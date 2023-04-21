@@ -1,74 +1,25 @@
 <!DOCTYPE html>
 <html>
+  <head>
+    <title>Token Details</title>
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.5.2/dist/web3.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts@3.28.0/dist/apexcharts.min.js"></script>
+    <style>
+      /* Define your CSS styles here */
+    </style>
+  </head>
+  <body>
+    <h1>Token Details</h1>
 
-<head>
-    <title>Compile Solidity Code</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethereumjs-util/6.1.0/ethereumjs-util.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.5.2/web3.min.js"></script>
-    <script src="https://cdn.ethers.io/lib/ethers-5.4.umd.min.js"></script>
-</head>
+    <form>
+      <label for="token-address">Enter Token Address:</label>
+      <input type="text" id="token-address" name="token-address">
+      <input type="submit" value="Get Token Details">
+    </form>
 
-<body>
-    <h1>Compile Solidity Code</h1>
-    <textarea id="solidityCode" rows="10" cols="50"></textarea>
-    <br />
-    <button onclick="compileCode()">Compile Code</button>
-    <br />
-    <pre id="compiledCode"></pre>
-    <script>
-        // Function to compile the Solidity code
-        
-        const express = require('express');
-const cors = require('cors');
-const app = express();
+    <div id="chart"></div>
+    <div id="token-details"></div>
 
-app.use(cors());
-
-// your Solidity compiler route
-app.get('/solc', (req, res) => {
-    // fetch the Solidity compiler from the remote server
-});
-
-app.listen(3000, () => {
-    console.log('Server running on port 3000');
-});
-
-        
-        async function compileCode() {
-            try {
-                const input = document.getElementById("solidityCode").value;
-                const output = await window.SolidityCompiler.compile(input);
-                const compiledCode = output.contracts[":MyContract"].bytecode;
-                document.getElementById("compiledCode").innerHTML = compiledCode;
-            } catch (error) {
-                console.error(error);
-            }
-        }
-
-        // Set up the Solidity compiler
-        window.SolidityCompiler = {
-            compilerUrl: "https://solc-bin.ethereum.org/bin/soljson-v0.8.0+commit.c7dfd78e.js",
-            async compile(source) {
-                const response = await fetch(this.compilerUrl, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({
-                        jsonrpc: "2.0",
-                        id: 0,
-                        method: "eth_compileSolidity",
-                        params: [source]
-                    })
-                });
-                const data = await response.json();
-                if (data.error) {
-                    throw new Error(data.error.message);
-                }
-                return data.result;
-            }
-        };
-    </script>
-</body>
-
+    <script src="app.js"></script>
+  </body>
 </html>
