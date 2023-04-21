@@ -1,27 +1,57 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Crypto Wallet</title>
-  </head>
-  <body>
-    <div id="create-wallet">
-      <h2>Create Wallet</h2>
-      <button onclick="createWallet()">Create New Wallet</button>
-      <div id="mnemonics"></div>
-    </div>
 
-    <div id="login">
-      <h2>Login</h2>
-      <textarea id="mnemonics-input" rows="3" placeholder="Enter your mnemonics"></textarea>
-      <button onclick="login()">Login</button>
-    </div>
-
-    <div id="balance" style="display: none">
-      <h2>Balance</h2>
-      <div>Your balance is: <span id="balance-value"></span> ETH</div>
-    </div>
-
+<head>
+    <title>Compile Solidity Code</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethereumjs-util/6.1.0/ethereumjs-util.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.5.2/web3.min.js"></script>
     <script src="https://cdn.ethers.io/lib/ethers-5.4.umd.min.js"></script>
-    <script src="app.js"></script>
-  </body>
+</head>
+
+<body>
+    <h1>Compile Solidity Code</h1>
+    <textarea id="solidityCode" rows="10" cols="50"></textarea>
+    <br />
+    <button onclick="compileCode()">Compile Code</button>
+    <br />
+    <pre id="compiledCode"></pre>
+    <script>
+        // Function to compile the Solidity code
+        async function compileCode() {
+            try {
+                const input = document.getElementById("solidityCode").value;
+                const output = await window.SolidityCompiler.compile(input);
+                const compiledCode = output.contracts[":MyContract"].bytecode;
+                document.getElementById("compiledCode").innerHTML = compiledCode;
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
+        // Set up the Solidity compiler
+        window.SolidityCompiler = {
+            compilerUrl: "https://solc-bin.ethereum.org/bin/soljson-v0.8.0+commit.c7dfd78e.js",
+            async compile(source) {
+                const response = await fetch(this.compilerUrl, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        jsonrpc: "2.0",
+                        id: 0,
+                        method: "eth_compileSolidity",
+                        params: [source]
+                    })
+                });
+                const data = await response.json();
+                if (data.error) {
+                    throw new Error(data.error.message);
+                }
+                return data.result;
+            }
+        };
+    </script>
+</body>
+
 </html>
