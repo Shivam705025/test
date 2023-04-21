@@ -5,7 +5,42 @@
     <script src="https://cdn.jsdelivr.net/npm/web3@1.5.2/dist/web3.min.js"></script>
     <script src="apexcharts.min.js"></script>
     <style>
-      /* Define your CSS styles here */
+      body {
+        background-color: black;
+        color: #00FF00;
+      }
+
+      /* Style the form */
+      form {
+        margin: 20px 0;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 10px;
+      }
+
+      input[type="text"] {
+        padding: 5px;
+        font-size: 16px;
+        border-radius: 5px;
+        border: none;
+      }
+
+      input[type="submit"] {
+        padding: 5px 10px;
+        font-size: 16px;
+        background-color: #00FF00;
+        color: black;
+        border-radius: 5px;
+        border: none;
+        cursor: pointer;
+      }
+
+      /* Style the chart and token details divs */
+      #chart, #token-details {
+        margin-top: 20px;
+      }
     </style>
   </head>
   <body>
@@ -17,8 +52,8 @@
       <input type="submit" value="Get Token Details">
     </form>
 
-    <div id="chart"></div>
-    <div id="token-details"></div>
+    <div id="chart" style="background-color: #222"></div>
+    <div id="token-details" style="background-color: #222"></div>
 
     <script src="app.js"></script>
   </body>
