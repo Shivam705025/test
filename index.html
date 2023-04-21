@@ -40,6 +40,50 @@
       /* Style the chart and token details divs */
       #chart, #token-details {
         margin-top: 20px;
+        height: 400px;
+        width: 100%;
+      }
+
+      /* Style the chart tooltip */
+      .apexcharts-tooltip {
+        font-size: 14px;
+      }
+
+      /* Style the x-axis labels */
+      .apexcharts-xaxis-label {
+        font-size: 14px;
+      }
+
+      /* Style the y-axis labels */
+      .apexcharts-yaxis-label {
+        font-size: 14px;
+      }
+
+      /* Style the legend labels */
+      .apexcharts-legend-text {
+        font-size: 14px;
+      }
+
+      /* Style the token details table */
+      table {
+        border-collapse: collapse;
+        width: 100%;
+        margin-top: 20px;
+      }
+
+      th, td {
+        text-align: left;
+        padding: 8px;
+        border-bottom: 1px solid #ddd;
+      }
+
+      th {
+        background-color: #555;
+        color: #fff;
+      }
+
+      tr:nth-child(even) {
+        background-color: #222;
       }
     </style>
   </head>
@@ -52,8 +96,8 @@
       <input type="submit" value="Get Token Details">
     </form>
 
-    <div id="chart" style="background-color: #222"></div>
-    <div id="token-details" style="background-color: #222"></div>
+    <div id="chart"></div>
+    <div id="token-details"></div>
 
     <script src="app.js"></script>
   </body>
