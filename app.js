@@ -111,9 +111,6 @@ form.addEventListener('submit', async (event) => {
     <p>Total Supply: ${formatNumber(totalSupply, decimals)} ${symbol}</p>
     <p>Total Market Cap: ${formatNumber(totalMarketCap, decimals)} ${symbol}</p>
     <h3>Token Distribution:</h3>
-    <ul>
-      ${tokenHolders.map((holder) => `<li>${holder.address}: ${formatNumber(holder.balance, decimals)} ${symbol}</li>`).join('')}
-    </ul>
     <h3>Token Functions:</h3>
     <ul>
       <li>Sell Tax: ${sellTax}%</li>
