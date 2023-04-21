@@ -8,7 +8,26 @@ form.addEventListener('submit', async (event) => {
 
   const tokenAddress = document.querySelector('#token-address').value;
 
-  const web3 = new Web3('https://mainnet.infura.io/v3/YOUR_INFURA_PROJECT_ID');
+  const web3 = new Web3('https://mainnet.infura.io/v3/b80413fa91ea43f2a74700555827bcb4');
+  
+  const TOKEN_ABI = [
+  {
+    "inputs": [],
+    "name": "name",
+    "outputs": [{ "internalType": "string", "name": "", "type": "string" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "symbol",
+    "outputs": [{ "internalType": "string", "name": "", "type": "string" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  // ...more method objects...
+];
+
 
   const tokenContract = new web3.eth.Contract(TOKEN_ABI, tokenAddress);
 
