@@ -134,32 +134,6 @@ async function calculateTotalMarketCap(web3, tokenContract, totalSupply) {
   return tokenPrice * totalSupply / 10 ** 18 * ethPrice;
 }
 
-async function getTokenHolders(web3, tokenContract) {
-  const tokenHolders = [];
-
-  const totalSupply = await tokenContract.methods.totalSupply().call();
-
-  const tokenHolderPromises = [];
-
-  for (let i = 0; i < totalSupply; i += 100) {
-    tokenHolderPromises.push(tokenContract.methods.holders(i, i + 100).call());
-  }
-
-  const holderRanges = await Promise.all(tokenHolderPromises);
-
-  for (const holderRange of holderRanges) {
-    for (const holder of holderRange.holders) {
-      const balance = await tokenContract.methods.balanceOf(holder).call();
-
-      tokenHolders.push({
-        address: holder,
-        balance: balance,
-      });
-    }
-  }
-
-  return tokenHolders;
-}
 
 async function getSellTax(web3, tokenContract) {
   try {
