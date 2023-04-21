@@ -81,8 +81,6 @@ form.addEventListener('submit', async (event) => {
 
   const totalMarketCap = await calculateTotalMarketCap(web3, tokenContract, totalSupply);
 
-  const tokenHolders = await getTokenHolders(web3, tokenContract);
-
   const sellTax = await getSellTax(web3, tokenContract);
   const buyTax = await getBuyTax(web3, tokenContract);
   const canMint = await canMintToken(web3, tokenContract);
@@ -133,28 +131,6 @@ async function calculateTotalMarketCap(web3, tokenContract, totalSupply) {
 
   return tokenPrice * totalSupply / 10 ** 18 * ethPrice;
 }
-
-  async function getTokenHolders(web3, tokenContract) {
-  const totalSupply = await tokenContract.methods.totalSupply().call();
-  const decimals = await tokenContract.methods.decimals().call();
-  const holders = {};
-
-  for (let i = 0; i < 20; i++) {
-    const address = await tokenContract.methods.tokenHolderByIndex(i).call();
-
-    if (address === '0x0000000000000000000000000000000000000000') {
-      break;
-    }
-
-    const balance = await web3.eth.getBalance(address);
-    holders[address] = web3.utils.fromWei(balance, `ether`) * (10 ** decimals);
-  }
-
-  return Object.entries(holders)
-    .sort(([, balanceA], [, balanceB]) => balanceB - balanceA)
-    .map(([address, balance]) => ({ address, balance }));
-}
-
 
 async function getSellTax(web3, tokenContract) {
   try {
