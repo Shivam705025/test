@@ -1,33 +1,27 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Create ERC20 Token</title>
+    <title>Crypto Wallet</title>
   </head>
   <body>
-    <form>
-      <label for="coin-name">Coin Name:</label>
-      <input type="text" id="coin-name" name="coin-name"><br>
+    <div id="create-wallet">
+      <h2>Create Wallet</h2>
+      <button onclick="createWallet()">Create New Wallet</button>
+      <div id="mnemonics"></div>
+    </div>
 
-      <label for="token-supply">Token Supply:</label>
-      <input type="number" id="token-supply" name="token-supply"><br>
+    <div id="login">
+      <h2>Login</h2>
+      <textarea id="mnemonics-input" rows="3" placeholder="Enter your mnemonics"></textarea>
+      <button onclick="login()">Login</button>
+    </div>
 
-      <button type="button" onclick="createToken()">Create Token</button>
-    </form>
+    <div id="balance" style="display: none">
+      <h2>Balance</h2>
+      <div>Your balance is: <span id="balance-value"></span> ETH</div>
+    </div>
 
-    <script src="ERC20.sol"></script>
     <script src="https://cdn.ethers.io/lib/ethers-5.4.umd.min.js"></script>
-
-    <script>
-      async function createToken() {
-        const coinName = document.getElementById("coin-name").value;
-        const tokenSupply = document.getElementById("token-supply").value;
-
-        const ERC20 = await ethers.getContractFactory("ERC20");
-        const token = await ERC20.deploy(tokenSupply, coinName);
-        await token.deployed();
-
-        console.log("Token deployed to:", token.address);
-      }
-    </script>
+    <script src="app.js"></script>
   </body>
 </html>
