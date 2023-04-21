@@ -1,15 +1,31 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Image Classification Example</title>
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.11.0/dist/tf.min.js"></script>
-       <script src="index.js"></script>
+    <title>Create ERC20 Token</title>
   </head>
   <body>
-    <h1>Image Classification Example</h1>
-    <input type="file" accept="image/*" onchange="loadImage(event)">
-    <img id="image">
-    <button onclick="classify()">Classify</button>
-    <p id="prediction"></p>
+    <form>
+      <label for="coin-name">Coin Name:</label>
+      <input type="text" id="coin-name" name="coin-name"><br>
+
+      <label for="token-supply">Token Supply:</label>
+      <input type="number" id="token-supply" name="token-supply"><br>
+
+      <button type="button" onclick="createToken()">Create Token</button>
+    </form>
+
+    <script src="https://cdn.jsdelivr.net/npm/@openzeppelin/contracts@4.4.0/build/contracts/ERC20.sol"></script>
+    <script>
+      async function createToken() {
+        const coinName = document.getElementById("coin-name").value;
+        const tokenSupply = document.getElementById("token-supply").value;
+
+        const ERC20 = await ethers.getContractFactory("ERC20");
+        const token = await ERC20.deploy(tokenSupply, coinName);
+        await token.deployed();
+
+        console.log("Token deployed to:", token.address);
+      }
+    </script>
   </body>
 </html>
