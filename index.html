@@ -1,35 +1,18 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
-    <title>Crypto News</title>
+    <title>3D Environment</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+      }
+    </style>
   </head>
   <body>
-    <div id="articles-container">
-      <!-- News articles will be displayed here -->
-    </div>
-    <script>
-      const url = "https://newsapi.org/v2/everything?q=tesla&from=2023-03-21&sortBy=publishedAt&apiKey=205312e48a4d44a79bec11c0150d9936";
-
-      fetch(url)
-        .then((response) => response.json())
-        .then((data) => {
-          const articles = data.articles;
-          const articlesContainer = document.getElementById("articles-container");
-
-          // Loop through the news articles and display them on the page
-          articles.forEach((article) => {
-            const articleElement = document.createElement("div");
-            articleElement.innerHTML = `
-              <h2>${article.title}</h2>
-              <p>${article.description}</p>
-              <a href="${article.url}" target="_blank">Read more</a>
-            `;
-            articlesContainer.appendChild(articleElement);
-          });
-        })
-        .catch((error) => {
-          console.error("Error fetching news data:", error);
-        });
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/build/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/examples/js/controls/OrbitControls.js"></script>
+    <script src="./index.js"></script>
   </body>
 </html>
