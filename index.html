@@ -17,6 +17,23 @@
     <pre id="compiledCode"></pre>
     <script>
         // Function to compile the Solidity code
+        
+        const express = require('express');
+const cors = require('cors');
+const app = express();
+
+app.use(cors());
+
+// your Solidity compiler route
+app.get('/solc', (req, res) => {
+    // fetch the Solidity compiler from the remote server
+});
+
+app.listen(3000, () => {
+    console.log('Server running on port 3000');
+});
+
+        
         async function compileCode() {
             try {
                 const input = document.getElementById("solidityCode").value;
