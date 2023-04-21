@@ -1,3 +1,4 @@
+function init() {
 const form = document.querySelector('form');
 const chartContainer = document.querySelector('#chart');
 const tokenDetailsContainer = document.querySelector('#token-details');
@@ -194,6 +195,7 @@ function formatNumber(number, decimals) {
   }
 
   return formattedWholePart + '.' + decimalPart;
+}
 }
 
 init();
