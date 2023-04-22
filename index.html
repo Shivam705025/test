@@ -4,6 +4,16 @@
     <title>Token Price Graph</title>
     <!-- Import Plotly.js library from CDN -->
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style>
+      body {
+        background-color: black;
+        color: #00ff00;
+      }
+      input[type=button] {
+        background-color: #00ff00;
+        color: black;
+      }
+    </style>
   </head>
   <body>
     <h1>Token Price Graph</h1>
@@ -36,22 +46,49 @@
             
             // Configure Plotly graph layout
             const layout = {
-              title: 'Token Price',
+              title: {
+                text: 'Token Price',
+                font: {
+                  color: '#00ff00'
+                }
+              },
               xaxis: {
-                title: 'Date',
-                type: 'date'
+                title: {
+                  text: 'Date',
+                  font: {
+                    color: '#00ff00'
+                  }
+                },
+                type: 'date',
+                tickfont: {
+                  color: '#00ff00'
+                },
+                tickangle: -45
               },
               yaxis: {
-                title: 'Price (USD)',
-                type: 'linear'
-              }
+                title: {
+                  text: 'Price (USD)',
+                  font: {
+                    color: '#00ff00'
+                  }
+                },
+                type: 'linear',
+                tickfont: {
+                  color: '#00ff00'
+                }
+              },
+              plot_bgcolor: 'black',
+              paper_bgcolor: 'black'
             };
             
             // Create Plotly graph with price data and layout
             Plotly.newPlot('graph', [{
               x: prices.map(price => price.x),
               y: prices.map(price => price.y),
-              type: 'scatter'
+              type: 'scatter',
+              line: {
+                color: '#00ff00'
+              }
             }], layout);
           })
           .catch(error => {
