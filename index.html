@@ -1,23 +1,33 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>My Three.js Game</title>
-        <script src="https://threejs.org/build/three.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three-gltf-loader@1.111.0/index.min.js"></script>
-    <script src="game.js"></script>
-    <style>
-      body {
-        margin: 0;
-        overflow: hidden;
-      }
-      canvas {
-        width: 100%;
-        height: 100%;
-      }
-    </style>
-  </head>
-  <body>
-    <canvas id="gameCanvas"></canvas>
+<head>
+	<title>Load .glb File</title>
+	<script src="https://cdn.jsdelivr.net/npm/three@0.134.0/build/three.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/three@0.134.0/examples/js/loaders/GLTFLoader.js"></script>
+</head>
+<body>
 
-  </body>
+	<script>
+		var scene = new THREE.Scene();
+		var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+
+		var renderer = new THREE.WebGLRenderer();
+		renderer.setSize(window.innerWidth, window.innerHeight);
+		document.body.appendChild(renderer.domElement);
+
+		var loader = new THREE.GLTFLoader();
+		loader.load('city.glb', function(gltf) {
+		    scene.add(gltf.scene);
+		});
+
+		camera.position.z = 5;
+
+		function animate() {
+			requestAnimationFrame(animate);
+			renderer.render(scene, camera);
+		}
+		animate();
+	</script>
+
+</body>
 </html>
