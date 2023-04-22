@@ -53,33 +53,56 @@
             
             // Configure Plotly graph layout
             const layout = {
-              title: 'Token Price',
+              title: {
+                text: 'Token Price',
+                font: {
+                  color: '#00ff00'
+                }
+              },
               xaxis: {
-                title: 'Date',
-                type: 'date'
+                title: {
+                  text: 'Date',
+                  font: {
+                    color: '#00ff00'
+                  }
+                },
+                type: 'date',
+                tickfont: {
+                  color: '#00ff00'
+                },
+                tickangle: -45
               },
               yaxis: {
-                title: 'Price (USD)',
-                type: 'linear'
+                title: {
+                  text: 'Price (USD)',
+                  font: {
+                    color: '#00ff00'
+                  }
+                },
+                type: 'linear',
+                tickfont: {
+                  color: '#00ff00'
+                }
               },
               plot_bgcolor: 'black',
-              paper_bgcolor: 'black',
-              font: {
-                color: 'green'
-              }
+              paper_bgcolor: 'black'
             };
             
             // Create Plotly graph with price data and layout
             Plotly.newPlot('graph-token', [{
               x: prices.map(price => price.x),
               y: prices.map(price => price.y),
-              type: 'scatter'
+              type: 'scatter',
+              line: {
+                color: '#00ff00'
+              }
             }], layout);
           })
           .catch(error => {
             console.error('Error fetching price data:', error);
             alert('Error fetching price data. Please try again later.');
           });
+        
         fetch(apiUrlBtc)
           .then(response => response.json())
           .then(data => {
@@ -93,33 +116,56 @@
             
             // Configure Plotly graph layout
             const layout = {
-              title: 'Token Price',
+              title: {
+                text: 'Token Price',
+                font: {
+                  color: '#00ff00'
+                }
+              },
               xaxis: {
-                title: 'Date',
-                type: 'date'
+                title: {
+                  text: 'Date',
+                  font: {
+                    color: '#00ff00'
+                  }
+                },
+                type: 'date',
+                tickfont: {
+                  color: '#00ff00'
+                },
+                tickangle: -45
               },
               yaxis: {
-                title: 'Price (ETH)',
-                type: 'linear'
+                title: {
+                  text: 'Price (BTC)',
+                  font: {
+                    color: '#00ff00'
+                  }
+                },
+                type: 'linear',
+                tickfont: {
+                  color: '#00ff00'
+                }
               },
               plot_bgcolor: 'black',
-              paper_bgcolor: 'black',
-              font: {
-                color: 'green'
-              }
+              paper_bgcolor: 'black'
             };
             
             // Create Plotly graph with price data and layout
             Plotly.newPlot('graph-btc', [{
               x: prices.map(price => price.x),
               y: prices.map(price => price.y),
-              type: 'scatter'
+              type: 'scatter',
+              line: {
+                color: '#00ff00'
+              }
             }], layout);
           })
           .catch(error => {
             console.error('Error fetching price data:', error);
             alert('Error fetching price data. Please try again later.');
           });
+        
         fetch(apiUrlEth)
           .then(response => response.json())
           .then(data => {
@@ -133,27 +179,49 @@
             
             // Configure Plotly graph layout
             const layout = {
-              title: 'Token Price',
+              title: {
+                text: 'Token Price',
+                font: {
+                  color: '#00ff00'
+                }
+              },
               xaxis: {
-                title: 'Date',
-                type: 'date'
+                title: {
+                  text: 'Date',
+                  font: {
+                    color: '#00ff00'
+                  }
+                },
+                type: 'date',
+                tickfont: {
+                  color: '#00ff00'
+                },
+                tickangle: -45
               },
               yaxis: {
-                title: 'Price (ETH)',
-                type: 'linear'
+                title: {
+                  text: 'Price (ETH)',
+                  font: {
+                    color: '#00ff00'
+                  }
+                },
+                type: 'linear',
+                tickfont: {
+                  color: '#00ff00'
+                }
               },
               plot_bgcolor: 'black',
-              paper_bgcolor: 'black',
-              font: {
-                color: 'green'
-              }
+              paper_bgcolor: 'black'
             };
             
             // Create Plotly graph with price data and layout
             Plotly.newPlot('graph-eth', [{
               x: prices.map(price => price.x),
               y: prices.map(price => price.y),
-              type: 'scatter'
+              type: 'scatter',
+              line: {
+                color: '#00ff00'
+              }
             }], layout);
           })
           .catch(error => {
