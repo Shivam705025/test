@@ -76,11 +76,10 @@
          const input = document.getElementById("textInput");
          const convertButton = document.getElementById("convertButton");
          const errorText = document.getElementById("errorText");
-         const resultContainer = document.getElementById("resultContainer");
+         const resultImage = document.getElementById("resultImage");
          
-         // add event listener for form submission
-         form.addEventListener("submit", (event) => {
-         event.preventDefault(); // prevent default form submission behavior
+         // add event listener for button click
+         convertButton.addEventListener("click", () => {
          
          // get the user's text input
          const text = input.value.trim();
@@ -95,11 +94,10 @@
          convertButton.disabled = true;
          convertButton.textContent = "Converting...";
          errorText.textContent = "";
-         resultContainer.style.display = "none";
+         resultImage.style.display = "none";
          
          // send API request to Imgflip API
-        // send API request to Imgflip API
-axios({
+         axios({
   method: "POST",
   url: "https://api.imgflip.com/caption_image",
   headers: {
@@ -109,19 +107,25 @@ axios({
 })
   .then((response) => {
     // enable the convert button
-    convertBtn.disabled = false;
+    convertButton.disabled = false;
     
-    // set the image URL to the generated meme
-    const imageUrl = response.data.data.url;
-    memeImg.src = imageUrl;
+    // check if the API request was successful
+    if (response.data.success) {
+      // set the image URL to the generated meme
+      const imageUrl = response.data.data.url;
+      resultImage.src = imageUrl;
+      resultContainer.style.display = "block";
+    } else {
+      errorText.textContent = "Oops! Something went wrong. Please try again.";
+    }
     
-    // reset the form inputs
-    topText.value = "";
-    bottomText.value = "";
+    // reset the form input
+    input.value = "";
+    convertButton.textContent = "Convert to Image";
   })
   .catch((error) => {
     console.log(error);
+    errorText.textContent = "Oops! Something went wrong. Please try again.";
+    convertButton.disabled = false;
+    convertButton.textContent = "Convert to Image";
   });
-	   </script>
-	</body>
-</html>
