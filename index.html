@@ -4,8 +4,6 @@
     <title>Pepedash token analyze with AI</title>
     <!-- Import Plotly.js library from CDN -->
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/leaflet.heat@0.2.0/dist/leaflet-heat.js"></script>
     <style>
       
       body {
@@ -16,10 +14,7 @@
         background-color: #00ff00;
         color: black;
       }
-      #mapid {
-            height: 500px;
-            width: 310px;
-        }
+
     </style>
   </head>
   <body>
@@ -278,43 +273,7 @@
             alert('Error fetching token data. Please try again later.');
           });
       }
-        const contractAddress = document.getElementById('tokenAddress').value;
-        
-        // Retrieve the list of token holders and their balances using Etherscan API
-        const etherscanApiKey = "AFFD2SXUNV3RY968V4442KMBP4928IBMJ7";
-        const etherscanApiUrl = `https://api.etherscan.io/api?module=account&action=tokenbalance&contractaddress=${contractAddress}&tag=latest&apikey=${etherscanApiKey}`;
-        fetch(etherscanApiUrl)
-            .then(response => response.json())
-            .then(data => {
-                const holders = Object.keys(data.result);
-                const balances = Object.values(data.result);
-                
-                // Convert balances from wei to token units
-                const tokenDecimals = 18;
-                const balancesInTokenUnits = balances.map(balance => balance / Math.pow(10, tokenDecimals));
-                
-                // Create an array of coordinates with random latitudes and longitudes
-                const coordinates = [];
-                for (let i = 0; i < holders.length; i++) {
-                    const lat = Math.random() * 180 - 90;
-                    const lng = Math.random() * 360 - 180;
-                    coordinates.push([lat, lng, balancesInTokenUnits[i]]);
-                }
-                
-                // Create the bubble map using Leaflet
-                const map = L.map('mapid').setView([0, 0], 2);
-                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                    attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
-                        '<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
-                        'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-                    maxZoom: 18,
-                    id: 'mapbox/streets-v11',
-                    tileSize: 512,
-                    zoomOffset: -1
-                }).addTo(map);
-                const heatLayer = L.heatLayer(coordinates, { radius: 30 }).addTo(map);
-            })
-            .catch(error => console.error(error));
+
         
     </script>
   </body>
