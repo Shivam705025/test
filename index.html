@@ -14,6 +14,18 @@
         background-color: #00ff00;
         color: black;
       }
+              pre {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        code {
+            display: block;
+            background-color: #f4f4f4;
+            padding: 10px;
+            font-size: 14px;
+            line-height: 1.5;
+            overflow-x: auto;
+        }
 
     </style>
   </head>
@@ -286,8 +298,8 @@
                     const contractInfo = data.result[0];
                     const contractCode = contractInfo.SourceCode;
                     delete contractInfo.SourceCode;
-                    document.getElementById("contract-info").innerHTML = JSON.stringify(contractInfo, null, 4);
-                    document.getElementById("contract-code").innerHTML = contractCode;
+                    document.getElementById("contract-info").textContent = JSON.stringify(contractInfo, null, 2);
+                    document.getElementById("contract-code").textContent = contractCode;
                 })
                 .catch(error => console.error(error));
             return false;
