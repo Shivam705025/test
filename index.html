@@ -1,54 +1,19 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="UTF-8">
-    <title>Facial Emotion Recognition Demo</title>
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-core"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-converter"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/face-landmarks-detection"></script>
-    <script src="face-api.min.js"></script>
-  </head>
-  <body>
-    <h1>Facial Emotion Recognition Demo</h1>
-    <video id="video" width="640" height="480" autoplay></video>
-    <canvas id="canvas" width="640" height="480"></canvas>
-    <div id="emotion"></div>
-    <script>
-      const video = document.getElementById('video');
-      const canvas = document.getElementById('canvas');
-      const ctx = canvas.getContext('2d');
-      const emotion = document.getElementById('emotion');
-      Promise.all([
-        faceapi.nets.tinyFaceDetector.loadFromUri('/models'),
-        faceapi.nets.faceLandmark68Net.loadFromUri('/models'),
-        faceapi.nets.faceRecognitionNet.loadFromUri('/models'),
-        faceapi.nets.faceExpressionNet.loadFromUri('/models')
-      ]).then(startVideo);
-
-      function startVideo() {
-        navigator.mediaDevices.getUserMedia({ video: true })
-          .then(function (stream) {
-            video.srcObject = stream;
-          })
-          .catch(function (err0r) {
-            console.log("Something went wrong!");
-          });
-      }
-
-      video.addEventListener('play', () => {
-        setInterval(async () => {
-          ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-          const detections = await faceapi.detectAllFaces(video, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceExpressions();
-          if (detections.length > 0) {
-            const expressions = detections[0].expressions;
-            let emotionText = "";
-            for (const [emotion, probability] of Object.entries(expressions)) {
-              emotionText += `${emotion}: ${probability.toFixed(2)}\n`;
-            }
-            emotion.innerText = emotionText;
-          }
-        }, 100);
-      });
-    </script>
-  </body>
+<head>
+  <meta charset="UTF-8">
+  <title>Sentence to Image Conversion</title>
+</head>
+<body>
+  <h1>Sentence to Image Conversion</h1>
+  <p>Enter a sentence:</p>
+  <input type="text" id="inputSentence">
+  <button onclick="analyzeSentence()">Analyze</button>
+  <br>
+  <img id="outputImage" style="display:none">
+  <p id="outputCaption"></p>
+  <script src="https://sdk.clarifai.com/js/clarifai-latest.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="./app.js"></script>
+</body>
 </html>
