@@ -2,71 +2,70 @@
 <html>
 <head>
 	<title>AI Notepad</title>
-   <script>
-      const notepad = document.getElementById('notepad');
-const suggestions = document.getElementById('suggestions');
-let model;
-
-// Load the Universal Sentence Encoder model
-async function loadModel() {
-  model = await use.load();
-}
-
-// Handle user input
-notepad.addEventListener('input', async function() {
-  const inputText = notepad.value;
-  const inputWords = inputText.split(' ');
-  const lastWord = inputWords[inputWords.length - 1].trim();
-  
-  // Auto-correct the last word
-  const suggestions = await getSuggestions(lastWord);
-  if (suggestions.length > 0) {
-    const correctedWord = suggestions[0];
-    const correctedText = inputWords.slice(0, -1).join(' ') + ' ' + correctedWord;
-    notepad.value = correctedText;
-  }
-  
-  // Auto-complete the current sentence
-  const sentence = inputText.trim().split('.').pop().trim();
-  if (sentence.length > 0) {
-    const completions = await getCompletions(sentence);
-    if (completions.length > 0) {
-      const suggestion = completions[0];
-      const suggestionText = inputText.slice(0, -sentence.length) + suggestion;
-      suggestions.innerHTML = completions.map(s => `<div>${s}</div>`).join('');
-    } else {
-      suggestions.innerHTML = '';
-    }
-  } else {
-    suggestions.innerHTML = '';
-  }
-});
-
-// Get suggestions for a given word
-async function getSuggestions(word) {
-  // Use a dictionary API to get suggestions for the word
-  const response = await fetch(`https://api.datamuse.com/sug?s=${word}`);
-  const data = await response.json();
-  return data.map(d => d.word);
-}
-
-// Get completions for a given sentence
-async function getCompletions(sentence) {
-  // Use the Universal Sentence Encoder to get similar sentences
-  const embeddings = await model.embed(sentence);
-  const result = await model.search(embeddings, 5);
-  return result.map(r => r.text);
-}
-
-// Load the model when the page is ready
-document.addEventListener('DOMContentLoaded', loadModel);
-
-   </script>
 </head>
 <body>
 	<textarea id="notepad"></textarea>
 	<div id="suggestions"></div>
 	<script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/universal-sentence-encoder"></script>
-	<script src="notepad.js"></script>
+	<script>
+		const notepad = document.getElementById('notepad');
+		const suggestions = document.getElementById('suggestions');
+		let model;
+
+		// Load the Universal Sentence Encoder model
+		async function loadModel() {
+			model = await use.load();
+		}
+
+		// Handle user input
+		notepad.addEventListener('input', async function() {
+			const inputText = notepad.value;
+			const inputWords = inputText.split(' ');
+			const lastWord = inputWords[inputWords.length - 1].trim();
+
+			// Auto-correct the last word
+			const suggestions = await getSuggestions(lastWord);
+			if (suggestions.length > 0) {
+				const correctedWord = suggestions[0];
+				const correctedText = inputWords.slice(0, -1).join(' ') + ' ' + correctedWord;
+				notepad.value = correctedText;
+			}
+
+			// Auto-complete the current sentence
+			const sentence = inputText.trim().split('.').pop().trim();
+			if (sentence.length > 0) {
+				const completions = await getCompletions(sentence);
+				if (completions.length > 0) {
+					const suggestion = completions[0];
+					const suggestionText = inputText.slice(0, -sentence.length) + suggestion;
+					notepad.value = suggestionText;
+					suggestions.innerHTML = completions.map(s => `<div>${s}</div>`).join('');
+				} else {
+					suggestions.innerHTML = '';
+				}
+			} else {
+				suggestions.innerHTML = '';
+			}
+		});
+
+		// Get suggestions for a given word
+		async function getSuggestions(word) {
+			// Use a dictionary API to get suggestions for the word
+			const response = await fetch(`https://api.datamuse.com/sug?s=${word}`);
+			const data = await response.json();
+			return data.map(d => d.word);
+		}
+
+		// Get completions for a given sentence
+		async function getCompletions(sentence) {
+			// Use the Universal Sentence Encoder to get similar sentences
+			const embeddings = await model.embed(sentence);
+			const result = await model.search(embeddings, 5);
+			return result.map(r => r.text);
+		}
+
+		// Load the model when the page is ready
+		document.addEventListener('DOMContentLoaded', loadModel);
+	</script>
 </body>
 </html>
