@@ -1,8 +1,8 @@
 // Set up the scene, camera, and renderer
 var scene = new THREE.Scene();
-var camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
-var renderer = new THREE.WebGLRenderer({ canvas: document.getElementById("gameCanvas") });
-renderer.setSize( window.innerWidth, window.innerHeight );
+var camera = new THREE.PerspectiveCamera( 75, canvas.clientWidth / canvas.clientHeight, 0.1, 1000 );
+var renderer = new THREE.WebGLRenderer({ canvas: canvas });
+renderer.setSize( canvas.clientWidth, canvas.clientHeight );
 
 // Create the city model and add it to the scene
 var cityLoader = new THREE.GLTFLoader();
