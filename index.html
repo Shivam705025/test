@@ -68,15 +68,13 @@
             <img id="resultImage" src="">
          </div>
       </div>
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.24.0/axios.min.js"></script>
       <script>
-         const USERNAME = "skod333"; // replace with your Imgflip username
-         const PASSWORD = "skod12345678"; // replace with your Imgflip password
          const form = document.querySelector("form");
          const input = document.getElementById("textInput");
          const convertButton = document.getElementById("convertButton");
          const errorText = document.getElementById("errorText");
          const resultImage = document.getElementById("resultImage");
+         const resultContainer = document.getElementById("resultContainer");
          
          // add event listener for button click
          convertButton.addEventListener("click", () => {
@@ -96,36 +94,30 @@
          errorText.textContent = "";
          resultImage.style.display = "none";
          
-         // send API request to Imgflip API
-         axios({
-  method: "POST",
-  url: "https://api.imgflip.com/caption_image",
-  headers: {
-    "Content-Type": "application/x-www-form-urlencoded"
-  },
-  data: `template_id=61527&username=${USERNAME}&password=${PASSWORD}&text0=${text}&max_font_size=100`,
-})
-  .then((response) => {
-    // enable the convert button
-    convertButton.disabled = false;
-    
-    // check if the API request was successful
-    if (response.data.success) {
-      // set the image URL to the generated meme
-      const imageUrl = response.data.data.url;
-      resultImage.src = imageUrl;
-      resultContainer.style.display = "block";
-    } else {
-      errorText.textContent = "Oops! Something went wrong. Please try again.";
-    }
-    
-    // reset the form input
-    input.value = "";
-    convertButton.textContent = "Convert to Image";
-  })
-  .catch((error) => {
-    console.log(error);
-    errorText.textContent = "Oops! Something went wrong. Please try again.";
-    convertButton.disabled = false;
-    convertButton.textContent = "Convert to Image";
-  });
+         // send API request to Lorem Picsum API
+         fetch(`https://picsum.photos/seed/${text}/300/300.jpg`)
+          .then(response => {
+            // enable the convert button
+            convertButton.disabled = false;
+
+            // check if the API request was successful
+            if (response.ok) {
+              // set the image URL to the generated meme
+              resultImage.src = response.url;
+              resultContainer.style.display = "block";
+            } else {
+              errorText.textContent = "Oops! Something went wrong. Please try again.";
+            }
+
+            // reset the form input
+            input.value = "";
+     })
+     .catch(error => {
+        console.log(error);
+        errorText.textContent = "Oops! Something went wrong. Please try again.";
+        convertButton.disabled = false;
+        convertButton.textContent = "Convert to Image";
+     });
+  </script>
+   </body>
+</html>
