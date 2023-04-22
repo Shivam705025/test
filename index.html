@@ -70,8 +70,8 @@
       </div>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.24.0/axios.min.js"></script>
       <script>
-	 
-         const API_KEY = "da56bdf6-30ad-4564-b76e-4ad81cfbb2ba"; // replace with your DeepAI API key
+         const USERNAME = "skod333"; // replace with your Imgflip username
+         const PASSWORD = "skod12345678"; // replace with your Imgflip password
          const form = document.querySelector("form");
          const input = document.getElementById("textInput");
          const convertButton = document.getElementById("convertButton");
@@ -97,40 +97,31 @@
          errorText.textContent = "";
          resultContainer.style.display = "none";
          
-         // send API request to DeepAI Text to Image API
-         axios({
-           method: "POST",
-           url: "https://api.deepai.org/api/text2img",
-           headers: {
-             "api-key": API_KEY,
-           },
-           data: {
-             text: text,
-           },
-         })
-           .then((response) => {
-             // enable the convert button and reset its text
-             convertButton.disabled = false;
-             convertButton.textContent = "Convert to Image";
-             
-             // show the image to the user
-             const imageUrl = response.data.output_url;
-             resultContainer.style.display = "block";
-             resultContainer.scrollIntoView();
-             document.getElementById("resultImage").src = imageUrl;
-           })
-           .catch((error) => {
-             // enable the convert button and reset its text
-             convertButton.disabled = false;
-             convertButton.textContent = "Convert to Image";
-         
-             // show error message to the user
-             const errorMessage = error.response
-               ? error.response.data.message
-               : "An error occurred. Please try again later.";
-             errorText.textContent = errorMessage;
-           });
-         });
-      </script>
-   </body>
+         // send API request to Imgflip API
+        // send API request to Imgflip API
+axios({
+  method: "POST",
+  url: "https://api.imgflip.com/caption_image",
+  headers: {
+    "Content-Type": "application/x-www-form-urlencoded"
+  },
+  data: `template_id=61527&username=${USERNAME}&password=${PASSWORD}&text0=${text}&max_font_size=100`,
+})
+  .then((response) => {
+    // enable the convert button
+    convertBtn.disabled = false;
+    
+    // set the image URL to the generated meme
+    const imageUrl = response.data.data.url;
+    memeImg.src = imageUrl;
+    
+    // reset the form inputs
+    topText.value = "";
+    bottomText.value = "";
+  })
+  .catch((error) => {
+    console.log(error);
+  });
+	   </script>
+	</body>
 </html>
