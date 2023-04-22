@@ -14,16 +14,17 @@
         background-color: #00ff00;
         color: black;
       }
-              pre {
-            white-space: pre-wrap;
-            word-wrap: break-word;
+             textarea {
+            background-color: transparent;
+            border: none;
+            width: 100%;
+            height: 500px;
+            resize: none;
         }
-        code {
-            display: block;
-            background-color: #f4f4f4;
+        pre {
+            background-color: #f5f5f5;
+            border: 1px solid #ccc;
             padding: 10px;
-            font-size: 14px;
-            line-height: 1.5;
             overflow-x: auto;
         }
 
@@ -296,13 +297,10 @@
                 .then(response => response.json())
                 .then(data => {
                     const contractInfo = data.result[0];
-                    const contractCode = contractInfo.SourceCode;
-                    delete contractInfo.SourceCode;
-                    const formattedContractInfo = Object.keys(contractInfo)
-                        .map(key => `${key}: ${contractInfo[key]}`)
-                        .join("\n");
-                    document.getElementById("contract-info").textContent = formattedContractInfo;
-                    document.getElementById("contract-code").textContent = contractCode;
+                    const contractJson = JSON.stringify(contractInfo, null, 2);
+                    const solidityCode = contractInfo.SourceCode;
+                    document.getElementById("contract-json").textContent = contractJson;
+                    document.getElementById("solidity-code").textContent = solidityCode;
                 })
                 .catch(error => console.error(error));
             return false;
