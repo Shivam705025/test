@@ -1,33 +1,28 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Load .glb File</title>
-	<script src="https://cdn.jsdelivr.net/npm/three@0.134.0/build/three.min.js"></script>
-	<script src="https://cdn.jsdelivr.net/npm/three@0.134.0/examples/js/loaders/GLTFLoader.js"></script>
+    <title>Load GLB File with Babylon.js</title>
+    <meta charset="utf-8">
+    <script src="https://cdn.babylonjs.com/babylon.js"></script>
+    <script src="https://cdn.babylonjs.com/loaders/babylonjs.loaders.min.js"></script>
 </head>
 <body>
+    <canvas id="renderCanvas"></canvas>
+    <script>
+        var canvas = document.getElementById("renderCanvas");
+        var engine = new BABYLON.Engine(canvas, true);
 
-	<script>
-		var scene = new THREE.Scene();
-		var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        BABYLON.SceneLoader.LoadAssetContainer("./", "city.glb", engine, function (container) {
+            container.addAllToScene();
+        });
 
-		var renderer = new THREE.WebGLRenderer();
-		renderer.setSize(window.innerWidth, window.innerHeight);
-		document.body.appendChild(renderer.domElement);
+        engine.runRenderLoop(function () {
+            scene.render();
+        });
 
-		var loader = new THREE.GLTFLoader();
-		loader.load('frog.glb', function(gltf) {
-		    scene.add(gltf.scene);
-		});
-
-		camera.position.z = 5;
-
-		function animate() {
-			requestAnimationFrame(animate);
-			renderer.render(scene, camera);
-		}
-		animate();
-	</script>
-
+        window.addEventListener("resize", function () {
+            engine.resize();
+        });
+    </script>
 </body>
 </html>
