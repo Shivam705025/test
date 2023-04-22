@@ -1,5 +1,6 @@
 // Set up the scene, camera, and renderer
 var scene = new THREE.Scene();
+var canvas = document.getElementById('gameCanvas');
 var camera = new THREE.PerspectiveCamera( 75, canvas.clientWidth / canvas.clientHeight, 0.1, 1000 );
 var renderer = new THREE.WebGLRenderer({ canvas: canvas });
 renderer.setSize( canvas.clientWidth, canvas.clientHeight );
