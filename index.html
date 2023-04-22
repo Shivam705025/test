@@ -298,7 +298,10 @@
                     const contractInfo = data.result[0];
                     const contractCode = contractInfo.SourceCode;
                     delete contractInfo.SourceCode;
-                    document.getElementById("contract-info").textContent = JSON.stringify(contractInfo, null, 2);
+                    const formattedContractInfo = Object.keys(contractInfo)
+                        .map(key => `${key}: ${contractInfo[key]}`)
+                        .join("\n");
+                    document.getElementById("contract-info").textContent = formattedContractInfo;
                     document.getElementById("contract-code").textContent = contractCode;
                 })
                 .catch(error => console.error(error));
