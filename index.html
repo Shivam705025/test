@@ -12,7 +12,7 @@
         var canvas = document.getElementById("renderCanvas");
         var engine = new BABYLON.Engine(canvas, true);
 
-        BABYLON.SceneLoader.LoadAssetContainer("./", "city.glb", engine, function (container) {
+        BABYLON.SceneLoader.LoadAssetContainer("", "city.glb", engine, function (container) {
             container.addAllToScene();
         });
 
