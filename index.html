@@ -34,7 +34,11 @@
     <br><br>
      <div id="tokenInfo"></div>
     <br><br>
-     <div id="mapid"></div>
+     <h2>Contract Information:</h2>
+    <div id="contract-info"></div>
+    <hr>
+    <h2>Contract Code:</h2>
+    <div id="contract-code"></div>
     
     <script>
       function showGraphs() {
@@ -236,6 +240,7 @@
             alert('Error fetching price data. Please try again later.');
           });
         getTokenInfo();
+        getContractInfo();
       }
       function getTokenInfo() {
         const tokenAddress = document.getElementById('tokenAddress').value;
@@ -273,6 +278,22 @@
             alert('Error fetching token data. Please try again later.');
           });
       }
+      function getContractInfo() {
+            const tokenAddress = document.getElementById("token-address").value;
+            const etherscanApiKey = "YOUR_ETHERSCAN_API_KEY";
+            const etherscanApiUrl = `https://api.etherscan.io/api?module=contract&action=getsourcecode&address=${tokenAddress}&apikey=${etherscanApiKey}`;
+            fetch(etherscanApiUrl)
+                .then(response => response.json())
+                .then(data => {
+                    const contractInfo = data.result[0];
+                    const contractCode = contractInfo.SourceCode;
+                    delete contractInfo.SourceCode;
+                    document.getElementById("contract-info").innerHTML = JSON.stringify(contractInfo, null, 4);
+                    document.getElementById("contract-code").innerHTML = contractCode;
+                })
+                .catch(error => console.error(error));
+            return false;
+        }
 
         
     </script>
