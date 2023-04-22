@@ -1,106 +1,64 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Dancing 3D Frog</title>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <style>
-     .frog-container {
-  position: relative;
-  height: 300px;
-  width: 300px;
-}
-
-.frog {
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
-  width: 100%;
-  background-image: url("frog.png");
-  background-size: cover;
-}
-
-.mouth {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  height: 50px;
-  width: 50px;
-  margin-top: -25px;
-  margin-left: -25px;
-  border-radius: 50%;
-  background-color: white;
-  z-index: 1;
-}
-
-.tongue {
-  position: absolute;
-  top: 70%;
-  left: 50%;
-  height: 20px;
-  width: 40px;
-  margin-top: -10px;
-  margin-left: -20px;
-  border-radius: 50%;
-  background-color: red;
-  z-index: 2;
-  transition: all 0.2s ease-in-out;
-}
-
-    </style>
-    <script>
-      const recognition = new webkitSpeechRecognition();
-
-recognition.onresult = (event) => {
-  const speech = event.results[0][0].transcript;
-  const words = speech.split(" ");
-
-  if (words.includes("hello") || words.includes("hi")) {
-    speak("Hello!");
-    jump();
-  } else if (words.includes("jump")) {
-    speak("Jumping!");
-    jump();
-  } else if (words.includes("stick out your tongue")) {
-    speak("Sure!");
-    stickOutTongue();
-  }
-};
-
-const speak = (message) => {
-  const speech = new SpeechSynthesisUtterance();
-  speech.lang = "en-US";
-  speech.text = message;
-  window.speechSynthesis.speak(speech);
-};
-
-const jump = () => {
-  const frog = document.querySelector(".frog");
-  frog.style.animation = "jump 0.5s ease-in-out";
-  setTimeout(() => {
-    frog.style.animation = "";
-  }, 500);
-};
-
-const stickOutTongue = () => {
-  const tongue = document.querySelector(".tongue");
-  tongue.style.transform = "translateY(20px)";
-  setTimeout(() => {
-    tongue.style.transform = "";
-  }, 500);
-};
-
-recognition.start();
-
-    </script>
+    <title>Token Price Graph</title>
+    <!-- Import Plotly.js library from CDN -->
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
   </head>
   <body>
-    <div class="frog-container">
-  <div class="frog"></div>
-  <div class="mouth"></div>
-  <div class="tongue"></div>
-</div>
-
+    <h1>Token Price Graph</h1>
+    <form>
+      <label for="tokenAddress">Token Address:</label>
+      <input type="text" id="tokenAddress" name="tokenAddress">
+      <input type="button" value="Show Graph" onclick="showGraph()">
+    </form>
+    <div id="graph"></div>
+    
+    <script>
+      function showGraph() {
+        // Get token address from input field
+        const tokenAddress = document.getElementById('tokenAddress').value;
+        
+        // Construct API URL to fetch price data for the token
+        const apiUrl = `https://api.coingecko.com/api/v3/coins/ethereum/contract/${tokenAddress}/market_chart/?vs_currency=usd&days=30`;
+        
+        // Fetch price data for the token using Coingecko API
+        fetch(apiUrl)
+          .then(response => response.json())
+          .then(data => {
+            // Extract price data from API response
+            const prices = data.prices.map(price => {
+              return {
+                x: new Date(price[0]),
+                y: price[1]
+              }
+            });
+            
+            // Configure Plotly graph layout
+            const layout = {
+              title: 'Token Price',
+              xaxis: {
+                title: 'Date',
+                type: 'date'
+              },
+              yaxis: {
+                title: 'Price (USD)',
+                type: 'linear'
+              }
+            };
+            
+            // Create Plotly graph with price data and layout
+            Plotly.newPlot('graph', [{
+              x: prices.map(price => price.x),
+              y: prices.map(price => price.y),
+              type: 'scatter'
+            }], layout);
+          })
+          .catch(error => {
+            console.error('Error fetching price data:', error);
+            alert('Error fetching price data. Please try again later.');
+          });
+      }
+    </script>
   </body>
 </html>
