@@ -22,18 +22,25 @@
       <input type="text" id="tokenAddress" name="tokenAddress">
       <input type="button" value="Show Graph" onclick="showGraph()">
     </form>
-    <div id="graph"></div>
+    <div id="graph-token"></div>
+    <br><br>
+    <div id="graph-btc"></div>
+    <br><br>
+    <div id="graph-eth"></div>
+    <br><br>
     
     <script>
-      function showGraph() {
+      function showGraphs() {
         // Get token address from input field
         const tokenAddress = document.getElementById('tokenAddress').value;
         
-        // Construct API URL to fetch price data for the token
-        const apiUrl = `https://api.coingecko.com/api/v3/coins/ethereum/contract/${tokenAddress}/market_chart/?vs_currency=usd&days=30`;
+        // Construct API URLs to fetch price data for the token, BTC, and ETH
+        const apiUrlToken = `https://api.coingecko.com/api/v3/coins/ethereum/contract/${tokenAddress}/market_chart/?vs_currency=usd&days=30`;
+        const apiUrlBtc = `https://api.coingecko.com/api/v3/coins/bitcoin/market_chart/?vs_currency=usd&days=30`;
+        const apiUrlEth = `https://api.coingecko.com/api/v3/coins/ethereum/market_chart/?vs_currency=usd&days=30`;
         
         // Fetch price data for the token using Coingecko API
-        fetch(apiUrl)
+        fetch(apiUrlToken)
           .then(response => response.json())
           .then(data => {
             // Extract price data from API response
@@ -46,49 +53,107 @@
             
             // Configure Plotly graph layout
             const layout = {
-              title: {
-                text: 'Token Price',
-                font: {
-                  color: '#00ff00'
-                }
-              },
+              title: 'Token Price',
               xaxis: {
-                title: {
-                  text: 'Date',
-                  font: {
-                    color: '#00ff00'
-                  }
-                },
-                type: 'date',
-                tickfont: {
-                  color: '#00ff00'
-                },
-                tickangle: -45
+                title: 'Date',
+                type: 'date'
               },
               yaxis: {
-                title: {
-                  text: 'Price (USD)',
-                  font: {
-                    color: '#00ff00'
-                  }
-                },
-                type: 'linear',
-                tickfont: {
-                  color: '#00ff00'
-                }
+                title: 'Price (USD)',
+                type: 'linear'
               },
               plot_bgcolor: 'black',
-              paper_bgcolor: 'black'
+              paper_bgcolor: 'black',
+              font: {
+                color: 'green'
+              }
             };
             
             // Create Plotly graph with price data and layout
-            Plotly.newPlot('graph', [{
+            Plotly.newPlot('graph-token', [{
               x: prices.map(price => price.x),
               y: prices.map(price => price.y),
-              type: 'scatter',
-              line: {
-                color: '#00ff00'
+              type: 'scatter'
+            }], layout);
+          })
+          .catch(error => {
+            console.error('Error fetching price data:', error);
+            alert('Error fetching price data. Please try again later.');
+          });
+        fetch(apiUrlBtc)
+          .then(response => response.json())
+          .then(data => {
+            // Extract price data from API response
+            const prices = data.prices.map(price => {
+              return {
+                x: new Date(price[0]),
+                y: price[1]
               }
+            });
+            
+            // Configure Plotly graph layout
+            const layout = {
+              title: 'Token Price',
+              xaxis: {
+                title: 'Date',
+                type: 'date'
+              },
+              yaxis: {
+                title: 'Price (USD)',
+                type: 'linear'
+              },
+              plot_bgcolor: 'black',
+              paper_bgcolor: 'black',
+              font: {
+                color: 'green'
+              }
+            };
+            
+            // Create Plotly graph with price data and layout
+            Plotly.newPlot('graph-btc', [{
+              x: prices.map(price => price.x),
+              y: prices.map(price => price.y),
+              type: 'scatter'
+            }], layout);
+          })
+          .catch(error => {
+            console.error('Error fetching price data:', error);
+            alert('Error fetching price data. Please try again later.');
+          });
+        fetch(apiUrlEth)
+          .then(response => response.json())
+          .then(data => {
+            // Extract price data from API response
+            const prices = data.prices.map(price => {
+              return {
+                x: new Date(price[0]),
+                y: price[1]
+              }
+            });
+            
+            // Configure Plotly graph layout
+            const layout = {
+              title: 'Token Price',
+              xaxis: {
+                title: 'Date',
+                type: 'date'
+              },
+              yaxis: {
+                title: 'Price (USD)',
+                type: 'linear'
+              },
+              plot_bgcolor: 'black',
+              paper_bgcolor: 'black',
+              font: {
+                color: 'green'
+              }
+            };
+            
+            // Create Plotly graph with price data and layout
+            Plotly.newPlot('graph-eth', [{
+              x: prices.map(price => price.x),
+              y: prices.map(price => price.y),
+              type: 'scatter'
             }], layout);
           })
           .catch(error => {
@@ -96,6 +161,7 @@
             alert('Error fetching price data. Please try again later.');
           });
       }
+        
     </script>
   </body>
 </html>
