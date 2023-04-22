@@ -70,7 +70,7 @@
       </div>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.24.0/axios.min.js"></script>
       <script>
-	  alert("running");
+	 
          const API_KEY = "da56bdf6-30ad-4564-b76e-4ad81cfbb2ba"; // replace with your DeepAI API key
          const form = document.querySelector("form");
          const input = document.getElementById("textInput");
@@ -112,7 +112,7 @@
              // enable the convert button and reset its text
              convertButton.disabled = false;
              convertButton.textContent = "Convert to Image";
-         
+             
              // show the image to the user
              const imageUrl = response.data.output_url;
              resultContainer.style.display = "block";
