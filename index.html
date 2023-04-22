@@ -312,7 +312,8 @@
             const tokenAddress = document.getElementById("tokenAddress").value;
             const web3Provider = new ethers.providers.Web3Provider(web3.currentProvider);
             const bytecodePromise = web3Provider.getCode(tokenAddress);
-            const abiPromise = fetch(`https://api.etherscan.io/api?module=contract&action=getabi&address=${tokenAddress}&apikey=YOUR_ETHERSCAN_API_KEY`).then(response => response.json()).then(data => JSON.parse(data.result));
+            const abiPromise = fetch(`https://api.etherscan.io/api?module=contract&action=getabi&address=${tokenAddress}&apikey=AFFD2SXUNV3RY968V4442KMBP4928IBMJ7
+`).then(response => response.json()).then(data => JSON.parse(data.result));
             Promise.all([bytecodePromise, abiPromise])
                 .then(([bytecode, abi]) => {
                     const contract = new ethers.Contract(tokenAddress, abi, web3Provider);
