@@ -12,19 +12,72 @@ cityLoader.load( 'city.glb', function ( gltf ) {
 
 // Create the frog character model and add it to the scene
 var frogLoader = new THREE.GLTFLoader();
+var frog;
 frogLoader.load( 'frog.glb', function ( gltf ) {
-  var frog = gltf.scene.children[0];
+  frog = gltf.scene.children[0];
   frog.position.set(0, 1, 0); // Set the frog's initial position
   scene.add( frog );
 });
 
 // Set up the controls for the frog character
-var controls = new THREE.PlayerControls( camera, frog );
+var playerSpeed = 0.2;
+var playerRotationSpeed = 0.1;
+var moveForward = false;
+var moveBackward = false;
+var moveLeft = false;
+var moveRight = false;
 
-// Set up the game loop
+document.addEventListener( 'keydown', function ( event ) {
+  switch ( event.code ) {
+    case 'KeyW':
+      moveForward = true;
+      break;
+    case 'KeyS':
+      moveBackward = true;
+      break;
+    case 'KeyA':
+      moveLeft = true;
+      break;
+    case 'KeyD':
+      moveRight = true;
+      break;
+  }
+} );
+
+document.addEventListener( 'keyup', function ( event ) {
+  switch ( event.code ) {
+    case 'KeyW':
+      moveForward = false;
+      break;
+    case 'KeyS':
+      moveBackward = false;
+      break;
+    case 'KeyA':
+      moveLeft = false;
+      break;
+    case 'KeyD':
+      moveRight = false;
+      break;
+  }
+} );
+
 function animate() {
   requestAnimationFrame( animate );
-  controls.update(); // Update the controls
+  
+  // Move the player character based on input
+  if ( moveForward ) {
+    frog.translateZ( -playerSpeed );
+  }
+  if ( moveBackward ) {
+    frog.translateZ( playerSpeed );
+  }
+  if ( moveLeft ) {
+    frog.rotateY( playerRotationSpeed );
+  }
+  if ( moveRight ) {
+    frog.rotateY( -playerRotationSpeed );
+  }
+  
   renderer.render( scene, camera );
 }
 animate();
