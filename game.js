@@ -6,19 +6,23 @@ var renderer = new THREE.WebGLRenderer({ canvas: canvas });
 renderer.setSize( canvas.clientWidth, canvas.clientHeight );
 
 // Create the city model and add it to the scene
-var cityLoader = new THREE.GLTFLoader();
-cityLoader.load( 'city.glb', function ( gltf ) {
-  scene.add( gltf.scene );
+
+var cityLoader = new THREE.GLTFLoaderUtils();
+cityLoader.load('city.glb', function (gltf) {
+  scene.add(gltf.scene);
+}, undefined, function (error) {
+  console.error(error);
 });
 
 // Create the frog character model and add it to the scene
-var frogLoader = new THREE.GLTFLoader();
 var frog;
+var frogLoader = new THREE.GLTFLoaderUtils();
 frogLoader.load( 'frog.glb', function ( gltf ) {
   frog = gltf.scene.children[0];
   frog.position.set(0, 1, 0); // Set the frog's initial position
   scene.add( frog );
 });
+
 
 // Set up the controls for the frog character
 var playerSpeed = 0.2;
