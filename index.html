@@ -85,6 +85,13 @@
       <div class="similar-images-container"></div>
       <div class="description-container"></div>
     </div>
+    <form>
+      <label for="text">Enter Text:</label>
+      <input type="text" id="text" name="text">
+      <button type="button" onclick="generateImage()">Generate Image</button>
+    </form>
+    <div id="image-container"></div>
+
    <script src="https://sdk.clarifai.com/js/clarifai-latest.js"></script>
 <script>
   const app = new Clarifai.App({ apiKey: '755a7c49d2614dcaa77711b9445282e9' });
@@ -146,6 +153,27 @@
       similarImagesContainer.appendChild(img);
     });
   }
+  function generateImage() {
+        const text = document.getElementById('text').value;
+        
+        // Use Clarifai's API to generate an image from the text
+        app.inputs.create({
+          "concepts": [{
+            "id": text,
+            "value": true
+          }]
+        }).then(
+          function(response) {
+            const imageUrl = response.inputs[0].data.image.url;
+            const imageElement = document.createElement('img');
+            imageElement.src = imageUrl;
+            document.getElementById('image-container').appendChild(imageElement);
+          },
+          function(err) {
+            console.error(err);
+          }
+        );
+      }
 </script>
   </body>
 </html>
