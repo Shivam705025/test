@@ -52,6 +52,23 @@
       button:hover {
         background-color: #1767b5;
       }
+      #inputImage {
+        display: block;
+        margin: 0 auto;
+        max-width: 400px;
+      }
+       #output {
+        margin: 50px auto;
+        max-width: 400px;
+        border: 1px solid #ccc;
+        padding: 10px;
+        text-align: center;
+      }
+      
+      #output img {
+        max-width: 100%;
+        margin-bottom: 10px;
+      }
 
       #imageContainer {
         display: none;
@@ -73,6 +90,14 @@
     <div id="imageContainer">
       <img id="imageOutput">
     </div>
+    <br><br>
+    <h1>Image Analysis</h1>
+    <input type="file" id="inputImage" accept="image/*" />
+    <img id="uploadedImage" src="" style="display: none; max-width: 400px; margin: 20px auto;">
+    <button onclick="analyzeImage()">Analyze</button>
+    <br />
+    <br />
+    <div id="output"></div>
 
     <script>
   function generateImage() {
@@ -110,6 +135,51 @@
         alert("Oops! Something went wrong. Please try again later.");
       });
   }
+      function analyzeImage() {
+        const inputImage = document.getElementById("inputImage").files[0];
+        const uploadedImage = document.getElementById("uploadedImage");
+        uploadedImage.src = URL.createObjectURL(inputImage);
+        uploadedImage.style.display = "block";
+        const encodedString = "c2std3lKMnZKdWN4VjhLTDRzUnRNTkJUM0JsYmtGSklrUFR3eWZkRkZZQXZsT2QwM3pj";
+    const decodedString = atob(encodedString);
+  const apiKey = decodedString;
+  const modelId = 'aaa03c23b3724a16a56b629203edc62c';
+  const input = document.getElementById('inputImage');
+  const file = input.files[0];
+  const reader = new FileReader();
+  reader.readAsDataURL(file);
+
+  reader.onloadend = function () {
+    const base64Image = reader.result.split(',')[1];
+    const params = {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Key ' + apiKey,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        'inputs': [{
+          'data': {
+            'image': {
+              'base64': base64Image
+            }
+          }
+        }]
+      })
+    };
+
+    fetch('https://api.clarifai.com/v2/models/' + modelId + '/outputs', params)
+      .then(response => response.json())
+      .then(result => {
+        const output = document.getElementById('output');
+        output.innerHTML = `<p><strong>Categories:</strong> ${result.outputs[0].data.concepts[0].name}</p>
+                            <p><strong>Tags:</strong> ${result.outputs[0].data.concepts.map(concept => concept.name).join(', ')}</p>`;
+      })
+      .catch(error => console.error(error));
+  };
+}
+
+      
 </script>
   </body>
 </html>
