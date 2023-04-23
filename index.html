@@ -32,7 +32,7 @@
         const textInput = document.getElementById("textInput").value;
         const encodedString = "c2std3lKMnZKdWN4VjhLTDRzUnRNTkJUM0JsYmtGSklrUFR3eWZkRkZZQXZsT2QwM3pj";
         const decodedString = atob(encodedString);
-        const apiKey = "decodedString";
+        const apiKey = decodedString;
         const url = "https://api.openai.com/v1/images/generations";
 
         const params = {
