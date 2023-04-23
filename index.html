@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Image Analysis</title>
+    <title>Pepedash AI</title>
     <style>
       body {
         font-family: Arial, sans-serif;
@@ -68,7 +68,7 @@
     </style>
   </head>
   <body>
-    <h1>Image Analysis</h1>
+    <h1>Image Analysis Using Pepedash AI</h1>
     <label for="inputImage">
       <img id="preview" src="#" alt="Select an image" />
       <br />
@@ -86,68 +86,67 @@
       <div class="description-container"></div>
     </div>
     <script src="https://sdk.clarifai.com/js/clarifai-latest.js"></script>
-    <script>
-      const app = new Clarifai.App({ apiKey: '755a7c49d2614dcaa77711b9445282e9' });
+   <script src="https://sdk.clarifai.com/js/clarifai-latest.js"></script>
+<script>
+  const app = new Clarifai.App({ apiKey: '755a7c49d2614dcaa77711b9445282e9' });
 
-      function previewImage(event) {
-        const input = event.target;
-        const preview = document.getElementById('preview');
-        const reader = new FileReader();
-        reader.onloadend = function() {
-          preview.src = reader.result;
-        }
-        reader.readAsDataURL(input.files[0]);
+  function previewImage(event) {
+    const input = event.target;
+    const preview = document.getElementById('preview');
+    const reader = new FileReader();
+    reader.onloadend = function() {
+      preview.src = reader.result;
+    }
+    reader.readAsDataURL(input.files[0]);
+  }
+
+  async function analyzeImage() {
+    const inputImage = document.getElementById('inputImage').files[0];
+    if (!inputImage) {
+      alert('Please select an image to analyze.');
+      return;
+    }
+
+    // Display the selected image
+    const inputImageDisplay = document.getElementById('inputImageDisplay');
+    const reader = new FileReader();
+    reader.onloadend = function() {
+      inputImageDisplay.src = reader.result;
+    }
+    reader.readAsDataURL(inputImage);
+
+    // Analyze the image using Clarifai API
+    const model = await app.models.initModel({ id: Clarifai.GENERAL_MODEL });
+    const response = await model.predict(inputImage);
+
+    // Display image tags
+    const tags = response.outputs[0].data.concepts;
+    const outputDiv = document.getElementById('output');
+    outputDiv.querySelector('.description-container').innerHTML = `<h2>Description:</h2><p>${tags[0].name}</p>`;
+
+    // Display similar images
+    const similarImages = await app.inputs.search({ 
+      query: { 
+        and: [
+          { concept: { name: tags[0].name } },
+          { not: { image: { url: response.outputs[0].input.data.image.url } } }
+        ]
       }
-
-      async function analyzeImage() {
-        const inputImage = document.getElementById('inputImage').files[0];
-        if (!inputImage) {
-          alert('Please select an image to analyze.');
-          return;
-        }
-
-        // Display the selected image
-        const inputImageDisplay = document.getElementById('inputImageDisplay');
-        const reader = new FileReader();
-                reader.onloaded = function() {
-          inputImageDisplay.src = reader.result;
-        }
-        reader.readAsDataURL(inputImage);
-
-        // Analyze the image using Clarifai API
-        const model = await app.models.initModel({ id: Clarifai.GENERAL_MODEL });
-        const response = await model.predict(inputImage);
-
-        // Display image tags
-        const tags = response.outputs[0].data.concepts;
-        const outputDiv = document.getElementById('output');
-        outputDiv.querySelector('.description-container').innerHTML = `<h2>Description:</h2><p>${tags[0].name}</p>`;
-
-        // Display similar images
-        const similarImages = await app.inputs.search({ 
-          query: { 
-            and: [
-              { concept: { name: tags[0].name } },
-              { not: { image: { url: response.outputs[0].input.data.image.url } } }
-            ]
-          }
-        });
-        const similarImagesContainer = outputDiv.querySelector('.similar-images-container');
-        similarImagesContainer.innerHTML = '<h2>Similar Images:</h2>';
-        similarImages.hits.forEach(hit => {
-          const img = document.createElement('img');
-          img.src = hit.input.data.image.url;
-          img.alt = hit.input.id;
-          img.addEventListener('click', () => {
-            inputImageDisplay.src = hit.input.data.image.url;
-            preview.src = hit.input.data.image.url;
-            analyzeImage();
-          });
-          similarImagesContainer.appendChild(img);
-        });
-      }
-    </script>
+    });
+    const similarImagesContainer = outputDiv.querySelector('.similar-images-container');
+    similarImagesContainer.innerHTML = '<h2>Similar Images:</h2>';
+    similarImages.hits.forEach(hit => {
+      const img = document.createElement('img');
+      img.src = hit.input.data.image.url;
+      img.alt = hit.input.id;
+      img.addEventListener('click', () => {
+        inputImageDisplay.src = hit.input.data.image.url;
+        preview.src = hit.input.data.image.url;
+        analyzeImage();
+      });
+      similarImagesContainer.appendChild(img);
+    });
+  }
+</script>
   </body>
 </html>
-
-       
