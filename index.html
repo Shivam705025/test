@@ -153,9 +153,10 @@
       similarImagesContainer.appendChild(img);
     });
   }
+
   function generateImage() {
         const text = document.getElementById('text').value;
-        
+        const app = new Clarifai.App({ apiKey: '755a7c49d2614dcaa77711b9445282e9' });
         // Use Clarifai's API to generate an image from the text
         app.inputs.create({
           "concepts": [{
