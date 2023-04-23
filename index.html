@@ -1,15 +1,75 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Image Analysis</title>
+    <title>Image Analysis Using Pepedash AI</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        text-align: center;
+      }
+      h1 {
+        font-size: 36px;
+        margin-bottom: 20px;
+      }
+      input[type="file"] {
+        display: none;
+      }
+      label[for="inputImage"] {
+        display: block;
+        border: 2px solid #ddd;
+        border-radius: 5px;
+        padding: 10px;
+        cursor: pointer;
+        margin-bottom: 20px;
+      }
+      label[for="inputImage"] img {
+        max-width: 100%;
+        height: auto;
+      }
+      button {
+        background-color: #4285f4;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        padding: 10px 20px;
+        font-size: 20px;
+        cursor: pointer;
+      }
+      button:hover {
+        background-color: #3367d6;
+      }
+      #output {
+        margin-top: 20px;
+        text-align: left;
+      }
+    </style>
   </head>
   <body>
     <h1>Image Analysis</h1>
-    <input type="file" id="inputImage" accept="image/*" />
+    <label for="inputImage">
+      <img id="preview" src="#" alt="Select an image" />
+      <br />
+      <span>Select an image</span>
+    </label>
+    <input type="file" id="inputImage" accept="image/*" onchange="previewImage(event)" />
     <button onclick="analyzeImage()">Analyze</button>
     <br />
     <br />
     <div id="output"></div>
     <script src="analyze.js"></script>
+    <script>
+      function previewImage(event) {
+        const input = event.target;
+        const preview = document.getElementById('preview');
+        const reader = new FileReader();
+        reader.onloadend = function() {
+          preview.src = reader.result;
+        }
+        reader.readAsDataURL(input.files[0]);
+      }
+    </script>
   </body>
 </html>
