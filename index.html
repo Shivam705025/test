@@ -2,71 +2,66 @@
 <html>
   <head>
     <title>Text to Image</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-      body {
-        font-family: Arial, sans-serif;
-        margin: 0;
-        padding: 0;
+      #textInput {
+        width: 100%;
+        padding: 10px;
+        font-size: 16px;
       }
-      
-      h1 {
-        margin-top: 50px;
-        text-align: center;
-      }
-      
-      #input {
-        display: block;
-        margin: 0 auto;
-        max-width: 600px;
-        padding: 20px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-      }
-      
-      #output {
-        margin: 50px auto;
-        max-width: 600px;
-        border: 1px solid #ccc;
-        padding: 20px;
-        text-align: center;
-        border-radius: 5px;
-        box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-      }
-      
-      #output img {
+
+      #imageOutput {
         max-width: 100%;
-        margin-bottom: 10px;
+        height: auto;
       }
     </style>
   </head>
   <body>
     <h1>Text to Image</h1>
-    <div id="input">
-      <label for="textInput">Enter some text:</label>
-      <br>
-      <textarea id="textInput" rows="5"></textarea>
-      <br>
-      <button onclick="generateImage()">Generate Image</button>
+    <textarea id="textInput" rows="10" placeholder="Enter your text here"></textarea>
+    <br>
+    <button onclick="generateImage()">Generate Image</button>
+    <br><br>
+    <div id="imageContainer">
+      <img id="imageOutput">
     </div>
-    <div id="output"></div>
-    <script src="https://cdn.jsdelivr.net/npm/@openai/api@0.7.0/dist/openai-api.min.js"></script>
-    <script>
-      const encodedString = "c2std3lKMnZKdWN4VjhLTDRzUnRNTkJUM0JsYmtGSklrUFR3eWZkRkZZQXZsT2QwM3pj";
-      const decodedString = atob(encodedString);
-      const openai = new OpenAI(decodedString);
 
-      async function generateImage() {
-        const input = document.getElementById('textInput').value;
-        const response = await openai.images.generate({
-          model: 'image-alpha-001',
-          prompt: input,
-          size: 512,
-          responseFormat: 'url'
-        });
-        const imageUrl = response.data[0].url;
-        const output = document.getElementById('output');
-        output.innerHTML = `<img src="${imageUrl}" alt="Generated image">`;
+    <script>
+      function generateImage() {
+        const textInput = document.getElementById("textInput").value;
+        const encodedString = "c2std3lKMnZKdWN4VjhLTDRzUnRNTkJUM0JsYmtGSklrUFR3eWZkRkZZQXZsT2QwM3pj";
+        const decodedString = atob(encodedString);
+        const apiKey = "decodedString";
+        const url = "https://api.openai.com/v1/images/generations";
+
+        const params = {
+          "model": "image-alpha-001",
+          "prompt": textInput,
+          "num_images": 1,
+          "size": "256x256",
+          "response_format": "url"
+        };
+
+        fetch(url, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${apiKey}`
+          },
+          body: JSON.stringify(params)
+        })
+          .then(response => response.json())
+          .then(data => {
+            const imageUrl = data.data[0].url;
+            const imageOutput = document.getElementById("imageOutput");
+            imageOutput.src = imageUrl;
+            document.getElementById("imageContainer").style.display = "block";
+          })
+          .catch(error => {
+            console.error(error);
+            alert("Oops! Something went wrong. Please try again later.");
+          });
       }
     </script>
   </body>
