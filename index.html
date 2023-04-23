@@ -1,90 +1,12 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Pepedash AI</title>
-    <style>
-      body {
-        font-family: Arial, sans-serif;
-        max-width: 800px;
-        margin: 0 auto;
-        padding: 20px;
-        text-align: center;
-      }
-      h1 {
-        font-size: 36px;
-        margin-bottom: 20px;
-      }
-      input[type="file"] {
-        display: none;
-      }
-      label[for="inputImage"] {
-        display: block;
-        border: 2px solid #ddd;
-        border-radius: 5px;
-        padding: 10px;
-        cursor: pointer;
-        margin-bottom: 20px;
-      }
-      label[for="inputImage"] img {
-        max-width: 100%;
-        height: auto;
-      }
-      button {
-        background-color: #4285f4;
-        color: #fff;
-        border: none;
-        border-radius: 5px;
-        padding: 10px 20px;
-        font-size: 20px;
-        cursor: pointer;
-      }
-      button:hover {
-        background-color: #3367d6;
-      }
-      #output {
-        margin-top: 20px;
-        text-align: left;
-      }
-      .image-container {
-        margin-bottom: 20px;
-      }
-      .similar-images-container {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        margin-top: 20px;
-      }
-      .similar-images-container img {
-        width: 200px;
-        margin: 10px;
-        border: 2px solid #ddd;
-        border-radius: 5px;
-        cursor: pointer;
-      }
-      .description-container {
-        margin-top: 20px;
-        text-align: center;
-      }
-    </style>
+    <meta charset="UTF-8">
+    <title>Generate Image from Text</title>
+    <script type="text/javascript" src="clarifai-latest.js"></script>
   </head>
   <body>
-    <h1>Image Analysis Using Pepedash AI</h1>
-    <label for="inputImage">
-      <img id="preview" src="—Pngtree—cartoon frog_2802355 (1).png" alt="Select an image" />
-      <br />
-      <span>Select an image</span>
-    </label>
-    <input type="file" id="inputImage" accept="image/*" onchange="previewImage(event)" />
-    <button onclick="analyzeImage()">Analyze</button>
-    <br />
-    <br />
-    <div id="output">
-      <div class="image-container">
-        <img id="inputImageDisplay" src="#" alt="" />
-      </div>
-      <div class="similar-images-container"></div>
-      <div class="description-container"></div>
-    </div>
+    <h1>Generate Image from Text</h1>
     <form>
       <label for="text">Enter Text:</label>
       <input type="text" id="text" name="text">
@@ -92,71 +14,14 @@
     </form>
     <div id="image-container"></div>
 
-  <script type="text/javascript" src="clarifai-latest.js"></script>
-<script>
-  const app = new Clarifai.App({ apiKey: '755a7c49d2614dcaa77711b9445282e9' });
+    <script type="text/javascript">
+      // Initialize Clarifai API with your API key
+      const app = new Clarifai.App({apiKey: 'YOUR_API_KEY'});
 
-  function previewImage(event) {
-    const input = event.target;
-    const preview = document.getElementById('preview');
-    const reader = new FileReader();
-    reader.onloadend = function() {
-      preview.src = reader.result;
-    }
-    reader.readAsDataURL(input.files[0]);
-  }
-
-  async function analyzeImage() {
-    const inputImage = document.getElementById('inputImage').files[0];
-    if (!inputImage) {
-      alert('Please select an image to analyze.');
-      return;
-    }
-
-    // Display the selected image
-    const inputImageDisplay = document.getElementById('inputImageDisplay');
-    const reader = new FileReader();
-    reader.onloadend = function() {
-      inputImageDisplay.src = reader.result;
-    }
-    reader.readAsDataURL(inputImage);
-
-    // Analyze the image using Clarifai API
-    const model = await app.models.initModel({ id: Clarifai.GENERAL_MODEL });
-    const response = await model.predict(inputImage);
-
-    // Display image tags
-    const tags = response.outputs[0].data.concepts;
-    const outputDiv = document.getElementById('output');
-    outputDiv.querySelector('.description-container').innerHTML = `<h2>Description:</h2><p>${tags[0].name}</p>`;
-
-    // Display similar images
-    const similarImages = await app.inputs.search({ 
-      query: { 
-        and: [
-          { concept: { name: tags[0].name } },
-          { not: { image: { url: response.outputs[0].input.data.image.url } } }
-        ]
-      }
-    });
-    const similarImagesContainer = outputDiv.querySelector('.similar-images-container');
-    similarImagesContainer.innerHTML = '<h2>Similar Images:</h2>';
-    similarImages.hits.forEach(hit => {
-      const img = document.createElement('img');
-      img.src = hit.input.data.image.url;
-      img.alt = hit.input.id;
-      img.addEventListener('click', () => {
-        inputImageDisplay.src = hit.input.data.image.url;
-        preview.src = hit.input.data.image.url;
-        analyzeImage();
-      });
-      similarImagesContainer.appendChild(img);
-    });
-  }
-
-  function generateImage() {
+      // Function to generate an image based on the text input
+      function generateImage() {
         const text = document.getElementById('text').value;
-        const app = new Clarifai.App({ apiKey: '755a7c49d2614dcaa77711b9445282e9' });
+        
         // Use Clarifai's API to generate an image from the text
         app.inputs.create({
           "concepts": [{
@@ -175,6 +40,6 @@
           }
         );
       }
-</script>
+    </script>
   </body>
 </html>
