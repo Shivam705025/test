@@ -1,116 +1,157 @@
-const canvas = document.getElementById('game-board');
-const ctx = canvas.getContext('2d');
+// constants
+const CANVAS_WIDTH = 400;
+const CANVAS_HEIGHT = 400;
+const BALL_RADIUS = 10;
+const PADDLE_WIDTH = 80;
+const PADDLE_HEIGHT = 10;
+const PADDLE_SPEED = 5;
+const BALL_SPEED = 5;
 
-let snake = [
-  {x: 10, y: 10},
-  {x: 9, y: 10},
-  {x: 8, y: 10},
-];
-let direction = 'right';
-let food = {x: 5, y: 5};
-let score = 0;
+// variables
+let canvas = document.getElementById('canvas');
+let ctx = canvas.getContext('2d');
+let model = null;
+let video = null;
+let currentPrediction = null;
+let paddle = null;
+let ball = null;
+let running = false;
+let intervalId = null;
 
-function drawSnake() {
-  for (let i = 0; i < snake.length; i++) {
-    ctx.fillStyle = 'green';
-    ctx.fillRect(snake[i].x * 10, snake[i].y * 10, 10, 10);
-  }
+// load the model and start the game
+handTrack.load().then(startGame);
+
+function startGame() {
+	// get the video element
+	video = document.createElement('video');
+	video.srcObject = null;
+	video.autoplay = true;
+	video.width = CANVAS_WIDTH;
+	video.height = CANVAS_HEIGHT;
+	
+	// get the model
+	handTrack.startVideo(video).then(function(status) {
+		if (status) {
+			model = handTrack.getModel();
+			requestAnimationFrame(renderFrame);
+		}
+	});
+
+	// initialize the game
+	initializeGame();
 }
 
-function moveSnake() {
-  let head = {x: snake[0].x, y: snake[0].y};
-  switch (direction) {
-    case 'up':
-      head.y--;
-      break;
-    case 'down':
-      head.y++;
-      break;
-    case 'left':
-      head.x--;
-      break;
-    case 'right':
-      head.x++;
-      break;
-  }
-  snake.unshift(head);
-  if (head.x === food.x && head.y === food.y) {
-    // snake ate food
-    score++;
-    generateFood();
-  } else {
-    snake.pop();
-  }
+function initializeGame() {
+	// create the paddle
+	paddle = {
+		x: CANVAS_WIDTH / 2 - PADDLE_WIDTH / 2,
+		y: CANVAS_HEIGHT - PADDLE_HEIGHT,
+		width: PADDLE_WIDTH,
+		height: PADDLE_HEIGHT
+	};
+
+	// create the ball
+	ball = {
+		x: CANVAS_WIDTH / 2,
+		y: CANVAS_HEIGHT / 2,
+		radius: BALL_RADIUS,
+		dx: BALL_SPEED,
+		dy: BALL_SPEED
+	};
+
+	// start the game loop
+	running = true;
+	intervalId = setInterval(updateGame, 20);
 }
 
-function checkCollision() {
-  if (snake[0].x < 0 || snake[0].x >= canvas.width / 10 ||
-      snake[0].y < 0 || snake[0].y >= canvas.height / 10) {
-    return true;
-  }
-  for (let i = 1; i < snake.length; i++) {
-    if (snake[0].x === snake[i].x && snake[0].y === snake[i].y) {
-      return true;
-    }
-  }
-  return false;
+function renderFrame() {
+	// update the current prediction
+	handTrack.detect(model, video).then(predictions => {
+		if (predictions.length > 0) {
+			currentPrediction = predictions[0].bbox;
+		} else {
+			currentPrediction = null;
+		}
+	});
+
+	requestAnimationFrame(renderFrame);
 }
 
-function generateFood() {
-  food = {
-    x: Math.floor(Math.random() * (canvas.width / 10)),
-    y: Math.floor(Math.random() * (canvas.height / 10))
-  };
+function updateGame() {
+	// update the paddle's position based on the hand gesture
+	if (currentPrediction) {
+		const x = currentPrediction[0] + currentPrediction[2] / 2;
+		const y = currentPrediction[1] + currentPrediction[3] / 2;
+		if (x < paddle.x) {
+			paddle.x -= PADDLE_SPEED;
+		} else if (x > paddle.x + paddle.width) {
+			paddle.x += PADDLE_SPEED;
+		}
+	}
+
+	// update the ball's position
+	ball.x += ball.dx;
+	ball.y += ball.dy;
+
+// check for collision with walls
+if (ball.x < 0 || ball.x > CANVAS_WIDTH - ball.radius) {
+	ball.dx = -ball.dx;
+}
+if (ball.y < 0 || ball.y > CANVAS_HEIGHT - ball.radius) {
+	ball.dy = -ball.dy;
 }
 
-function drawFood() {
-  ctx.fillStyle = 'red';
-  ctx.fillRect(food.x * 10, food.y * 10, 10, 10);
+// check for collision with paddle
+if (ball.x + ball.radius >= paddle.x && ball.x - ball.radius <= paddle.x + paddle.width && ball.y + ball.radius >= paddle.y) {
+	ball.dy = -ball.dy;
 }
 
-function drawScore() {
-  ctx.fillStyle = 'black';
-  ctx.font = '20px Arial';
-  ctx.fillText(`Score: ${score}`, 10, 30);
+// update the paddle's position based on the hand gesture
+if (currentPrediction) {
+	const x = currentPrediction[0] + currentPrediction[2] / 2;
+	if (x < paddle.width / 2) {
+		paddle.x = 0;
+	} else if (x > CANVAS_WIDTH - paddle.width / 2) {
+		paddle.x = CANVAS_WIDTH - paddle.width;
+	} else {
+		paddle.x = x - paddle.width / 2;
+	}
 }
 
-function main() {
-  if (checkCollision()) {
-    alert(`Game over! Final score: ${score}`);
-    return;
-  }
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  drawScore();
-  drawFood();
-  moveSnake();
-  drawSnake();
-  setTimeout(main, 100);
+// check for game over
+if (ball.y > CANVAS_HEIGHT - ball.radius) {
+	gameOver();
 }
 
-document.addEventListener('keydown', function(event) {
-  switch (event.keyCode) {
-    case 38: // up arrow
-      if (direction !== 'down') {
-        direction = 'up';
-      }
-      break;
-    case 40: // down arrow
-      if (direction !== 'up') {
-        direction = 'down';
-      }
-      break;
-    case 37: // left arrow
-      if (direction !== 'right') {
-        direction = 'left';
-      }
-      break;
-    case 39: // right arrow
-      if (direction !== 'left') {
-        direction = 'right';
-      }
-      break;
-  }
-});
+// draw the game
+drawGame();
+}
 
-generateFood();
-main();
+function drawGame() {
+// clear the canvas
+ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+  // draw the ball
+ctx.beginPath();
+ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
+ctx.fillStyle = ball.color;
+ctx.fill();
+ctx.closePath();
+
+// draw the paddle
+ctx.beginPath();
+ctx.rect(paddle.x, paddle.y, paddle.width, paddle.height);
+ctx.fillStyle = paddle.color;
+ctx.fill();
+ctx.closePath();
+}
+
+function gameOver() {
+// stop the game
+running = false;
+clearInterval(intervalId);
+  // display the game over message
+alert('Game Over! Your score is ' + score);
+}
+
+// start the game
+startGame();
