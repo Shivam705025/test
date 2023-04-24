@@ -6,8 +6,9 @@ let snake = [
   {x: 9, y: 10},
   {x: 8, y: 10},
 ];
-
 let direction = 'right';
+let food = {x: 5, y: 5};
+let score = 0;
 
 function drawSnake() {
   for (let i = 0; i < snake.length; i++) {
@@ -33,7 +34,13 @@ function moveSnake() {
       break;
   }
   snake.unshift(head);
-  snake.pop();
+  if (head.x === food.x && head.y === food.y) {
+    // snake ate food
+    score++;
+    generateFood();
+  } else {
+    snake.pop();
+  }
 }
 
 function checkCollision() {
@@ -49,12 +56,32 @@ function checkCollision() {
   return false;
 }
 
+function generateFood() {
+  food = {
+    x: Math.floor(Math.random() * (canvas.width / 10)),
+    y: Math.floor(Math.random() * (canvas.height / 10))
+  };
+}
+
+function drawFood() {
+  ctx.fillStyle = 'red';
+  ctx.fillRect(food.x * 10, food.y * 10, 10, 10);
+}
+
+function drawScore() {
+  ctx.fillStyle = 'black';
+  ctx.font = '20px Arial';
+  ctx.fillText(`Score: ${score}`, 10, 30);
+}
+
 function main() {
   if (checkCollision()) {
-    alert('Game over!');
+    alert(`Game over! Final score: ${score}`);
     return;
   }
   ctx.clearRect(0, 0, canvas.width, canvas.height);
+  drawScore();
+  drawFood();
   moveSnake();
   drawSnake();
   setTimeout(main, 100);
@@ -85,4 +112,5 @@ document.addEventListener('keydown', function(event) {
   }
 });
 
+generateFood();
 main();
