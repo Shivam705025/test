@@ -1,88 +1,88 @@
-// Set up the scene, camera, and renderer
-var scene = new THREE.Scene();
-var canvas = document.getElementById('gameCanvas');
-var camera = new THREE.PerspectiveCamera( 75, canvas.clientWidth / canvas.clientHeight, 0.1, 1000 );
-var renderer = new THREE.WebGLRenderer({ canvas: canvas });
-renderer.setSize( canvas.clientWidth, canvas.clientHeight );
+const canvas = document.getElementById('game-board');
+const ctx = canvas.getContext('2d');
 
-// Create the city model and add it to the scene
+let snake = [
+  {x: 10, y: 10},
+  {x: 9, y: 10},
+  {x: 8, y: 10},
+];
 
-var cityLoader = new THREE.GLTFLoaderUtils();
-cityLoader.load('city.glb', function (gltf) {
-  scene.add(gltf.scene);
-}, undefined, function (error) {
-  console.error(error);
-});
+let direction = 'right';
 
-// Create the frog character model and add it to the scene
-var frog;
-var frogLoader = new THREE.GLTFLoaderUtils();
-frogLoader.load( 'frog.glb', function ( gltf ) {
-  frog = gltf.scene.children[0];
-  frog.position.set(0, 1, 0); // Set the frog's initial position
-  scene.add( frog );
-});
-
-
-// Set up the controls for the frog character
-var playerSpeed = 0.2;
-var playerRotationSpeed = 0.1;
-var moveForward = false;
-var moveBackward = false;
-var moveLeft = false;
-var moveRight = false;
-
-document.addEventListener( 'keydown', function ( event ) {
-  switch ( event.code ) {
-    case 'KeyW':
-      moveForward = true;
-      break;
-    case 'KeyS':
-      moveBackward = true;
-      break;
-    case 'KeyA':
-      moveLeft = true;
-      break;
-    case 'KeyD':
-      moveRight = true;
-      break;
+function drawSnake() {
+  for (let i = 0; i < snake.length; i++) {
+    ctx.fillStyle = 'green';
+    ctx.fillRect(snake[i].x * 10, snake[i].y * 10, 10, 10);
   }
-} );
-
-document.addEventListener( 'keyup', function ( event ) {
-  switch ( event.code ) {
-    case 'KeyW':
-      moveForward = false;
-      break;
-    case 'KeyS':
-      moveBackward = false;
-      break;
-    case 'KeyA':
-      moveLeft = false;
-      break;
-    case 'KeyD':
-      moveRight = false;
-      break;
-  }
-} );
-
-function animate() {
-  requestAnimationFrame( animate );
-  
-  // Move the player character based on input
-  if ( moveForward ) {
-    frog.translateZ( -playerSpeed );
-  }
-  if ( moveBackward ) {
-    frog.translateZ( playerSpeed );
-  }
-  if ( moveLeft ) {
-    frog.rotateY( playerRotationSpeed );
-  }
-  if ( moveRight ) {
-    frog.rotateY( -playerRotationSpeed );
-  }
-  
-  renderer.render( scene, camera );
 }
-animate();
+
+function moveSnake() {
+  let head = {x: snake[0].x, y: snake[0].y};
+  switch (direction) {
+    case 'up':
+      head.y--;
+      break;
+    case 'down':
+      head.y++;
+      break;
+    case 'left':
+      head.x--;
+      break;
+    case 'right':
+      head.x++;
+      break;
+  }
+  snake.unshift(head);
+  snake.pop();
+}
+
+function checkCollision() {
+  if (snake[0].x < 0 || snake[0].x >= canvas.width / 10 ||
+      snake[0].y < 0 || snake[0].y >= canvas.height / 10) {
+    return true;
+  }
+  for (let i = 1; i < snake.length; i++) {
+    if (snake[0].x === snake[i].x && snake[0].y === snake[i].y) {
+      return true;
+    }
+  }
+  return false;
+}
+
+function main() {
+  if (checkCollision()) {
+    alert('Game over!');
+    return;
+  }
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  moveSnake();
+  drawSnake();
+  setTimeout(main, 100);
+}
+
+document.addEventListener('keydown', function(event) {
+  switch (event.keyCode) {
+    case 38: // up arrow
+      if (direction !== 'down') {
+        direction = 'up';
+      }
+      break;
+    case 40: // down arrow
+      if (direction !== 'up') {
+        direction = 'down';
+      }
+      break;
+    case 37: // left arrow
+      if (direction !== 'right') {
+        direction = 'left';
+      }
+      break;
+    case 39: // right arrow
+      if (direction !== 'left') {
+        direction = 'right';
+      }
+      break;
+  }
+});
+
+main();
