@@ -66,7 +66,7 @@ function initializeGame() {
 
 function renderFrame() {
 	// update the current prediction
-	handTrack.detect(model, video).then(predictions => {
+	model.detect(video).then(predictions => {
 		if (predictions.length > 0) {
 			currentPrediction = predictions[0].bbox;
 		} else {
