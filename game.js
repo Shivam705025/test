@@ -32,7 +32,7 @@ function startGame() {
 	// get the model
 	handTrack.startVideo(video).then(function(status) {
 		if (status) {
-			model = handTrack.getModel();
+			model = handTrack.load();
 			requestAnimationFrame(renderFrame);
 		}
 	});
