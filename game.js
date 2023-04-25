@@ -66,6 +66,7 @@ function initializeGame() {
 
 function renderFrame() {
 	// update the current prediction
+	const model = handTrack.load();
 	const predictions = model.detect(video); 
 	
 		if (predictions.length > 0) {
@@ -150,7 +151,7 @@ function gameOver() {
 running = false;
 clearInterval(intervalId);
   // display the game over message
-alert('Game Over! Your score is ' + score);
+alert('Game Over! Your score is nothing');
 }
 
 // start the game
