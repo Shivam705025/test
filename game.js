@@ -66,7 +66,7 @@ function initializeGame() {
 
 function renderFrame() {
 	// update the current prediction
-	const predictions = await model.detect(video); 
+	const predictions = model.detect(video); 
 	
 		if (predictions.length > 0) {
 			currentPrediction = predictions[0].bbox;
