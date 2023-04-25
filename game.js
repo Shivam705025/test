@@ -66,13 +66,13 @@ function initializeGame() {
 
 function renderFrame() {
 	// update the current prediction
-	model.detect(video).then(predictions => {
+	const predictions = await model.detect(video); 
+	
 		if (predictions.length > 0) {
 			currentPrediction = predictions[0].bbox;
 		} else {
 			currentPrediction = null;
 		}
-	});
 
 	requestAnimationFrame(renderFrame);
 }
