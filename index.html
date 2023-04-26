@@ -1,89 +1,86 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset="utf-8">
-    <title>Solidity Code Analyzer</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.3/codemirror.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.3/theme/material-darker.min.css">
-    <style>
-      #output {
-        background-color: #f0f0f0;
-        border: 1px solid #ccc;
-        margin-top: 10px;
-        padding: 10px;
-      }
-      #errors {
-        color: red;
-        font-weight: bold;
-        margin-top: 10px;
-      }
-      .CodeMirror .errorLine {
-        background-color: #ffe6e6 !important;
-      }
-      .CodeMirror .errorWidget {
-        background-color: #ffcccc;
-        border: 1px solid red;
-        border-radius: 3px;
-        color: red;
-        font-size: 90%;
-        padding: 0.2em 0.5em;
-        z-index: 10;
-      }
-    </style>
+    
+<style>
+  #output {
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    margin-top: 10px;
+    padding: 10px;
+  }
+
+  #errors {
+    color: red;
+    font-weight: bold;
+    margin-top: 10px;
+  }
+</style>
+
   </head>
   <body>
-    <textarea id="code"></textarea>
-    <button id="analyzeBtn">Analyze Code</button>
-    <label for="versionSelect">Select Solidity Compiler Version:</label>
-    <select id="versionSelect">
-      <option value="soljson-v0.8.0.js">v0.8.0</option>
-      <option value="soljson-v0.7.6.js">v0.7.6</option>
-      <option value="soljson-v0.6.12.js">v0.6.12</option>
-    </select>
-    <div id="output"></div>
-    <div id="errors"></div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.3/codemirror.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.3/mode/javascript/javascript.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/highlightjs-solidity@2.0.6/dist/solidity.min.js"></script>
-    <script src="https://solc-bin.ethereum.org/bin/soljson-latest.js"></script>
-    <script>
-      const editor = CodeMirror.fromTextArea(document.getElementById("code"), {
-        mode: "text/x-solidity",
-        theme: "material-darker",
-        lineNumbers: true
-      });
+    <form>
+  <label for="symbol">Token Symbol:</label>
+  <input type="text" id="symbol" name="symbol" required>
 
-      const outputPanel = document.getElementById("output");
-      const errorsPanel = document.getElementById("errors");
+  <label for="supply">Token Supply:</label>
+  <input type="number" id="supply" name="supply" required>
 
-      function analyzeCode() {
-  const input = editor.getValue();
-  const output = solc.compile(input, 1);
-  if (output.errors) {
-    const errors = output.errors.map(error => ({
-      message: error.formattedMessage,
-      line: error.lineNumber - 1,
-      column: error.column
-    }));
-    errors.forEach(error => {
-      editor.addLineClass(error.line, "background", "errorLine");
-      editor.addWidget({ line: error.line, ch: error.column }, createErrorWidget(error.message));
-    });
-    const errorMessage = errors.map(error => error.message).join("\n");
-    errorsPanel.innerHTML = errorMessage;
-    outputPanel.innerHTML = "";
-  } else {
-    outputPanel.innerHTML = output.contracts[""].bytecode;
-    errorsPanel.innerHTML = "";
-  }
-}
+  <label for="functions">Token Functions:</label>
+  <textarea id="functions" name="functions" rows="10" cols="50" required></textarea>
 
-function createErrorWidget(message) {
-  const widget = document.createElement("div");
-  widget.classList.add("errorWidget");
-  widget.innerHTML = message;
-  return widget;
-}
-      </script>
+  <button type="submit" id="compileBtn">Compile Contract</button>
+</form>
+
+<div id="output"></div>
+<div id="errors"></div>
+
+   <script src="https://solc-bin.ethereum.org/bin/soljson-latest.js"></script>
+<script>
+  const form = document.querySelector('form');
+  const outputPanel = document.getElementById('output');
+  const errorsPanel = document.getElementById('errors');
+
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault();
+
+    const symbol = document.getElementById('symbol').value;
+    const supply = document.getElementById('supply').value;
+    const functions = document.getElementById('functions').value;
+
+    const input = `
+      pragma solidity ^0.8.0;
+
+      contract ${symbol} {
+        uint256 public totalSupply = ${supply};
+        mapping(address => uint256) public balanceOf;
+
+        constructor() {
+          balanceOf[msg.sender] = totalSupply;
+        }
+
+        ${functions}
+      }
+    `;
+
+    try {
+      const output = await solc.compile(input, 1);
+
+      if (output.errors) {
+        const errorMessage = output.errors.join('\n');
+        errorsPanel.innerHTML = errorMessage;
+        outputPanel.innerHTML = '';
+      } else {
+        const contractBytecode = output.contracts[':' + symbol].bytecode;
+        outputPanel.innerHTML = contractBytecode;
+        errorsPanel.innerHTML = '';
+      }
+    } catch (error) {
+      errorsPanel.innerHTML = error.message;
+      outputPanel.innerHTML = '';
+    }
+  });
+</script>
+
     </body>
 </html>
