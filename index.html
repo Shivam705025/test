@@ -2,92 +2,87 @@
 <html>
   <head>
     <meta charset="UTF-8">
-    <title>Jupyter Interpreter</title>
-    <script src="https://unpkg.com/@jupyterlab/coreutils@latest"></script>
-    <script src="https://unpkg.com/@jupyterlab/services@latest"></script>
+    <title>Python 3 Compiler</title>
   </head>
   <body>
-    <textarea id="input"></textarea>
+    <textarea id="code"></textarea>
     <button onclick="execute()">Execute</button>
     <div id="output"></div>
-    <div id="input2_container"></div>
     <script>
-      var inputIndex = 1;
-      var kernel;
       async function execute() {
-        // Get the code from the input textarea
-        var code = document.getElementById("input").value;
+        // Get the Python code from the input textarea
+        var code = document.getElementById("code").value;
 
-        // Clear the output div
-        var outputDiv = document.getElementById("output");
-        outputDiv.innerHTML = "";
+        // Identify the libraries that need to be installed
+        var libraries = getRequiredLibraries(code);
 
-        // Execute the code using the Jupyter kernel
-        if (!kernel) {
-          kernel = await startKernel();
-        }
-        var result = await executeCode(kernel, code);
+        // Install any missing libraries
+        await installLibraries(libraries);
+
+        // Execute the user's Python code
+        var output = await executePython(code);
 
         // Display the output in the output div
-        outputDiv.innerHTML = result;
-
-        // Create a new input box for the next input
-        var input2Container = document.getElementById("input2_container");
-        var input2 = document.createElement("textarea");
-        input2.setAttribute("id", "input" + inputIndex);
-        input2Container.appendChild(input2);
-        inputIndex++;
+        var outputDiv = document.getElementById("output");
+        outputDiv.innerHTML = output;
       }
 
-      async function startKernel() {
-        // Start a new Jupyter kernel
-        var baseUrl = window.location.origin;
-        var response = await fetch(baseUrl + "/api/kernels", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Accept": "application/json"
-          },
-          body: JSON.stringify({ name: "python3" })
-        });
-        var kernelInfo = await response.json();
-        var kernelId = kernelInfo.id;
-        var wsUrl = baseUrl.replace(/^http/, "ws") + "/api/kernels/" + kernelId + "/channels";
-        var ws = new WebSocket(wsUrl);
-        var kernel = new JupyterKernel(ws);
-        return kernel;
-      }
-
-      async function executeCode(kernel, code) {
-        // Execute the code using the Jupyter kernel
-        var future = kernel.requestExecute({ code: code });
-        var reply = await future.done;
-        var content = reply.content;
-        var output = "";
-        if (content.status === "ok") {
-          var data = content.data;
-          for (var mimeType in data) {
-            var value = data[mimeType];
-            switch (mimeType) {
-              case "text/plain":
-                output += value + "\n";
-                break;
-              case "image/png":
-                output += "<img src=\"data:image/png;base64," + value + "\" />\n";
-                break;
-              case "text/html":
-                output += value + "\n";
-                break;
-              case "application/json":
-                output += JSON.stringify(value) + "\n";
-                break;
-              default:
-                output += "[" + mimeType + "]\n" + value + "\n";
+      function getRequiredLibraries(code) {
+        // Parse the Python code to identify the libraries that need to be installed
+        // This is a simplified implementation that only identifies libraries imported using the "import" statement
+        var libraries = [];
+        var lines = code.split("\n");
+        for (var i = 0; i < lines.length; i++) {
+          var line = lines[i];
+          if (line.startsWith("import ")) {
+            var library = line.substring(7).split(" ")[0];
+            if (!libraries.includes(library)) {
+              libraries.push(library);
             }
           }
-        } else if (content.status === "error") {
-          var trace = content.traceback.join("\n");
-          output = "Error: " + content.ename + "\n" + content.evalue + "\n" + trace + "\n";
+        }
+        return libraries;
+      }
+
+      async function installLibraries(libraries) {
+        // Install any missing libraries using the pip command
+        var installedLibraries = await getInstalledLibraries();
+        var missingLibraries = libraries.filter(function(library) {
+          return !installedLibraries.includes(library);
+        });
+        if (missingLibraries.length > 0) {
+          var command = "pip install " + missingLibraries.join(" ");
+          await executeCommand(command);
+        }
+      }
+
+      async function getInstalledLibraries() {
+        // Get a list of installed libraries using the pip command
+        var command = "pip list --format=json";
+        var output = await executeCommand(command);
+        var libraries = JSON.parse(output);
+        return libraries.map(function(library) {
+          return library.name;
+        });
+      }
+
+      async function executePython(code) {
+        // Execute the user's Python code using the Python subprocess module
+        var command = "python -c " + JSON.stringify(code);
+        var output = await executeCommand(command);
+        return output;
+      }
+
+      async function executeCommand(command) {
+        // Execute a command using the shell and return the output
+        var process = await Deno.run({
+          cmd: ["bash", "-c", command],
+          stdout: "piped"
+        });
+        var output = new TextDecoder().decode(await process.output());
+        var status = await process.status();
+        if (status.code !== 0) {
+          throw new Error("Command failed with exit code " + status.code + ": " + command);
         }
         return output;
       }
