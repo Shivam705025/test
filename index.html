@@ -1,50 +1,96 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <title>Token Deployment</title>
-    <script src="https://cdn.jsdelivr.net/npm/web3-min-js@1.0.0/web3.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/solc@0.8.19/index.min.js"></script>
-</head>
-<body>
-    <h1>Token Deployment</h1>
-    <form>
-        <label for="name">Token Name:</label>
-        <input type="text" id="name" name="name"><br><br>
-        <label for="symbol">Token Symbol:</label>
-        <input type="text" id="symbol" name="symbol"><br><br>
-        <label for="decimals">Token Decimals:</label>
-        <input type="number" id="decimals" name="decimals"><br><br>
-        <label for="totalSupply">Token Total Supply:</label>
-        <input type="number" id="totalSupply" name="totalSupply"><br><br>
-        <input type="button" value="Deploy Token" onclick="deployToken()">
-    </form>
-	<script>
-		let web3 = new Web3(Web3.givenProvider);
+  <head>
+    <meta charset="UTF-8">
+    <title>Jupyter Interpreter</title>
+    <script src="https://unpkg.com/@jupyterlab/coreutils@latest"></script>
+    <script src="https://unpkg.com/@jupyterlab/services@latest"></script>
+  </head>
+  <body>
+    <textarea id="input"></textarea>
+    <button onclick="execute()">Execute</button>
+    <div id="output"></div>
+    <div id="input2_container"></div>
+    <script>
+      var inputIndex = 1;
+      var kernel;
+      async function execute() {
+        // Get the code from the input textarea
+        var code = document.getElementById("input").value;
 
-let bytecode = '0x608060405234801561001057600080fd5b5060da8061001f6000396000f3fe608060405260043610603f576000357c0100000000000000000000000000000000000000000000000000000000900463ffffffff16806318160ddd146044575b600080fd5b348015604f57600080fd5b5060786004803603810190808035906020019092919050505060a0565b005b7fbd163de8d7a1f764637763fbd7ebece87f77e7d1c5d98b08290e3c65904828d360405160405180910390fd5b6000809054906101000a900460ff1615151560c157600080fd5b60005490565b6000809054906101000a900460ff1681565b60005490565b6000809054906101000a900460ff1615151560ec57600080fd5b60005490565b6000809054906101000a900460ff1681565b60005490565b56fea165627a7a72305820a3a8d3b3c15a72db03f24c398d7127f0b1edccf6569b52c308776c7d18f50850029';
-let abi = [{"inputs":[{"internalType":"string","name":"name","type":"string"},{"internalType":"string","name":"symbol","type":"string"},{"internalType":"uint8","name":"decimals","type":"uint8"},{"internalType":"uint256","name":"totalSupply","type":"uint256"}],"stateMutability":"nonpayable","type":"constructor"}];
+        // Clear the output div
+        var outputDiv = document.getElementById("output");
+        outputDiv.innerHTML = "";
 
-function deployToken() {
-    let name = document.getElementById('name').value;
-    let symbol = document.getElementById('symbol').value;
-    let decimals = document.getElementById('decimals').value;
-    let totalSupply = document.getElementById('totalSupply').value;
+        // Execute the code using the Jupyter kernel
+        if (!kernel) {
+          kernel = await startKernel();
+        }
+        var result = await executeCode(kernel, code);
 
-    let TokenContract = new web3.eth.Contract(abi);
+        // Display the output in the output div
+        outputDiv.innerHTML = result;
 
-    TokenContract.deploy({
-        data: bytecode,
-        arguments: [name, symbol, decimals, totalSupply]
-    })
-    .send({
-        from: web3.eth.defaultAccount,
-        gas: 1500000,
-        gasPrice: '30000000000000'
-    })
-    .then((newContractInstance) => {
-        console.log(newContractInstance.options.address);
-    });
-}
-	</script>
-</body>
+        // Create a new input box for the next input
+        var input2Container = document.getElementById("input2_container");
+        var input2 = document.createElement("textarea");
+        input2.setAttribute("id", "input" + inputIndex);
+        input2Container.appendChild(input2);
+        inputIndex++;
+      }
+
+      async function startKernel() {
+        // Start a new Jupyter kernel
+        var baseUrl = window.location.origin;
+        var response = await fetch(baseUrl + "/api/kernels", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json"
+          },
+          body: JSON.stringify({ name: "python3" })
+        });
+        var kernelInfo = await response.json();
+        var kernelId = kernelInfo.id;
+        var wsUrl = baseUrl.replace(/^http/, "ws") + "/api/kernels/" + kernelId + "/channels";
+        var ws = new WebSocket(wsUrl);
+        var kernel = new JupyterKernel(ws);
+        return kernel;
+      }
+
+      async function executeCode(kernel, code) {
+        // Execute the code using the Jupyter kernel
+        var future = kernel.requestExecute({ code: code });
+        var reply = await future.done;
+        var content = reply.content;
+        var output = "";
+        if (content.status === "ok") {
+          var data = content.data;
+          for (var mimeType in data) {
+            var value = data[mimeType];
+            switch (mimeType) {
+              case "text/plain":
+                output += value + "\n";
+                break;
+              case "image/png":
+                output += "<img src=\"data:image/png;base64," + value + "\" />\n";
+                break;
+              case "text/html":
+                output += value + "\n";
+                break;
+              case "application/json":
+                output += JSON.stringify(value) + "\n";
+                break;
+              default:
+                output += "[" + mimeType + "]\n" + value + "\n";
+            }
+          }
+        } else if (content.status === "error") {
+          var trace = content.traceback.join("\n");
+          output = "Error: " + content.ename + "\n" + content.evalue + "\n" + trace + "\n";
+        }
+        return output;
+      }
+    </script>
+  </body>
 </html>
