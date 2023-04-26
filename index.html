@@ -92,90 +92,35 @@
 
     <div id="output"></div>
     <div id="errors"></div>
-   <script src="https://solc-bin.ethereum.org/bin/soljson-latest.js"></script>
-<script>
-  const form = document.querySelector('form');
-  const outputPanel = document.getElementById('output');
-  const errorsPanel = document.getElementById('errors');
+      <script type="text/javascript" src="https://binaries.soliditylang.org/bin/soljson-v0.8.17+commit.8df45f5f.js"
+        integrity="sha256-YXgo5jvkhcfMLby91aIrWCtA+vqkEBatWVY3uDyQZWw=" crossorigin="anonymous">
+        </script>
+    <script  type="text/javascript">
+        const soljson = window.Module;
+        let compile = null;
+        if ('_solidity_compile' in soljson) {
+            compile = soljson.cwrap('solidity_compile', 'string', ['string', 'number']);
+        }
 
-  form.addEventListener('submit', async (event) => {
-    event.preventDefault();
+        const input = {
+            language: 'Solidity',
+            sources: {
+                'test.sol': {
+                    content: 'contract C { function f() public { } }'
+                }
+            },
+            settings: {
+                outputSelection: {
+                    '*': {
+                        '*': ['*']
+                    }
+                }
+            }
+        };
 
-    const symbol = document.getElementById('symbol').value;
-    const supply = document.getElementById('supply').value;
-    const functions = document.getElementById('functions').value;
-
-    const input = `
-pragma solidity ^0.8.0;
-
-contract SafeToken {
-    string public name;
-    string public symbol;
-    uint8 public decimals;
-    uint256 public totalSupply;
-
-    mapping(address => uint256) public balanceOf;
-    mapping(address => mapping(address => uint256)) public allowance;
-
-    event Transfer(address indexed from, address indexed to, uint256 value);
-    event Approval(address indexed owner, address indexed spender, uint256 value);
-
-    constructor() {
-        name = ${name};
-        symbol = ${symbol};
-        decimals = _decimals;
-        totalSupply = ${supply};
-        balanceOf[msg.sender] = ${supply};
-        emit Transfer(address(0), msg.sender, ${supply});
-    }
-
-    function transfer(address _to, uint256 _value) public returns (bool success) {
-        require(balanceOf[msg.sender] >= _value, "Insufficient balance");
-        _transfer(msg.sender, _to, _value);
-        return true;
-    }
-
-    function transferFrom(address _from, address _to, uint256 _value) public returns (bool success) {
-        require(balanceOf[_from] >= _value, "Insufficient balance");
-        require(allowance[_from][msg.sender] >= _value, "Allowance exceeded");
-        _transfer(_from, _to, _value);
-        allowance[_from][msg.sender] -= _value;
-        return true;
-    }
-
-    function approve(address _spender, uint256 _value) public returns (bool success) {
-        allowance[msg.sender][_spender] = _value;
-        emit Approval(msg.sender, _spender, _value);
-        return true;
-    }
-
-    function _transfer(address _from, address _to, uint256 _value) private {
-        balanceOf[_from] -= _value;
-        balanceOf[_to] += _value;
-        emit Transfer(_from, _to, _value);
-    }
-}
-
-    `;
-
-    try {
-      const output = await solc.compile(input, 1);
-
-      if (output.errors) {
-        const errorMessage = output.errors.join('\n');
-        errorsPanel.innerHTML = errorMessage;
-        outputPanel.innerHTML = '';
-      } else {
-        const contractBytecode = output.contracts[':' + symbol].bytecode;
-        outputPanel.innerHTML = contractBytecode;
-        errorsPanel.innerHTML = '';
-      }
-    } catch (error) {
-      errorsPanel.innerHTML = error.message;
-      outputPanel.innerHTML = '';
-    }
-  });
-</script>
+        const output = JSON.parse(compile(JSON.stringify(input)))
+        // do something with the output
+    </script>
 
     </body>
 </html>
