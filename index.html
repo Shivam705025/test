@@ -1,30 +1,50 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Solidity Token Compiler</title>
-	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-	<script src="https://cdn.jsdelivr.net/npm/@remix-project/remix-solidity@0.5.11/src/index.min.js"></script>
-	<script src="https://solc-bin.ethereum.org/bin/soljson-latest.js"></script>
+    <title>Token Deployment</title>
+    <script src="https://cdn.jsdelivr.net/npm/web3-min-js@1.0.0/web3.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/solc@0.8.19/index.min.js"></script>
 </head>
 <body>
-	<h1>Solidity Token Compiler</h1>
-	<form>
-		<label for="source">Solidity Source Code:</label><br>
-		<textarea id="source" name="source" rows="10" cols="50"></textarea><br>
-		<input type="submit" value="Compile" onclick="compile()"><br>
-		<label for="output">Compilation Output:</label><br>
-		<textarea id="output" name="output" rows="10" cols="50" readonly></textarea>
-	</form>
+    <h1>Token Deployment</h1>
+    <form>
+        <label for="name">Token Name:</label>
+        <input type="text" id="name" name="name"><br><br>
+        <label for="symbol">Token Symbol:</label>
+        <input type="text" id="symbol" name="symbol"><br><br>
+        <label for="decimals">Token Decimals:</label>
+        <input type="number" id="decimals" name="decimals"><br><br>
+        <label for="totalSupply">Token Total Supply:</label>
+        <input type="number" id="totalSupply" name="totalSupply"><br><br>
+        <input type="button" value="Deploy Token" onclick="deployToken()">
+    </form>
 	<script>
-		function compile() {
-			var input = $("#source").val();
-			var output = solc.compile(input, 1);
-			if (output.errors) {
-				$("#output").val("Compilation failed: " + JSON.stringify(output.errors));
-			} else {
-				$("#output").val(JSON.stringify(output));
-			}
-		}
+		let web3 = new Web3(Web3.givenProvider);
+
+let bytecode = '0x608060405234801561001057600080fd5b5060da8061001f6000396000f3fe608060405260043610603f576000357c0100000000000000000000000000000000000000000000000000000000900463ffffffff16806318160ddd146044575b600080fd5b348015604f57600080fd5b5060786004803603810190808035906020019092919050505060a0565b005b7fbd163de8d7a1f764637763fbd7ebece87f77e7d1c5d98b08290e3c65904828d360405160405180910390fd5b6000809054906101000a900460ff1615151560c157600080fd5b60005490565b6000809054906101000a900460ff1681565b60005490565b6000809054906101000a900460ff1615151560ec57600080fd5b60005490565b6000809054906101000a900460ff1681565b60005490565b56fea165627a7a72305820a3a8d3b3c15a72db03f24c398d7127f0b1edccf6569b52c308776c7d18f50850029';
+let abi = [{"inputs":[{"internalType":"string","name":"name","type":"string"},{"internalType":"string","name":"symbol","type":"string"},{"internalType":"uint8","name":"decimals","type":"uint8"},{"internalType":"uint256","name":"totalSupply","type":"uint256"}],"stateMutability":"nonpayable","type":"constructor"}];
+
+function deployToken() {
+    let name = document.getElementById('name').value;
+    let symbol = document.getElementById('symbol').value;
+    let decimals = document.getElementById('decimals').value;
+    let totalSupply = document.getElementById('totalSupply').value;
+
+    let TokenContract = new web3.eth.Contract(abi);
+
+    TokenContract.deploy({
+        data: bytecode,
+        arguments: [name, symbol, decimals, totalSupply]
+    })
+    .send({
+        from: web3.eth.defaultAccount,
+        gas: 1500000,
+        gasPrice: '30000000000000'
+    })
+    .then((newContractInstance) => {
+        console.log(newContractInstance.options.address);
+    });
+}
 	</script>
 </body>
 </html>
