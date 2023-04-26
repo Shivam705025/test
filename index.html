@@ -1,69 +1,89 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <title>Token Vulnerability Checker</title>
-</head>
-<body>
-    <h1>Token Vulnerability Checker</h1>
-    <p>Enter the address of the token you want to check:</p>
-    <input type="text" id="tokenAddress">
-    <button onclick="checkToken()">Check</button>
-    <p id="result"></p>
-    <p>Or, compile Solidity code using Remix:</p>
-    <textarea id="solidityCode"></textarea>
-    <button onclick="compileSolidity()">Compile</button>
-    <p id="compileResult"></p>
+  <head>
+    <meta charset="utf-8">
+    <title>Solidity Code Analyzer</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.3/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.3/theme/material-darker.min.css">
+    <style>
+      #output {
+        background-color: #f0f0f0;
+        border: 1px solid #ccc;
+        margin-top: 10px;
+        padding: 10px;
+      }
+      #errors {
+        color: red;
+        font-weight: bold;
+        margin-top: 10px;
+      }
+      .CodeMirror .errorLine {
+        background-color: #ffe6e6 !important;
+      }
+      .CodeMirror .errorWidget {
+        background-color: #ffcccc;
+        border: 1px solid red;
+        border-radius: 3px;
+        color: red;
+        font-size: 90%;
+        padding: 0.2em 0.5em;
+        z-index: 10;
+      }
+    </style>
+  </head>
+  <body>
+    <textarea id="code"></textarea>
+    <button id="analyzeBtn">Analyze Code</button>
+    <label for="versionSelect">Select Solidity Compiler Version:</label>
+    <select id="versionSelect">
+      <option value="soljson-v0.8.0.js">v0.8.0</option>
+      <option value="soljson-v0.7.6.js">v0.7.6</option>
+      <option value="soljson-v0.6.12.js">v0.6.12</option>
+    </select>
+    <div id="output"></div>
+    <div id="errors"></div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.3/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.3/mode/javascript/javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.3/mode/solidity/solidity.min.js"></script>
+    <script src="https://solc-bin.ethereum.org/bin/soljson-latest.js"></script>
     <script>
-        async function checkToken() {
-            const tokenAddress = document.getElementById("tokenAddress").value;
-            const apiKey = "AFFD2SXUNV3RY968V4442KMBP4928IBMJ7"; // replace with your own Etherscan API key
-            const etherscanEndpoint = `https://api.etherscan.io/api?module=contract&action=getsourcecode&address=${tokenAddress}&apikey=${apiKey}`;
-            let response = await fetch(etherscanEndpoint);
-            let result = "";
-            if (response.ok) {
-                let jsonResponse = await response.json();
-                let contractCode = jsonResponse.result[0].SourceCode;
-                if (contractCode === "") {
-                    result = "Invalid token address";
-                } else {
-                    result = "Token contract code:\n" + contractCode;
-                    const vulnerabilityAnalysisEndpoint = "https://api.etherscan.io/apisecurity/apikey?module=contract&action=checkcode&code=" + encodeURIComponent(contractCode);
-                    let vulnerabilityResponse = await fetch(vulnerabilityAnalysisEndpoint);
-                    if (vulnerabilityResponse.ok) {
-                        let vulnerabilityJsonResponse = await vulnerabilityResponse.json();
-                        if (vulnerabilityJsonResponse.result === "0") {
-                            result += "\nNo vulnerabilities detected in the contract code";
-                        } else {
-                            result += "\nVulnerabilities detected in the contract code: " + vulnerabilityJsonResponse.result;
-                        }
-                    } else {
-                        result += "\nError checking contract vulnerabilities";
-                    }
-                }
-            } else {
-                result = "Error checking token";
-            }
-            document.getElementById("result").innerText = result;
-        }
+      const editor = CodeMirror.fromTextArea(document.getElementById("code"), {
+        mode: "text/x-solidity",
+        theme: "material-darker",
+        lineNumbers: true
+      });
 
-        async function compileSolidity() {
-            const solidityCode = document.getElementById("solidityCode").value;
-            const remixEndpoint = "https://remix.ethereum.org/compile";
-            let response = await fetch(remixEndpoint, {
-                method: "POST",
-                body: JSON.stringify({ "sources": { "file.sol": { "content": solidityCode } } }),
-                headers: { "Content-Type": "application/json" }
-            });
-            let result = "";
-            if (response.ok) {
-                let jsonResponse = await response.json();
-                let bytecode = jsonResponse.contracts["file.sol"]["contractName"].evm.bytecode.object;
-                result = "Compiled bytecode:\n" + bytecode;
-            } else {
-                result = "Error compiling Solidity code";
-            }
-            document.getElementById("compileResult").innerText = result;
-        }
-    </script>
-</body>
+      const outputPanel = document.getElementById("output");
+      const errorsPanel = document.getElementById("errors");
+
+      function analyzeCode() {
+  const input = editor.getValue();
+  const output = solc.compile(input, 1);
+  if (output.errors) {
+    const errors = output.errors.map(error => ({
+      message: error.formattedMessage,
+      line: error.lineNumber - 1,
+      column: error.column
+    }));
+    errors.forEach(error => {
+      editor.addLineClass(error.line, "background", "errorLine");
+      editor.addWidget({ line: error.line, ch: error.column }, createErrorWidget(error.message));
+    });
+    const errorMessage = errors.map(error => error.message).join("\n");
+    errorsPanel.innerHTML = errorMessage;
+    outputPanel.innerHTML = "";
+  } else {
+    outputPanel.innerHTML = output.contracts[""].bytecode;
+    errorsPanel.innerHTML = "";
+  }
+}
+
+function createErrorWidget(message) {
+  const widget = document.createElement("div");
+  widget.classList.add("errorWidget");
+  widget.innerHTML = message;
+  return widget;
+}
+      </script>
+    </body>
 </html>
