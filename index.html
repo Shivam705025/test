@@ -36,6 +36,7 @@
 
       textarea {
         height: 200px;
+        width: 500px;
       }
 
       button[type="submit"] {
@@ -81,8 +82,11 @@
       <input type="number" id="supply" name="supply" required>
 
       <label for="functions">Token Functions:</label>
-      <textarea id="functions" name="functions" rows="10" cols="50" required></textarea>
-
+      <select id="functions" name="functions">
+        <option value="function transfer(address to, uint256 amount) public returns (bool) {}">Transfer</option>
+        <option value="function approve(address spender, uint256 amount) public returns (bool) {}">Approve</option>
+        <option value="function allowance(address owner, address spender) public view returns (uint256) {}">Allowance</option>
+      </select>
       <button type="submit" id="compileBtn">Compile Contract</button>
     </form>
 
