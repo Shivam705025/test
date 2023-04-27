@@ -8,7 +8,8 @@
     <h1>Quantum Random Number Guessing Game</h1>
     <p>Guess a number between 0 and 7:</p>
     <input type="text" id="guessInput">
-    <button onclick="guess()">Guess</button>
+    <button id="guessButton" onclick="guess()">Guess</button>
+     <button id="startButton" onclick="startGame()">Start</button>
     <p id="feedback"></p>
     <script>
       // Define a function to fetch the API token from the IBM Quantum Experience
