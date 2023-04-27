@@ -14,15 +14,16 @@
 		$(document).ready(function() {
 			$("#compile").click(function() {
 				var code = $("#input").val();
-                                let encod = "MjJjNjRhZjgwMzEwNzkyY2Q5YmMyZWU3ZmVlOTAyMTkzZDgyNTM5ZDEwYjJmY2FjZTZjYzY1Y2QzYzZjYWJjYWFiNmRkMjc4OWQ3M2Q2ZDNmYjdlNjFiNDk0ZTcxNTYwMzNjNTg0ZTNiZWQzOWU3ZTM5NTQ4NTMzNTAwN2JiYmY="
+				var corsProxy = "https://cors-anywhere.herokuapp.com/";
+				var apiUrl = corsProxy + "https://auth.quantum-computing.ibm.com/api/users/loginWithToken";
+				let encod = "MjJjNjRhZjgwMzEwNzkyY2Q5YmMyZWU3ZmVlOTAyMTkzZDgyNTM5ZDEwYjJmY2FjZTZjYzY1Y2QzYzZjYWJjYWFiNmRkMjc4OWQ3M2Q2ZDNmYjdlNjFiNDk0ZTcxNTYwMzNjNTg0ZTNiZWQzOWU3ZTM5NTQ4NTMzNTAwN2JiYmY="
 				let decoded = window.atob(encod);
-				var apiUrl = "https://auth.quantum-computing.ibm.com/api/users/loginWithToken";
 				var apiKey = decoded;
 
 				$.post(apiUrl, {"apiToken": apiKey})
 				.done(function(data) {
 					var accessToken = data.id;
-					var apiUrl = "https://api.quantum-computing.ibm.com/v2/jobs";
+					var apiUrl = corsProxy + "https://api.quantum-computing.ibm.com/v2/jobs";
 
 					var request = {
 						"headers": {
@@ -41,13 +42,13 @@
 						var statusUrl = apiUrl + "/" + jobId + "/status";
 
 						var intervalId = setInterval(function() {
-							$.get(statusUrl, request)
+							$.get(corsProxy + statusUrl, request)
 							.done(function(data) {
 								var status = data.status;
 
 								if (status == "COMPLETED") {
 									var resultUrl = apiUrl + "/" + jobId + "/results";
-									$.get(resultUrl, request)
+									$.get(corsProxy + resultUrl, request)
 									.done(function(data) {
 										var result = data.result.result;
 										$("#output").text(result);
