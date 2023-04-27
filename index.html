@@ -1,91 +1,15 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset="UTF-8">
-    <title>Python 3 Compiler</title>
+    <meta charset="utf-8">
+    <title>Quantum Random Number Guessing Game</title>
   </head>
   <body>
-    <textarea id="code"></textarea>
-    <button onclick="execute()">Execute</button>
-    <div id="output"></div>
-    <script>
-      async function execute() {
-        // Get the Python code from the input textarea
-        var code = document.getElementById("code").value;
-
-        // Identify the libraries that need to be installed
-        var libraries = getRequiredLibraries(code);
-
-        // Install any missing libraries
-        await installLibraries(libraries);
-
-        // Execute the user's Python code
-        var output = await executePython(code);
-
-        // Display the output in the output div
-        var outputDiv = document.getElementById("output");
-        outputDiv.innerHTML = output;
-      }
-
-      function getRequiredLibraries(code) {
-        // Parse the Python code to identify the libraries that need to be installed
-        // This is a simplified implementation that only identifies libraries imported using the "import" statement
-        var libraries = [];
-        var lines = code.split("\n");
-        for (var i = 0; i < lines.length; i++) {
-          var line = lines[i];
-          if (line.startsWith("import ")) {
-            var library = line.substring(7).split(" ")[0];
-            if (!libraries.includes(library)) {
-              libraries.push(library);
-            }
-          }
-        }
-        return libraries;
-      }
-
-      async function installLibraries(libraries) {
-        // Install any missing libraries using the pip command
-        var installedLibraries = await getInstalledLibraries();
-        var missingLibraries = libraries.filter(function(library) {
-          return !installedLibraries.includes(library);
-        });
-        if (missingLibraries.length > 0) {
-          var command = "pip install " + missingLibraries.join(" ");
-          await executeCommand(command);
-        }
-      }
-
-      async function getInstalledLibraries() {
-        // Get a list of installed libraries using the pip command
-        var command = "pip list --format=json";
-        var output = await executeCommand(command);
-        var libraries = JSON.parse(output);
-        return libraries.map(function(library) {
-          return library.name;
-        });
-      }
-
-      async function executePython(code) {
-        // Execute the user's Python code using the Python subprocess module
-        var command = "python -c " + JSON.stringify(code);
-        var output = await executeCommand(command);
-        return output;
-      }
-
-      async function executeCommand(command) {
-        // Execute a command using the shell and return the output
-        var process = await Deno.run({
-          cmd: ["bash", "-c", command],
-          stdout: "piped"
-        });
-        var output = new TextDecoder().decode(await process.output());
-        var status = await process.status();
-        if (status.code !== 0) {
-          throw new Error("Command failed with exit code " + status.code + ": " + command);
-        }
-        return output;
-      }
-    </script>
+    <h1>Quantum Random Number Guessing Game</h1>
+    <p>Guess a number between 0 and 7:</p>
+    <input type="text" id="guessInput">
+    <button onclick="guess()">Guess</button>
+    <p id="feedback"></p>
+    <script src="index.js"></script>
   </body>
 </html>
