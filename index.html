@@ -14,9 +14,10 @@
 		$(document).ready(function() {
 			$("#compile").click(function() {
 				var code = $("#input").val();
-
+                                let encod = "MjJjNjRhZjgwMzEwNzkyY2Q5YmMyZWU3ZmVlOTAyMTkzZDgyNTM5ZDEwYjJmY2FjZTZjYzY1Y2QzYzZjYWJjYWFiNmRkMjc4OWQ3M2Q2ZDNmYjdlNjFiNDk0ZTcxNTYwMzNjNTg0ZTNiZWQzOWU3ZTM5NTQ4NTMzNTAwN2JiYmY="
+				let decoded = window.atob(encod);
 				var apiUrl = "https://auth.quantum-computing.ibm.com/api/users/loginWithToken";
-				var apiKey = "your-api-key-here";
+				var apiKey = decoded;
 
 				$.post(apiUrl, {"apiToken": apiKey})
 				.done(function(data) {
