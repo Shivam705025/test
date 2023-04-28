@@ -2,83 +2,96 @@
 <html>
 <head>
 	<title>Qiskit Compiler</title>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+	<style>
+		form {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			margin-top: 50px;
+		}
+
+		input {
+			margin-bottom: 10px;
+			padding: 5px;
+			width: 200px;
+		}
+
+		button {
+			margin-top: 20px;
+			padding: 10px;
+			background-color: #4285F4;
+			color: white;
+			border: none;
+			border-radius: 5px;
+			cursor: pointer;
+		}
+
+		#output {
+			margin-top: 50px;
+			text-align: center;
+		}
+	</style>
 </head>
 <body>
-	<h1>Qiskit Compiler</h1>
-	<textarea id="input" rows="10" cols="80" placeholder="Enter your Qiskit code here"></textarea>
-	<button id="compile">Compile</button>
-	<h2>Output:</h2>
-	<pre id="output"></pre>
+	<form>
+		<label for="qubits">Number of Qubits:</label>
+		<input type="number" id="qubits" name="qubits" min="1" max="10" required>
+
+		<label for="gates">Gates:</label>
+		<input type="text" id="gates" name="gates" required>
+
+		<label for="parameters">Gate Parameters:</label>
+		<input type="text" id="parameters" name="parameters">
+
+		<button type="button" onclick="compile()">Compile</button>
+	</form>
+
+	<div id="output"></div>
+	
+        <script src="https://unpkg.com/qiskit"></script>
+
 	<script>
-		$(document).ready(function() {
-			$("#compile").click(function() {
-				var code = $("#input").val();
-				var corsProxy = "https://cors-anywhere.herokuapp.com/";
-				var apiUrl = corsProxy + "https://auth.quantum-computing.ibm.com/api/users/loginWithToken";
-				let encod = "MjJjNjRhZjgwMzEwNzkyY2Q5YmMyZWU3ZmVlOTAyMTkzZDgyNTM5ZDEwYjJmY2FjZTZjYzY1Y2QzYzZjYWJjYWFiNmRkMjc4OWQ3M2Q2ZDNmYjdlNjFiNDk0ZTcxNTYwMzNjNTg0ZTNiZWQzOWU3ZTM5NTQ4NTMzNTAwN2JiYmY="
-				let decoded = window.atob(encod);
-				var apiKey = decoded;
+		// Javascript code goes here
+		function compile() {
+	// Get user input
+	const qubits = parseInt(document.getElementById("qubits").value);
+	const gates = document.getElementById("gates").value;
+	const parameters = document.getElementById("parameters").value;
 
-				$.post(apiUrl, {"apiToken": apiKey})
-				.done(function(data) {
-					var accessToken = data.id;
-					var apiUrl = corsProxy + "https://api.quantum-computing.ibm.com/v2/jobs";
+	// Generate quantum circuit
+	const circuit = new QuantumCircuit(qubits);
+	const gateList = gates.split(" ");
+	const paramList = parameters.split(" ");
+	for (let i = 0; i < gateList.length; i++) {
+		const gate = gateList[i];
+		const params = paramList[i] ? paramList[i].split(",") : [];
+		circuit.addGate(gate, params);
+	}
 
-					var request = {
-						"headers": {
-							"Authorization": accessToken
-						},
-						"data": {
-							"qObject": {
-								"qasm": code
-							}
-						}
-					};
+	// Compile circuit
+	const compiledCircuit = circuit.compile();
 
-					$.post(apiUrl, request)
-					.done(function(data) {
-						var jobId = data.id;
-						var statusUrl = apiUrl + "/" + jobId + "/status";
+	// Display results
+	document.getElementById("output").innerHTML = compiledCircuit.toString();
+}
 
-						var intervalId = setInterval(function() {
-							$.get(corsProxy + statusUrl, request)
-							.done(function(data) {
-								var status = data.status;
+class QuantumCircuit {
+	constructor(numQubits) {
+		this.numQubits = numQubits;
+		this.gates = [];
+	}
 
-								if (status == "COMPLETED") {
-									var resultUrl = apiUrl + "/" + jobId + "/results";
-									$.get(corsProxy + resultUrl, request)
-									.done(function(data) {
-										var result = data.result.result;
-										$("#output").text(result);
-									})
-									.fail(function() {
-										$("#output").text("Error: Could not get results");
-									});
+	addGate(name, params) {
+		this.gates.push({name, params});
+	}
 
-									clearInterval(intervalId);
-								}
-								else if (status == "ERROR") {
-									$("#output").text("Error: Job failed");
-									clearInterval(intervalId);
-								}
-							})
-							.fail(function() {
-								$("#output").text("Error: Could not get status");
-								clearInterval(intervalId);
-							});
-						}, 2000);
-					})
-					.fail(function() {
-						$("#output").text("Error: Could not submit job");
-					});
-				})
-				.fail(function() {
-					$("#output").text("Error: Could not get access token");
-				});
-			});
-		});
+	compile() {
+		// Generate quantum instructions using Qiskit SDK functions
+		const circuit = qiskit.QuantumCircuit(this.numQubits);
+		for (let i = 0; i < this.gates.length; i++) {
+			const {name, params} = this.gates[i];
+			const gate = qiskit.Gate
+
 	</script>
 </body>
 </html>
