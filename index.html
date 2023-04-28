@@ -1,52 +1,96 @@
 <!DOCTYPE html>
 <html>
-<head>
-	<meta charset="UTF-8">
-	<title>Text to Speech Converter</title>
-</head>
-<body>
-	<h1>Text to Speech Converter</h1>
-	<textarea id="text-input" rows="5" cols="50"></textarea><br><br>
-	<button id="speak-button">Speak</button>
-	<br><br>
-	<select id="voice-selector">
-		<option value="">Select a voice</option>
-	</select>
+  <head>
+    <title>Text-to-Speech Converter</title>
+    <meta charset="UTF-8">
+    <style>
+      body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        margin: 0;
+        font-family: sans-serif;
+      }
+      
+      h1 {
+        margin-top: 0;
+      }
+      
+      form {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+      }
+      
+      label {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 5px;
+        font-weight: bold;
+      }
+      
+      button {
+        padding: 10px;
+        border: none;
+        border-radius: 5px;
+        background-color: #0077cc;
+        color: white;
+        font-weight: bold;
+        cursor: pointer;
+      }
+      
+      button:hover {
+        background-color: #005fa3;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Text-to-Speech Converter</h1>
+    <form>
+      <label for="text-input">Enter text:</label>
+      <textarea id="text-input" name="text-input" rows="4" cols="50"></textarea>
+      <label for="voice-select">Choose a voice:</label>
+      <select id="voice-select" name="voice-select"></select>
+      <button id="speak-button" type="button">Speak</button>
+    </form>
 
-	<script>
-		const speakButton = document.getElementById("speak-button");
-		const voiceSelector = document.getElementById("voice-selector");
+    <script>
+      const synth = window.speechSynthesis;
 
-		// Load available voices
-		function loadVoices() {
-			const voices = window.speechSynthesis.getVoices();
-			voiceSelector.innerHTML = "<option value=''>Select a voice</option>";
-			for (let i = 0; i < voices.length; i++) {
-				const option = document.createElement("option");
-				option.value = voices[i].name;
-				option.innerHTML = voices[i].name + " (" + voices[i].lang + ")";
-				voiceSelector.appendChild(option);
-			}
-		}
+      function populateVoiceList() {
+        const voices = synth.getVoices();
+        const voiceSelect = document.getElementById("voice-select");
 
-		// Speak text
-		function speak() {
-			const text = document.getElementById("text-input").value;
-			const voiceName = voiceSelector.value;
+        for (let i = 0; i < voices.length; i++) {
+          const option = document.createElement("option");
+          option.textContent = voices[i].name + " (" + voices[i].lang + ")";
+          option.setAttribute("data-lang", voices[i].lang);
+          option.setAttribute("data-name", voices[i].name);
+          voiceSelect.appendChild(option);
+        }
+      }
 
-			const msg = new SpeechSynthesisUtterance(text);
-			msg.voice = window.speechSynthesis.getVoices().find(v => v.name === voiceName);
-			window.speechSynthesis.speak(msg);
-		}
+      populateVoiceList();
 
-		// Load available voices when the page is loaded
-		window.addEventListener("load", loadVoices);
+      if (speechSynthesis.onvoiceschanged !== undefined) {
+        speechSynthesis.onvoiceschanged = populateVoiceList;
+      }
 
-		// Update available voices when the user changes the selection
-		voiceSelector.addEventListener("change", loadVoices);
+      function speak() {
+        const textInput = document.getElementById("text-input");
+        const voiceSelect = document.getElementById("voice-select");
 
-		// Speak text when the user clicks the Speak button
-		speakButton.addEventListener("click", speak);
-	</script>
-</body>
+        const utterance = new SpeechSynthesisUtterance(textInput.value);
+        utterance.voice = synth.getVoices().find(v => v.name === voiceSelect.value);
+        synth.speak(utterance);
+      }
+
+      const speakButton = document.getElementById("speak-button");
+      speakButton.addEventListener("click", speak);
+    </script>
+  </body>
 </html>
