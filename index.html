@@ -1,71 +1,50 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Qiskit Compiler</title>
+	<title>Qiskit Code Compiler</title>
 	<script src="https://unpkg.com/qiskit"></script>
 	<script>
 		function compile() {
 			// Get user input
-			const qubits = parseInt(document.getElementById("qubits").value);
-			const gates = document.getElementById("gates").value;
-			const parameters = document.getElementById("parameters").value;
-
-			// Generate quantum circuit
-			const circuit = new QuantumCircuit(qubits);
-			const gateList = gates.split(" ");
-			const paramList = parameters.split(" ");
-			for (let i = 0; i < gateList.length; i++) {
-				const gate = gateList[i];
-				const params = paramList[i] ? paramList[i].split(",") : [];
-				circuit.addGate(gate, params);
-			}
+			const code = document.getElementById("code").value;
 
 			// Compile circuit
-			const compiledCircuit = circuit.compile();
+			const compiledCircuit = compileQiskitCode(code);
 
 			// Display results
 			document.getElementById("output").innerHTML = compiledCircuit.qasm();
 		}
 
-		class QuantumCircuit {
-			constructor(numQubits) {
-				this.numQubits = numQubits;
-				this.gates = [];
-			}
+		function compileQiskitCode(code) {
+			// Create a new quantum circuit
+			const circuit = qiskit.QuantumCircuit();
 
-			addGate(name, params) {
-				this.gates.push({name, params});
-			}
-
-			compile() {
-				// Generate quantum instructions using Qiskit SDK functions
-				const circuit = qiskit.QuantumCircuit(this.numQubits);
-				for (let i = 0; i < this.gates.length; i++) {
-					const {name, params} = this.gates[i];
-					const gate = qiskit.Gate(name, params);
-					circuit.append(gate, []);
+			// Parse Qiskit code and add gates to the circuit
+			const parser = new qiskit.QiskitParser();
+			const ast = parser.parse(code);
+			for (let i = 0; i < ast.body.length; i++) {
+				const stmt = ast.body[i];
+				if (stmt.type === "Gate") {
+					const args = stmt.args.map(arg => arg.value);
+					const gate = qiskit.Gate(stmt.name, args);
+					circuit.append(gate, stmt.qubits);
 				}
-
-				// Compile circuit using Qiskit SDK functions
-				const backend = qiskit.Aer.getBackend("qasm_simulator");
-				const job = qiskit.execute(circuit, backend);
-				const result = job.result();
-
-				return result.getRanQasm();
 			}
+
+			// Compile circuit using Qiskit SDK functions
+			const backend = qiskit.Aer.getBackend("qasm_simulator");
+			const job = qiskit.execute(circuit, backend);
+			const result = job.result();
+
+			return result;
 		}
 	</script>
 </head>
 <body>
-	<h1>Qiskit Compiler</h1>
-	<p>Enter the number of qubits, gates, and parameters:</p>
+	<h1>Qiskit Code Compiler</h1>
+	<p>Enter your Qiskit code:</p>
 	<form>
-		<label for="qubits">Number of qubits:</label>
-		<input type="number" id="qubits" name="qubits"><br><br>
-		<label for="gates">Gates:</label>
-		<input type="text" id="gates" name="gates"><br><br>
-		<label for="parameters">Parameters:</label>
-		<input type="text" id="parameters" name="parameters"><br><br>
+		<textarea id="code" name="code" rows="10" cols="50"></textarea><br><br>
 		<input type="button" value="Compile" onclick="compile()">
 	</form>
 	<br>
