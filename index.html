@@ -1,54 +1,52 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Qiskit Code Compiler</title>
-	<script src="https://unpkg.com/qiskit"></script>
-	<script>
-		function compile() {
-			// Get user input
-			const code = document.getElementById("code").value;
-
-			// Compile circuit
-			const compiledCircuit = compileQiskitCode(code);
-
-			// Display results
-			document.getElementById("output").innerHTML = compiledCircuit.qasm();
-		}
-
-		function compileQiskitCode(code) {
-			// Create a new quantum circuit
-			const circuit = qiskit.QuantumCircuit();
-
-			// Parse Qiskit code and add gates to the circuit
-			const parser = new qiskit.QiskitParser();
-			const ast = parser.parse(code);
-			for (let i = 0; i < ast.body.length; i++) {
-				const stmt = ast.body[i];
-				if (stmt.type === "Gate") {
-					const args = stmt.args.map(arg => arg.value);
-					const gate = qiskit.Gate(stmt.name, args);
-					circuit.append(gate, stmt.qubits);
-				}
-			}
-
-			// Compile circuit using Qiskit SDK functions
-			const backend = qiskit.Aer.getBackend("qasm_simulator");
-			const job = qiskit.execute(circuit, backend);
-			const result = job.result();
-
-			return result;
-		}
-	</script>
+	<meta charset="UTF-8">
+	<title>Text to Speech Converter</title>
 </head>
 <body>
-	<h1>Qiskit Code Compiler</h1>
-	<p>Enter your Qiskit code:</p>
-	<form>
-		<textarea id="code" name="code" rows="10" cols="50"></textarea><br><br>
-		<input type="button" value="Compile" onclick="compile()">
-	</form>
-	<br>
-	<p>Compiled circuit:</p>
-	<pre id="output"></pre>
+	<h1>Text to Speech Converter</h1>
+	<textarea id="text-input" rows="5" cols="50"></textarea><br><br>
+	<button id="speak-button">Speak</button>
+	<br><br>
+	<select id="voice-selector">
+		<option value="">Select a voice</option>
+	</select>
+
+	<script>
+		const speakButton = document.getElementById("speak-button");
+		const voiceSelector = document.getElementById("voice-selector");
+
+		// Load available voices
+		function loadVoices() {
+			const voices = window.speechSynthesis.getVoices();
+			voiceSelector.innerHTML = "<option value=''>Select a voice</option>";
+			for (let i = 0; i < voices.length; i++) {
+				const option = document.createElement("option");
+				option.value = voices[i].name;
+				option.innerHTML = voices[i].name + " (" + voices[i].lang + ")";
+				voiceSelector.appendChild(option);
+			}
+		}
+
+		// Speak text
+		function speak() {
+			const text = document.getElementById("text-input").value;
+			const voiceName = voiceSelector.value;
+
+			const msg = new SpeechSynthesisUtterance(text);
+			msg.voice = window.speechSynthesis.getVoices().find(v => v.name === voiceName);
+			window.speechSynthesis.speak(msg);
+		}
+
+		// Load available voices when the page is loaded
+		window.addEventListener("load", loadVoices);
+
+		// Update available voices when the user changes the selection
+		voiceSelector.addEventListener("change", loadVoices);
+
+		// Speak text when the user clicks the Speak button
+		speakButton.addEventListener("click", speak);
+	</script>
 </body>
 </html>
