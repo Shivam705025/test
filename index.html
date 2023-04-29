@@ -7,60 +7,113 @@
       window.addEventListener('load', async () => {
         let isConnected = false;
         let web3;
-        let address;
-        let balance;
 
-        const connectWalletButton = document.getElementById('connect-wallet');
+        const erc20ABI = [
+          // ERC20 standard ABI
+          {
+            "inputs": [
+              {
+                "internalType": "address",
+                "name": "_owner",
+                "type": "address"
+              }
+            ],
+            "name": "balanceOf",
+            "outputs": [
+              {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+              }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+          }
+        ];
 
-        connectWalletButton.addEventListener('click', async () => {
-          if (!isConnected) {
-            if (typeof window.ethereum !== 'undefined') {
-              // Connect to the wallet
+        const connectButton = document.getElementById('connectButton');
+        const disconnectButton = document.getElementById('disconnectButton');
+        const addressElement = document.getElementById('address');
+        const tokenBalancesElement = document.getElementById('tokenBalances');
+
+        connectButton.addEventListener('click', async () => {
+          if (window.ethereum) {
+            try {
               await window.ethereum.request({ method: 'eth_requestAccounts' });
               web3 = new Web3(window.ethereum);
-
-              // Get the wallet address
-              const accounts = await web3.eth.getAccounts();
-              address = accounts[0];
-
-              // Get the wallet balance and display it
-              balance = await web3.eth.getBalance(address);
-              const balanceInEth = web3.utils.fromWei(balance, 'ether');
-              document.getElementById('balance').textContent = balanceInEth + ' ETH';
-
-              // Get other wallet details and display them
-              // ...
-
-              // Change the state of the button to "Disconnect"
-              connectWalletButton.textContent = 'Disconnect';
               isConnected = true;
-            } else {
-              alert('Please install a wallet extension such as MetaMask to use this feature.');
-            }
-          } else {
-            // Disconnect the wallet
-            await window.ethereum.request({ method: 'wallet_requestPermissions', params: [{ eth_accounts: {} }] });
-            web3 = null;
-            address = null;
-            balance = null;
 
-            // Reset the displayed wallet details
-            document.getElementById('wallet-address').textContent = '';
-            document.getElementById('balance').textContent = '';
+              const accounts = await web3.eth.getAccounts();
+              const address = accounts[0];
+              addressElement.innerText = address;
+              connectButton.style.display = 'none';
+              disconnectButton.style.display = 'inline-block';
 
-            // Change the state of the button back to "Connect Wallet"
-            connectWalletButton.textContent = 'Connect Wallet';
-            isConnected = false;
-          }
-        });
-      });
-    </script>
+              // Fetch token balances for connected wallet
+              const tokenBalances = {};
+              const tokenAPIUrls = [];
+              for (const [name, address] of Object.entries(tokenAddresses)) {
+                const tokenContract = new web3.eth.Contract(erc20ABI, address);
+                const balance = await tokenContract.methods.balanceOf(address).call();
+                if (balance > 0) {
+                  tokenBalances[name] = balance;
+                  tokenAPIUrls.push(`https://api.etherscan.io/api?module=account&action=tokenbalance&contractaddress=${address}&address=${address}&tag=latest&apikey=AFFD2SXUNV3RY968V4442KMBP4928IBMJ7`);
+                }
+              }
+
+              // Get token details from Etherscan API
+              const tokenDetails = {};
+              for (const url of tokenAPIUrls) {
+                const response = await fetch(url);
+                const data = await response.json();
+                if (data && data.result) {
+                  const address = data.result.contractAddress;
+                  const symbol = data.result.tokenSymbol;
+                  const balance = web3.utils.fromWei(data.result.balance);
+                  tokenDetails[address] = {
+                    symbol: symbol,
+                    balance: balance
+                  };
+                }
+              }
+
+             // Display token balances
+     / Display token balances
+let tokenBalancesHTML = '<h2>Token Balances:</h2>';
+
+// Loop through each token in the user's wallet
+for (const [address, balance] of Object.entries(tokenBalances)) {
+// Check if the token balance is greater than 0
+if (balance > 0) {
+// Get the token details from the API response
+const token = tokenDetails[address];
+  // Display the token symbol and balance in the HTML
+tokenBalancesHTML += `<p>${token.symbol}: ${balance} ${token.balance}</p>`;
+}
+}
+
+// Display the token balances in the HTML
+tokenBalancesElement.innerHTML = tokenBalancesHTML;
+
+disconnectButton.addEventListener('click', async () => {
+if (isConnected) {
+await web3.currentProvider.disconnect();
+isConnected = false;
+addressElement.innerText = '';
+disconnectButton.style.display = 'none';
+connectButton.style.display = 'inline-block';
+tokenBalancesElement.innerHTML = '';
+}
+});
+});
+</script>
+
   </head>
   <body>
     <h1>Wallet Details</h1>
-    <button id="connect-wallet">Connect Wallet</button>
-    <p id="wallet-address"></p>
-    <p id="balance"></p>
-    <!-- Display other wallet details here -->
+    <button id="connectButton">Connect Wallet</button>
+    <button id="disconnectButton" style="display: none;">Disconnect Wallet</button>
+    <div id="address"></div>
+    <div id="tokenBalances"></div>
   </body>
 </html>
