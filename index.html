@@ -5,26 +5,54 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.6.0/web3.min.js"></script>
     <script>
       window.addEventListener('load', async () => {
-        if (typeof window.ethereum !== 'undefined') {
-          // Connect to the wallet
-          await window.ethereum.enable();
-          const web3 = new Web3(window.ethereum);
+        let isConnected = false;
+        let web3;
+        let address;
+        let balance;
 
-          // Get the wallet address
-          const accounts = await web3.eth.getAccounts();
-          const address = accounts[0];
+        const connectWalletButton = document.getElementById('connect-wallet');
 
-          // Get the wallet balance and display it
-          const balance = await web3.eth.getBalance(address);
-          const balanceInEth = web3.utils.fromWei(balance, 'ether');
-          document.getElementById('balance').textContent = balanceInEth + ' ETH';
+        connectWalletButton.addEventListener('click', async () => {
+          if (!isConnected) {
+            if (typeof window.ethereum !== 'undefined') {
+              // Connect to the wallet
+              await window.ethereum.enable();
+              web3 = new Web3(window.ethereum);
 
-          // Get other wallet details and display them
-          // ...
+              // Get the wallet address
+              const accounts = await web3.eth.getAccounts();
+              address = accounts[0];
 
-        } else {
-          alert('Please install a wallet extension such as MetaMask to use this feature.');
-        }
+              // Get the wallet balance and display it
+              balance = await web3.eth.getBalance(address);
+              const balanceInEth = web3.utils.fromWei(balance, 'ether');
+              document.getElementById('balance').textContent = balanceInEth + ' ETH';
+
+              // Get other wallet details and display them
+              // ...
+
+              // Change the state of the button to "Disconnect"
+              connectWalletButton.textContent = 'Disconnect';
+              isConnected = true;
+            } else {
+              alert('Please install a wallet extension such as MetaMask to use this feature.');
+            }
+          } else {
+            // Disconnect the wallet
+            await web3.currentProvider.disconnect();
+            web3 = null;
+            address = null;
+            balance = null;
+
+            // Reset the displayed wallet details
+            document.getElementById('wallet-address').textContent = '';
+            document.getElementById('balance').textContent = '';
+
+            // Change the state of the button back to "Connect Wallet"
+            connectWalletButton.textContent = 'Connect Wallet';
+            isConnected = false;
+          }
+        });
       });
     </script>
   </head>
