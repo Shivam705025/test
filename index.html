@@ -1,99 +1,38 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
   <head>
-    <meta charset="UTF-8" />
-    <title>Text-to-Speech Website</title>
+    <title>Wallet Details</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.6.0/web3.min.js"></script>
+    <script>
+      window.addEventListener('load', async () => {
+        if (typeof window.ethereum !== 'undefined') {
+          // Connect to the wallet
+          await window.ethereum.enable();
+          const web3 = new Web3(window.ethereum);
+
+          // Get the wallet address
+          const accounts = await web3.eth.getAccounts();
+          const address = accounts[0];
+
+          // Get the wallet balance and display it
+          const balance = await web3.eth.getBalance(address);
+          const balanceInEth = web3.utils.fromWei(balance, 'ether');
+          document.getElementById('balance').textContent = balanceInEth + ' ETH';
+
+          // Get other wallet details and display them
+          // ...
+
+        } else {
+          alert('Please install a wallet extension such as MetaMask to use this feature.');
+        }
+      });
+    </script>
   </head>
   <body>
-    <h1>Text-to-Speech Website</h1>
-    <form>
-      <label for="input">Enter Text:</label>
-      <textarea id="input" name="input" rows="10" cols="50"></textarea>
-      <br />
-      <label for="voice-select">Select Voice:</label>
-      <select id="voice-select"></select>
-      <br />
-      <label for="audio-file">Or upload an audio file:</label>
-      <input type="file" id="audio-file" name="audio-file" accept="audio/*" />
-      <br />
-      <button id="speak-btn" type="button">Speak</button>
-    </form>
-    <hr />
-    <div>
-      <h2>Output:</h2>
-      <audio id="output-audio" controls></audio>
-    </div>
-   <script>
-  // Load available voices and populate the voice selection dropdown
-  var voicesSelect = document.getElementById("voice-select");
-  var synth = window.speechSynthesis;
-  var voices = [];
-  function populateVoices() {
-    voices = synth.getVoices();
-    voicesSelect.innerHTML = "";
-    voices.forEach(function (voice) {
-      var option = document.createElement("option");
-      option.textContent = voice.name + " (" + voice.lang + ")";
-      option.value = voice.name;
-      voicesSelect.appendChild(option);
-    });
-  }
-  populateVoices();
-  if (speechSynthesis.onvoiceschanged !== undefined) {
-    speechSynthesis.onvoiceschanged = populateVoices;
-  }
-
-  // Speak the input text using the selected voice or the uploaded audio file
-  var speakBtn = document.getElementById("speak-btn");
-  speakBtn.onclick = function () {
-    var inputText = document.getElementById("input").value;
-    var selectedVoice = voices.find(
-      (voice) => voice.name === voicesSelect.value
-    );
-    var audioFile = document.getElementById("audio-file").files[0];
-    if (audioFile) {
-      // Convert uploaded audio file to speech using the selected voice
-      var reader = new FileReader();
-      reader.onload = function (event) {
-        var audioData = event.target.result;
-        var audioContext = new AudioContext();
-        audioContext.decodeAudioData(audioData).then(function (buffer) {
-          var audioBufferSourceNode = audioContext.createBufferSource();
-          audioBufferSourceNode.buffer = buffer;
-          var scriptProcessorNode = audioContext.createScriptProcessor();
-          scriptProcessorNode.onaudioprocess = function (event) {
-            var inputBuffer = event.inputBuffer;
-            var outputBuffer = event.outputBuffer;
-            for (
-              var channel = 0;
-              channel < outputBuffer.numberOfChannels;
-              channel++
-            ) {
-              var inputData = inputBuffer.getChannelData(channel);
-              var outputData = outputBuffer.getChannelData(channel);
-              for (var sample = 0; sample < inputBuffer.length; sample++) {
-                outputData[sample] = inputData[sample];
-              }
-            }
-          };
-          var sourceNode = audioContext.createMediaElementSource(
-            document.getElementById("output-audio")
-          );
-          sourceNode.connect(scriptProcessorNode);
-          scriptProcessorNode.connect(audioContext.destination);
-          audioBufferSourceNode.connect(scriptProcessorNode);
-          audioBufferSourceNode.start();
-          synth.speak(new SpeechSynthesisUtterance(inputText));
-        });
-      };
-      reader.readAsArrayBuffer(audioFile);
-    } else {
-      // Speak the input text using the selected voice
-      var utterance = new SpeechSynthesisUtterance(inputText);
-      utterance.voice = selectedVoice;
-      synth.speak(utterance);
-    }
-  };
-</script>
+    <h1>Wallet Details</h1>
+    <button id="connect-wallet">Connect Wallet</button>
+    <p id="wallet-address"></p>
+    <p id="balance"></p>
+    <!-- Display other wallet details here -->
   </body>
 </html>
