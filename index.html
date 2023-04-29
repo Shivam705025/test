@@ -1,126 +1,90 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Wallet Details</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.3.6/web3.min.js"></script>
-    <script>
-      window.addEventListener('load', async () => {
-        let isConnected = false;
-        let web3;
-
-        const erc20ABI = [
-          // ERC20 standard ABI
-          {
-            "inputs": [
-              {
-                "internalType": "address",
-                "name": "_owner",
-                "type": "address"
-              }
-            ],
-            "name": "balanceOf",
-            "outputs": [
-              {
-                "internalType": "uint256",
-                "name": "",
-                "type": "uint256"
-              }
-            ],
-            "stateMutability": "view",
-            "type": "function"
-          }
-        ];
-
-        const tokenAddresses = {
-          "Token A": "0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84"
-        };
-
-        const connectButton = document.getElementById('connectButton');
-        const disconnectButton = document.getElementById('disconnectButton');
-        const addressElement = document.getElementById('address');
-        const tokenBalancesElement = document.getElementById('tokenBalances');
-
-        connectButton.addEventListener('click', async () => {
-          if (window.ethereum) {
-            try {
-              await window.ethereum.request({ method: 'eth_requestAccounts' });
-              web3 = new Web3(window.ethereum);
-              isConnected = true;
-
-              const accounts = await web3.eth.getAccounts();
-              const address = accounts[0];
-              addressElement.innerText = address;
-              connectButton.style.display = 'none';
-              disconnectButton.style.display = 'inline-block';
-
-              // Fetch token balances for connected wallet
-              const tokenBalances = {};
-              const tokenAPIUrls = [];
-              for (const [name, address] of Object.entries(tokenAddresses)) {
-                const tokenContract = new web3.eth.Contract(erc20ABI, address);
-                const balance = await tokenContract.methods.balanceOf(address).call();
-                if (balance > 0) {
-                  tokenBalances[name] = balance;
-                  tokenAPIUrls.push(`https://api.etherscan.io/api?module=account&action=tokenbalance&contractaddress=${address}&address=${address}&tag=latest&apikey=AFFD2SXUNV3RY968V4442KMBP4928IBMJ7`);
-                }
-              }
-
-              // Get token details from Etherscan API
-              const tokenDetails = {};
-              for (const url of tokenAPIUrls) {
-                const response = await fetch(url);
-                const data = await response.json();
-                if (data && data.result) {
-                  const address = data.result.contractAddress;
-                  const symbol = data.result.tokenSymbol;
-                  const balance = web3.utils.fromWei(data.result.balance);
-                  tokenDetails[address] = {
-                    symbol: symbol,
-                    balance: balance
-                  };
-                }
-              }
-
-              // Display token balances
-              let tokenBalancesHTML = '<h2>Token Balances:</h2>';
-
-              // Loop through each token in the user's wallet
-              for (const [tokenAddress, balance] of Object.entries(tokenBalances)) {
-                const tokenContract = new web3.eth.Contract(erc20ABI, tokenAddress);
-                const symbol = tokenDetails[tokenAddress].symbol;
-                const formattedBalance = web3.utils.fromWei(balance);
-
-                // Display the token symbol and balance in the HTML
-                tokenBalancesHTML += `<p>${symbol}: ${formattedBalance}</p>`;
-              }
-
-              // Display the token balances in the HTML
-              tokenBalancesElement.innerHTML = tokenBalancesHTML;
-
-            } catch (error) {
-              console.error(error);
-            }
-          }
-        });
-disconnectButton.addEventListener('click', async () => {
-if (isConnected) {
-await web3.currentProvider.disconnect();
-isConnected = false;
-addressElement.innerText = '';
-disconnectButton.style.display = 'none';
-connectButton.style.display = 'inline-block';
-tokenBalancesElement.innerHTML = '';
-}
-});
-});
-</script>
-
+    <meta charset="UTF-8">
+    <title>Chess Game with Stockfish</title>
+    <link rel="stylesheet" href="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.css" />
+    <script src="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.js"></script>
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.13.3/chess.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stockfish.js/10.0.2/stockfish.js"></script>
   </head>
   <body>
-    <h1>Wallet Details</h1>
-    <button id="connectButton">Connect Wallet</button>
-    <button id="disconnectButton" style="display: none;">Disconnect Wallet</button>
-    <div id="address"></div>
-    <div id="tokenBalances"></div>
+    <div id="board" style="width: 400px"></div>
+    <br>
+    <button id="startBtn">Start new game</button>
+    <button id="resignBtn" disabled>Resign</button>
+    <button id="drawBtn" disabled>Offer draw</button>
+    <br><br>
+    <div id="status"></div>
+    <script>
+      let board = Chessboard('board', {
+        draggable: true,
+        dropOffBoard: 'trash',
+        sparePieces: true
+      });
+      let game = new Chess();
+      let engine = new Worker('stockfish.js');
+
+      // Start a new game
+      document.getElementById('startBtn').addEventListener('click', () => {
+        engine.postMessage('ucinewgame');
+        engine.postMessage(`position ${game.fen()}`);
+        engine.postMessage(`go movetime 1000`);
+        board.start();
+        updateStatus();
+        document.getElementById('resignBtn').disabled = false;
+        document.getElementById('drawBtn').disabled = false;
+      });
+
+      // Resign
+      document.getElementById('resignBtn').addEventListener('click', () => {
+        let msg = 'You resigned. ';
+        if (game.turn() === 'b') {
+          msg += 'White wins.';
+        } else {
+          msg += 'Black wins.';
+        }
+        alert(msg);
+        game.reset();
+        board.start();
+        updateStatus();
+      });
+
+      // Offer a draw
+      document.getElementById('drawBtn').addEventListener('click', () => {
+        if (confirm('Are you sure you want to offer a draw?')) {
+          alert('Draw offer sent. Waiting for opponent to accept.');
+        }
+      });
+
+      // Update game status
+      function updateStatus() {
+        let status = '';
+        if (game.in_checkmate()) {
+          status = `Game over, ${game.turn() === 'w' ? 'black' : 'white'} is in checkmate.`;
+        } else if (game.in_draw()) {
+          status = 'Game over, draw.';
+        } else {
+          status = `${game.turn() === 'w' ? 'White' : 'Black'} to move.`;
+        }
+        document.getElementById('status').textContent = status;
+      }
+
+      // Listen for user moves
+      board.on('change', () => {
+        game.load(board.fen());
+        updateStatus();
+      });
+
+      // Listen for engine moves
+      engine.onmessage = (event) => {
+        if (event.data.startsWith('bestmove')) {
+          const bestMove = event.data.split(' ')[1];
+          game.move(bestMove);
+          board.position(game.fen());
+          updateStatus();
+        }
+      };
+    </script>
   </body>
 </html>
