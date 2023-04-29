@@ -31,6 +31,10 @@
           }
         ];
 
+        const tokenAddresses = {
+          // Add your token addresses here
+        };
+
         const connectButton = document.getElementById('connectButton');
         const disconnectButton = document.getElementById('disconnectButton');
         const addressElement = document.getElementById('address');
@@ -39,64 +43,67 @@
         connectButton.addEventListener('click', async () => {
           if (window.ethereum) {
             try {
-  await window.ethereum.request({ method: 'eth_requestAccounts' });
-  web3 = new Web3(window.ethereum);
-  isConnected = true;
+              await window.ethereum.request({ method: 'eth_requestAccounts' });
+              web3 = new Web3(window.ethereum);
+              isConnected = true;
 
-  const accounts = await web3.eth.getAccounts();
-  const address = accounts[0];
-  addressElement.innerText = address;
-  connectButton.style.display = 'none';
-  disconnectButton.style.display = 'inline-block';
+              const accounts = await web3.eth.getAccounts();
+              const address = accounts[0];
+              addressElement.innerText = address;
+              connectButton.style.display = 'none';
+              disconnectButton.style.display = 'inline-block';
 
-  // Fetch token balances for connected wallet
-  const tokenBalances = {};
-  const tokenAPIUrls = [];
-  for (const [name, address] of Object.entries(tokenAddresses)) {
-    const tokenContract = new web3.eth.Contract(erc20ABI, address);
-    const balance = await tokenContract.methods.balanceOf(address).call();
-    if (balance > 0) {
-      tokenBalances[name] = balance;
-      tokenAPIUrls.push(`https://api.etherscan.io/api?module=account&action=tokenbalance&contractaddress=${address}&address=${address}&tag=latest&apikey=<your_api_key>`);
-    }
-  }
+              // Fetch token balances for connected wallet
+              const tokenBalances = {};
+              const tokenAPIUrls = [];
+              for (const [name, address] of Object.entries(tokenAddresses)) {
+                const tokenContract = new web3.eth.Contract(erc20ABI, address);
+                const balance = await tokenContract.methods.balanceOf(address).call();
+                if (balance > 0) {
+                  tokenBalances[name] = balance;
+                  tokenAPIUrls.push(`https://api.etherscan.io/api?module=account&action=tokenbalance&contractaddress=${address}&address=${address}&tag=latest&apikey=<your_api_key>`);
+                }
+              }
 
-  // Get token details from Etherscan API
-  const tokenDetails = {};
-  for (const url of tokenAPIUrls) {
-    const response = await fetch(url);
-    const data = await response.json();
-    if (data && data.result) {
-      const address = data.result.contractAddress;
-      const symbol = data.result.tokenSymbol;
-      const balance = web3.utils.fromWei(data.result.balance);
-      tokenDetails[address] = {
-        symbol: symbol,
-        balance: balance
-      };
-    }
-  }
+              // Get token details from Etherscan API
+              const tokenDetails = {};
+              for (const url of tokenAPIUrls) {
+                const response = await fetch(url);
+                const data = await response.json();
+                if (data && data.result) {
+                  const address = data.result.contractAddress;
+                  const symbol = data.result.tokenSymbol;
+                  const balance = web3.utils.fromWei(data.result.balance);
+                  tokenDetails[address] = {
+                    symbol: symbol,
+                    balance: balance
+                  };
+                }
+              }
 
-  // Display token balances
-  let tokenBalancesHTML = '<h2>Token Balances:</h2>';
+              // Display token balances
+              let tokenBalancesHTML = '<h2>Token Balances:</h2>';
 
-  // Loop through each token in the user's wallet
-  for (const [tokenAddress, balance] of Object.entries(tokenBalances)) {
-    const tokenContract = new web3.eth.Contract(erc20ABI, tokenAddress);
-    const symbol = tokenDetails[tokenAddress].symbol;
-    const formattedBalance = web3.utils.fromWei(balance);
+              // Loop through each token in the user's wallet
+              for (const [tokenAddress, balance] of Object.entries(tokenBalances)) {
+                const tokenContract = new web3.eth.Contract(erc20ABI, tokenAddress);
+                const symbol = tokenDetails[tokenAddress].symbol;
+                const formattedBalance = web3.utils.fromWei(balance);
 
-    // Display the token symbol and balance in the HTML
-    tokenBalancesHTML += `<p>${symbol}: ${formattedBalance}</p>`;
-  }
+                // Display the token symbol and balance in the HTML
+                tokenBalancesHTML += `<p>${symbol}: ${formattedBalance}</p>`;
+              }
 
-  // Display the token balances in the HTML
-  tokenBalancesElement.innerHTML = tokenBalancesHTML;
+              // Display the token balances in the HTML
+              tokenBalancesElement.innerHTML = tokenBalancesHTML;
 
-} catch (error) {
-  console.error(error);
-}
+            } catch (error) {
+              console.error(error);
+            }
           }
+        });
+
+        disconnectButton.addEventListener('click
 
 
 disconnectButton.addEventListener('click', async () => {
