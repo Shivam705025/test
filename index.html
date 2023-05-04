@@ -5,28 +5,91 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      font-family: sans-serif;
+      background-color: #f7f7f7;
+    }
+    #header {
+      background-color: #232323;
+      color: white;
+      padding: 10px;
+      text-align: center;
+    }
+    #content {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: white;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      border-radius: 5px;
+      margin-top: 20px;
+    }
+    h1 {
+      margin-top: 0;
+    }
+    form {
+      margin-bottom: 20px;
+    }
+    label {
+      margin-right: 10px;
+    }
+    button {
+      background-color: #232323;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      font-size: 16px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #111;
+    }
+    #movies {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+    }
     #movies li {
-      display: inline-block;
-      margin: 10px;
-      width: 300px;
-      vertical-align: top;
+      width: calc(33.33% - 10px);
+      margin-bottom: 20px;
+      background-color: white;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
     }
     #movies img {
       width: 100%;
       height: auto;
+      display: block;
+    }
+    #movies h4 {
+      margin: 10px;
+      font-size: 16px;
+      font-weight: normal;
     }
   </style>
 </head>
 <body>
-  <h1>Movie Recommendation</h1>
-  <form>
-    <label><input type="radio" name="emotion" value="happy" checked>Happy</label>
-    <label><input type="radio" name="emotion" value="sad">Sad</label>
-    <label><input type="radio" name="emotion" value="angry">Angry</label>
-    <button type="button" onclick="recommendMovies()">Get Recommendations</button>
-  </form>
-  <ul id="movies"></ul>
-
+  <div id="header">
+    <h1>Movie Recommendation</h1>
+  </div>
+  <div id="content">
+    <form>
+      <label><input type="radio" name="emotion" value="happy" checked>Happy</label>
+      <label><input type="radio" name="emotion" value="sad">Sad</label>
+      <label><input type="radio" name="emotion" value="angry">Angry</label>
+      <button type="button" onclick="recommendMovies()">Get Recommendations</button>
+    </form>
+    <ul id="movies"></ul>
+  </div>
   <script>
     function recommendMovies() {
       var emotion = document.querySelector('input[name="emotion"]:checked').value;
