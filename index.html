@@ -1,114 +1,70 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Movie Recommendation System</title>
-  <style>
-    body {
-	margin: 0;
-	padding: 0;
-	background-color: #f7f7f7;
-	font-family: Arial, sans-serif;
-}
-
-h1 {
-	text-align: center;
-	margin-top: 50px;
-}
-
-p {
-	margin-top: 50px;
-	text-align: center;
-}
-
-input[type="text"] {
-	padding: 10px;
-	border-radius: 5px;
-	border: none;
-	margin-bottom: 20px;
-}
-
-button {
-	padding: 10px;
-	background-color: #007bff;
-	color: #fff;
-	border: none;
-	border-radius: 5px;
-	cursor: pointer;
-	margin-bottom: 20px;
-}
-
-ul {
-	list-style: none;
-	padding: 0;
-	margin: 0;
-}
-
-li {
-	padding: 10px;
-	border-radius: 5px;
-	border: 1px solid #ccc;
-	margin-bottom: 10px;
-}
-
-  </style>
+	<title>Token Analyzer</title>
+	<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.8.0"></script>
+	<script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/universal-sentence-encoder@4.3.0"></script>
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
-	<h1>Movie Recommendation System</h1>
-	<p>Please enter your mood:</p>
-	<input type="text" id="user-input" name="user-input" required>
-	<button type="button" onclick="recommendMovies()">Recommend Movies</button>
-	<div id="movie-list"></div>
-	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-	<script>
-    function recommendMovies() {
-	const userInput = document.getElementById("user-input").value;
-	$.ajax({
-		url: "https://sentim-api.herokuapp.com/api/v1/",
-		data: {
-			text: userInput
-		},
-		type: "POST",
-		success: function(response) {
-			const polarity = response.result.type;
-			let mood = "";
-			if (polarity === "positive") {
-				mood = "happy";
-			} else if (polarity === "negative") {
-				mood = "sad";
-			} else {
-				mood = "neutral";
-			}
-			$.ajax({
-				url: "https://api.themoviedb.org/3/discover/movie",
-				data: {
-					api_key: "YOUR_API_KEY",
-					sort_by: "popularity.desc",
-					with_genres: "16,18",
-					"vote_average.gte": "7.5",
-					"vote_count.gte": "500",
-					with_keywords: mood
-				},
-				type: "GET",
-				success: function(response) {
-					const movies = response.results;
-					let html = "<ul>";
-					for (let i = 0; i < movies.length; i++) {
-						html += "<li>" + movies[i].title + " (" + movies[i].release_date.substr(0, 4) + ")</li>";
-					}
-					html += "</ul>";
-					document.getElementById("movie-list").innerHTML = html;
-				},
-				error: function(error) {
-					alert("An error occurred while processing your request.");
-				}
-			});
-		},
-		error: function(error) {
-			alert("An error occurred while processing your request.");
-		}
-	});
-}
+	<h1>Token Analyzer</h1>
+	<label for="token-name">Token Name:</label>
+	<input type="text" id="token-name">
+	<label for="token-symbol">Token Symbol:</label>
+	<input type="text" id="token-symbol">
+	<label for="token-price">Token Price:</label>
+	<input type="text" id="token-price">
+	<label for="token-market-cap">Token Market Cap:</label>
+	<input type="text" id="token-market-cap">
+	<label for="token-volume">Token Volume:</label>
+	<input type="text" id="token-volume">
+	<button id="analyze-button">Analyze</button>
+	<div id="result"></div>
 
-  </script>
+	<script>
+		// Load the pre-trained sentiment analysis model
+		async function loadModel() {
+			const model = await tf.loadLayersModel('https://storage.googleapis.com/tfjs-models/tfjs/sentiment_cnn_v1/model.json');
+			return model;
+		}
+
+		// Analyze the user input using the pre-trained model
+		async function analyze(model, input) {
+			const encodedInput = await model.embed(input);
+			const output = model.predict(encodedInput);
+			const score = output.arraySync()[0];
+			if (score > 0.5) {
+				return "Positive";
+			} else if (score < 0.5) {
+				return "Negative";
+			} else {
+				return "Neutral";
+			}
+		}
+
+		$(document).ready(async function() {
+			// Load the pre-trained model
+			const model = await loadModel();
+
+			// Handle button click event
+			$("#analyze-button").click(async function() {
+				// Get user input
+				const tokenName = $("#token-name").val();
+				const tokenSymbol = $("#token-symbol").val();
+				const tokenPrice = $("#token-price").val();
+				const tokenMarketCap = $("#token-market-cap").val();
+				const tokenVolume = $("#token-volume").val();
+
+				// Preprocess input data
+				const input = `${tokenName} ${tokenSymbol} ${tokenPrice} ${tokenMarketCap} ${tokenVolume}`;
+				
+				// Analyze input using the pre-trained model
+				const result = await analyze(model, input);
+
+				// Display the result
+				$("#result").text(`Sentiment: ${result}`);
+			});
+		});
+	</script>
 </body>
 </html>
