@@ -1,149 +1,114 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Movie Recommendation</title>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Movie Recommendation System</title>
   <style>
-    * {
-      box-sizing: border-box;
-    }
     body {
-      margin: 0;
-      font-family: sans-serif;
-      background-color: #f7f7f7;
-    }
-    #header {
-      background-color: #232323;
-      color: white;
-      padding: 10px;
-      text-align: center;
-    }
-    #content {
-      max-width: 800px;
-      margin: 0 auto;
-      padding: 20px;
-      background-color: white;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-      border-radius: 5px;
-      margin-top: 20px;
-    }
-    h1 {
-      margin-top: 0;
-    }
-    form {
-      margin-bottom: 20px;
-    }
-    label {
-      margin-right: 10px;
-    }
-    button {
-      background-color: #232323;
-      color: white;
-      border: none;
-      padding: 10px 20px;
-      font-size: 16px;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-    button:hover {
-      background-color: #111;
-    }
-    #movies {
-      list-style: none;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-    }
-    #movies li {
-      width: calc(33.33% - 10px);
-      margin-bottom: 20px;
-      background-color: white;
-      border-radius: 5px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-      overflow: hidden;
-    }
-    #movies img {
-      width: 100%;
-      height: auto;
-      display: block;
-    }
-    #movies h4 {
-      margin: 10px;
-      font-size: 16px;
-      font-weight: normal;
-    }
+	margin: 0;
+	padding: 0;
+	background-color: #f7f7f7;
+	font-family: Arial, sans-serif;
+}
+
+h1 {
+	text-align: center;
+	margin-top: 50px;
+}
+
+p {
+	margin-top: 50px;
+	text-align: center;
+}
+
+input[type="text"] {
+	padding: 10px;
+	border-radius: 5px;
+	border: none;
+	margin-bottom: 20px;
+}
+
+button {
+	padding: 10px;
+	background-color: #007bff;
+	color: #fff;
+	border: none;
+	border-radius: 5px;
+	cursor: pointer;
+	margin-bottom: 20px;
+}
+
+ul {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+
+li {
+	padding: 10px;
+	border-radius: 5px;
+	border: 1px solid #ccc;
+	margin-bottom: 10px;
+}
+
   </style>
 </head>
 <body>
-  <div id="header">
-    <h1>Movie Recommendation</h1>
-  </div>
-  <div id="content">
-    <form>
-      <label><input type="radio" name="emotion" value="happy" checked>Happy</label>
-      <label><input type="radio" name="emotion" value="sad">Sad</label>
-      <label><input type="radio" name="emotion" value="angry">Angry</label>
-      <button type="button" onclick="recommendMovies()">Get Recommendations</button>
-    </form>
-    <ul id="movies"></ul>
-  </div>
-  <script>
+	<h1>Movie Recommendation System</h1>
+	<p>Please enter your mood:</p>
+	<input type="text" id="user-input" name="user-input" required>
+	<button type="button" onclick="recommendMovies()">Recommend Movies</button>
+	<div id="movie-list"></div>
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<script>
     function recommendMovies() {
-      var emotion = document.querySelector('input[name="emotion"]:checked').value;
-      var movies = getMoviesByEmotion(emotion);
-      var movieList = '';
-      for (var i = 0; i < movies.length; i++) {
-        movieList += '<li><a href="' + movies[i].link + '">' +
-          '<img src="' + movies[i].image + '">' +
-          '<h4>' + movies[i].title + '</h4></a></li>';
-      }
-      document.getElementById('movies').innerHTML = movieList;
-    }
+	const userInput = document.getElementById("user-input").value;
+	$.ajax({
+		url: "https://sentim-api.herokuapp.com/api/v1/",
+		data: {
+			text: userInput
+		},
+		type: "POST",
+		success: function(response) {
+			const polarity = response.result.type;
+			let mood = "";
+			if (polarity === "positive") {
+				mood = "happy";
+			} else if (polarity === "negative") {
+				mood = "sad";
+			} else {
+				mood = "neutral";
+			}
+			$.ajax({
+				url: "https://api.themoviedb.org/3/discover/movie",
+				data: {
+					api_key: "YOUR_API_KEY",
+					sort_by: "popularity.desc",
+					with_genres: "16,18",
+					"vote_average.gte": "7.5",
+					"vote_count.gte": "500",
+					with_keywords: mood
+				},
+				type: "GET",
+				success: function(response) {
+					const movies = response.results;
+					let html = "<ul>";
+					for (let i = 0; i < movies.length; i++) {
+						html += "<li>" + movies[i].title + " (" + movies[i].release_date.substr(0, 4) + ")</li>";
+					}
+					html += "</ul>";
+					document.getElementById("movie-list").innerHTML = html;
+				},
+				error: function(error) {
+					alert("An error occurred while processing your request.");
+				}
+			});
+		},
+		error: function(error) {
+			alert("An error occurred while processing your request.");
+		}
+	});
+}
 
-    function getMoviesByEmotion(emotion) {
-      var movies = [
-        {
-          title: 'Forrest Gump',
-          image: 'https://images-na.ssl-images-amazon.com/images/I/51c8VVBW%2BWL._AC_SY445_.jpg',
-          link: 'https://www.imdb.com/title/tt0109830/'
-        },
-        {
-          title: 'The Pursuit of Happyness',
-          image: 'https://images-na.ssl-images-amazon.com/images/I/71rNJQsFjSL._AC_SY679_.jpg',
-          link: 'https://www.imdb.com/title/tt0454921/'
-        },
-        {
-          title: 'Inside Out',
-          image: 'https://images-na.ssl-images-amazon.com/images/I/71leSkjPl-L._AC_SY679_.jpg',
-          link: 'https://www.imdb.com/title/tt2096673/'
-        },
-        {
-          title: 'Schindler\'s List',
-          image: 'https://images-na.ssl-images-amazon.com/images/I/71N20WfHkTL._AC_SY741_.jpg',
-          link: 'https://www.imdb.com/title/tt0108052/'
-        },
-        {
-          title: 'The Shawshank Redemption',
-          image: 'https://images-na.ssl-images-amazon.com/images/I/51UVw1JWQWL._AC_SY741_.jpg',
-          link: 'https://www.imdb.com/title/tt0111161/'
-        },
-        {
-          title: 'The Godfather',
-          image: 'https://images-na.ssl-images-amazon.com/images/I/61ABeN%2BP8aL._AC_SY679_.jpg',
-          link: 'https://www.imdb.com/title/tt0068646/'
-        }
-      ];
-       if (emotion === 'happy') {
-        return [movies[0], movies[1], movies[2]];
-      } else if (emotion === 'sad') {
-        return [movies[3], movies[4]];
-      } else if (emotion === 'angry') {
-        return [movies[5]];
-      }
-    }
   </script>
 </body>
 </html>
