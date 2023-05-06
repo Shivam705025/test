@@ -1,70 +1,129 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Token Analyzer</title>
-	<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.8.0"></script>
-	<script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/universal-sentence-encoder"></script>
-	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<title>Website Score</title>
+	<script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js"></script>
 </head>
 <body>
-	<h1>Token Analyzer</h1>
-	<label for="token-name">Token Name:</label>
-	<input type="text" id="token-name">
-	<label for="token-symbol">Token Symbol:</label>
-	<input type="text" id="token-symbol">
-	<label for="token-price">Token Price:</label>
-	<input type="text" id="token-price">
-	<label for="token-market-cap">Token Market Cap:</label>
-	<input type="text" id="token-market-cap">
-	<label for="token-volume">Token Volume:</label>
-	<input type="text" id="token-volume">
-	<button id="analyze-button">Analyze</button>
-	<div id="result"></div>
+	<h1>Website Score:</h1>
+	<p id="score">0 seconds</p>
+	<button id="connect-wallet">Connect Wallet</button>
+	<button id="store-score">Store Score</button>
+	<p id="current-wallet"></p>
+	<p id="error-message"></p>
+	<h2>Top 100 Scores:</h2>
+	<ul id="top-scores"></ul>
 
 	<script>
-		// Load the pre-trained sentiment analysis model
-		async function loadModel() {
-			const model = await tf.loadLayersModel('https://storage.googleapis.com/tfjs-models/tfjs/sentiment_cnn_v1/model.json');
-			return model;
-		}
+		let provider;
+		let signer;
+		let scoreTokenContract;
+		let walletAddress;
+		let score = 0;
+		
+		const SCORE_TOKEN_ABI = [
+  {
+    "inputs": [],
+    "name": "getTopScores",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "score",
+            "type": "uint256"
+          },
+          {
+            "internalType": "address",
+            "name": "addr",
+            "type": "address"
+          }
+        ],
+        "internalType": "struct ScoreToken.Score[]",
+        "name": "",
+        "type": "tuple[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "score",
+        "type": "uint256"
+      }
+    ],
+    "name": "storeScore",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  }
+];
 
-		// Analyze the user input using the pre-trained model
-		async function analyze(model, input) {
-			const encodedInput = await model.embed(input);
-			const output = model.predict(encodedInput);
-			const score = output.arraySync()[0];
-			if (score > 0.5) {
-				return "Positive";
-			} else if (score < 0.5) {
-				return "Negative";
-			} else {
-				return "Neutral";
+
+		const updateScore = () => {
+			let currentTime = new Date().getTime();
+			let elapsedTime = currentTime - startTime;
+			score = Math.floor(elapsedTime / 1000);
+			document.getElementById("score").textContent = score + " seconds";
+		};
+
+		const connectWallet = async () => {
+			if (typeof window.ethereum === "undefined") {
+				document.getElementById("error-message").textContent = "Please install MetaMask to use this website.";
+				return;
 			}
-		}
+			try {
+				await window.ethereum.request({ method: "eth_requestAccounts" });
+				provider = new ethers.providers.Web3Provider(window.ethereum);
+				signer = provider.getSigner();
+				walletAddress = await signer.getAddress();
+				document.getElementById("current-wallet").textContent = "Connected to wallet address: " + walletAddress;
+				scoreTokenContract = new ethers.Contract("SCORE_TOKEN_ADDRESS", SCORE_TOKEN_ABI, signer);
+			} catch (err) {
+				document.getElementById("error-message").textContent = err.message;
+			}
+		};
 
-		$(document).ready(async function() {
-			// Load the pre-trained model
-			const model = await loadModel();
+		const storeScore = async () => {
+			if (!scoreTokenContract) {
+				document.getElementById("error-message").textContent = "Please connect a wallet to store your score.";
+				return;
+			}
+			try {
+				await scoreTokenContract.storeScore(score);
+				document.getElementById("error-message").textContent = "Score stored successfully.";
+			} catch (err) {
+				document.getElementById("error-message").textContent = err.message;
+			}
+		};
 
-			// Handle button click event
-			$("#analyze-button").click(async function() {
-				// Get user input
-				const tokenName = $("#token-name").val();
-				const tokenSymbol = $("#token-symbol").val();
-				const tokenPrice = $("#token-price").val();
-				const tokenMarketCap = $("#token-market-cap").val();
-				const tokenVolume = $("#token-volume").val();
+		const getTopScores = async () => {
+			if (!scoreTokenContract) {
+				document.getElementById("error-message").textContent = "Please connect a wallet to get top scores.";
+				return;
+			}
+			try {
+				const topScores = await scoreTokenContract.getTopScores();
+				document.getElementById("top-scores").innerHTML = "";
+				topScores.forEach((score, index) => {
+					const listItem = document.createElement("li");
+					listItem.textContent = (index + 1) + ". " + score.score + " seconds - " + score.address;
+					document.getElementById("top-scores").appendChild(listItem);
+				});
+			} catch (err) {
+				document.getElementById("error-message").textContent = err.message;
+			}
+		};
 
-				// Preprocess input data
-				const input = `${tokenName} ${tokenSymbol} ${tokenPrice} ${tokenMarketCap} ${tokenVolume}`;
-				
-				// Analyze input using the pre-trained model
-				const result = await analyze(model, input);
+		document.getElementById("connect-wallet").addEventListener("click", connectWallet);
+		document.getElementById("store-score").addEventListener("click", storeScore);
 
-				// Display the result
-				$("#result").text(`Sentiment: ${result}`);
-			});
-		});
+		let startTime = new Date().getTime();
+		setInterval(updateScore, 1000);
+		setInterval(getTopScores, 5000);
 	</script>
 </body>
 </html>
