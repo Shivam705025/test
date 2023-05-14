@@ -1,45 +1,36 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Website Score</title>
-	<script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js"></script>
-</head>
-<body>
-	<h1>Website Score:</h1>
-	<p id="score">0 seconds</p>
-	<button id="connect-wallet">Connect Wallet</button>
-	<button id="store-score">Store Score</button>
-	<p id="current-wallet"></p>
-	<p id="error-message"></p>
-	<h2>Top 100 Scores:</h2>
-	<ul id="top-scores"></ul>
-
-	<script>
-		let provider;
-		let signer;
-		let scoreTokenContract;
-		let walletAddress;
-		let score = 0;
-		
-		const SCORE_TOKEN_ABI = [
+    <title>Message Store</title>
+    <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js"></script>
+    <script type="text/javascript">
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        const signer = provider.getSigner();
+        const contractAddress = "0xc7746f4ce04f2981d8800d46c04a5c3988347a50";
+        const contractAbi = [
   {
     "inputs": [],
-    "name": "getTopScores",
+    "name": "getMessages",
     "outputs": [
       {
         "components": [
           {
-            "internalType": "uint256",
-            "name": "score",
-            "type": "uint256"
+            "internalType": "address",
+            "name": "from",
+            "type": "address"
           },
           {
             "internalType": "address",
-            "name": "addr",
+            "name": "to",
             "type": "address"
+          },
+          {
+            "internalType": "string",
+            "name": "text",
+            "type": "string"
           }
         ],
-        "internalType": "struct ScoreToken.Score[]",
+        "internalType": "struct MessageStore.Message[]",
         "name": "",
         "type": "tuple[]"
       }
@@ -50,80 +41,81 @@
   {
     "inputs": [
       {
-        "internalType": "uint256",
-        "name": "score",
-        "type": "uint256"
+        "internalType": "address",
+        "name": "to",
+        "type": "address"
+      },
+      {
+        "internalType": "string",
+        "name": "text",
+        "type": "string"
       }
     ],
-    "name": "storeScore",
+    "name": "storeMessage",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "from",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "to",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "text",
+        "type": "string"
+      }
+    ],
+    "name": "MessageStored",
+    "type": "event"
   }
-];
+]
 
+        const messageStore = new ethers.Contract(contractAddress, contractAbi, signer);
 
-		const updateScore = () => {
-			let currentTime = new Date().getTime();
-			let elapsedTime = currentTime - startTime;
-			score = Math.floor(elapsedTime / 1000);
-			document.getElementById("score").textContent = score + " seconds";
-		};
+        async function storeMessage() {
+            const to = document.getElementById("to").value;
+            const text = document.getElementById("text").value;
+            await messageStore.storeMessage(to, text);
+            alert("Message stored successfully!");
+        }
 
-		const connectWallet = async () => {
-			if (typeof window.ethereum === "undefined") {
-				document.getElementById("error-message").textContent = "Please install MetaMask to use this website.";
-				return;
-			}
-			try {
-				await window.ethereum.request({ method: "eth_requestAccounts" });
-				provider = new ethers.providers.Web3Provider(window.ethereum);
-				signer = provider.getSigner();
-				walletAddress = await signer.getAddress();
-				document.getElementById("current-wallet").textContent = "Connected to wallet address: " + walletAddress;
-				scoreTokenContract = new ethers.Contract("SCORE_TOKEN_ADDRESS", SCORE_TOKEN_ABI, signer);
-			} catch (err) {
-				document.getElementById("error-message").textContent = err.message;
-			}
-		};
-
-		const storeScore = async () => {
-			if (!scoreTokenContract) {
-				document.getElementById("error-message").textContent = "Please connect a wallet to store your score.";
-				return;
-			}
-			try {
-				await scoreTokenContract.storeScore(score);
-				document.getElementById("error-message").textContent = "Score stored successfully.";
-			} catch (err) {
-				document.getElementById("error-message").textContent = err.message;
-			}
-		};
-
-		const getTopScores = async () => {
-			if (!scoreTokenContract) {
-				document.getElementById("error-message").textContent = "Please connect a wallet to get top scores.";
-				return;
-			}
-			try {
-				const topScores = await scoreTokenContract.getTopScores();
-				document.getElementById("top-scores").innerHTML = "";
-				topScores.forEach((score, index) => {
-					const listItem = document.createElement("li");
-					listItem.textContent = (index + 1) + ". " + score.score + " seconds - " + score.address;
-					document.getElementById("top-scores").appendChild(listItem);
-				});
-			} catch (err) {
-				document.getElementById("error-message").textContent = err.message;
-			}
-		};
-
-		document.getElementById("connect-wallet").addEventListener("click", connectWallet);
-		document.getElementById("store-score").addEventListener("click", storeScore);
-
-		let startTime = new Date().getTime();
-		setInterval(updateScore, 1000);
-		setInterval(getTopScores, 5000);
-	</script>
+        async function getMessages() {
+            const messages = await messageStore.getMessages();
+            let messageList = "";
+            for (let i = 0; i < messages.length; i++) {
+                messageList += `<li>From: ${messages[i].from}, To: ${messages[i].to}, Text: ${messages[i].text}</li>`;
+            }
+            document.getElementById("messageList").innerHTML = messageList;
+        }
+    </script>
+</head>
+<body>
+    <h1>Message Store</h1>
+    <h2>Send Message</h2>
+    <div>
+        <label for="to">To:</label>
+        <input type="text" id="to" name="to">
+    </div>
+    <div>
+        <label for="text">Text:</label>
+        <input type="text" id="text" name="text">
+    </div>
+    <button onclick="storeMessage()">Send Message</button>
+    <h2>Get Messages</h2>
+    <ul id="messageList"></ul>
+    <button onclick="getMessages()">Refresh</button>
 </body>
 </html>
