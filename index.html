@@ -1,126 +1,44 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Message Store</title>
-    <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js"></script>
-    <script type="text/javascript">
-        const provider = new ethers.providers.Web3Provider(window.ethereum);
-        const signer = provider.getSigner();
-        const contractAddress = "0xc7746f4ce04f2981d8800d46c04a5c3988347a50";
-        const contractAbi = [
-  {
-    "inputs": [],
-    "name": "getMessages",
-    "outputs": [
-      {
-        "components": [
-          {
-            "internalType": "address",
-            "name": "from",
-            "type": "address"
-          },
-          {
-            "internalType": "address",
-            "name": "to",
-            "type": "address"
-          },
-          {
-            "internalType": "string",
-            "name": "text",
-            "type": "string"
-          }
-        ],
-        "internalType": "struct MessageStore.Message[]",
-        "name": "",
-        "type": "tuple[]"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "to",
-        "type": "address"
-      },
-      {
-        "internalType": "string",
-        "name": "text",
-        "type": "string"
-      }
-    ],
-    "name": "storeMessage",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "from",
-        "type": "address"
-      },
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "to",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "string",
-        "name": "text",
-        "type": "string"
-      }
-    ],
-    "name": "MessageStored",
-    "type": "event"
-  }
-]
-
-        const messageStore = new ethers.Contract(contractAddress, contractAbi, signer);
-
-        async function storeMessage() {
-            const to = document.getElementById("to").value;
-            const text = document.getElementById("text").value;
-            await messageStore.storeMessage(to, text);
-            alert("Message stored successfully!");
-        }
-
-       async function getMessages() {
-    if (window.ethereum && window.ethereum.selectedAddress) {
-        const messages = await messageStore.getMessages();
-        let messageList = "";
-        for (let i = 0; i < messages.length; i++) {
-            messageList += `<li>From: ${messages[i].from}, To: ${messages[i].to}, Text: ${messages[i].text}</li>`;
-        }
-        document.getElementById("messageList").innerHTML = messageList;
-    } else {
-        alert("Please connect your wallet first.");
-    }
-}
-
-    </script>
+  <title>Connect to Rainbow Wallet using Web3 Connect</title>
+  <script src="https://rainbow.me/sdk/rainbow-sdk.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/web3@1.5.0/dist/web3.min.js"></script>
 </head>
 <body>
-    <h1>Message Store</h1>
-    <h2>Send Message</h2>
-    <div>
-        <label for="to">To:</label>
-        <input type="text" id="to" name="to">
-    </div>
-    <div>
-        <label for="text">Text:</label>
-        <input type="text" id="text" name="text">
-    </div>
-    <button onclick="storeMessage()">Send Message</button>
-    <h2>Get Messages</h2>
-    <ul id="messageList"></ul>
-    <button onclick="getMessages()">Refresh</button>
+  <h1>Connect to Rainbow Wallet using Web3 Connect</h1>
+  <p>Wallet Address: <span id="wallet-address"></span></p>
+  <p>Wallet Balance: <span id="wallet-balance"></span></p>
+
+  <script>
+    const sdk = new RainbowSDK({
+      host: 'official',
+      rainbow: {
+        host: 's2s-platform.rainbow.sso',
+        mode: 'xmpp'
+      }
+    });
+
+    sdk.start();
+
+    (async function() {
+      const provider = await sdk.connector.getProvider('ethereum');
+      const web3 = new Web3(provider);
+
+      const accounts = await web3.eth.getAccounts();
+
+      if (accounts.length > 0) {
+        console.log('Connected to wallet:', accounts[0]);
+
+        const addressElement = document.getElementById('wallet-address');
+        const balanceElement = document.getElementById('wallet-balance');
+        addressElement.textContent = accounts[0];
+        const balance = await web3.eth.getBalance(accounts[0]);
+        balanceElement.textContent = web3.utils.fromWei(balance, 'ether');
+      } else {
+        console.error('Failed to connect to wallet');
+      }
+    })();
+  </script>
 </body>
 </html>
