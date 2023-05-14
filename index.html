@@ -92,14 +92,19 @@
             alert("Message stored successfully!");
         }
 
-        async function getMessages() {
-            const messages = await messageStore.getMessages();
-            let messageList = "";
-            for (let i = 0; i < messages.length; i++) {
-                messageList += `<li>From: ${messages[i].from}, To: ${messages[i].to}, Text: ${messages[i].text}</li>`;
-            }
-            document.getElementById("messageList").innerHTML = messageList;
+       async function getMessages() {
+    if (window.ethereum && window.ethereum.selectedAddress) {
+        const messages = await messageStore.getMessages();
+        let messageList = "";
+        for (let i = 0; i < messages.length; i++) {
+            messageList += `<li>From: ${messages[i].from}, To: ${messages[i].to}, Text: ${messages[i].text}</li>`;
         }
+        document.getElementById("messageList").innerHTML = messageList;
+    } else {
+        alert("Please connect your wallet first.");
+    }
+}
+
     </script>
 </head>
 <body>
