@@ -100,8 +100,251 @@
     <script>
         // Contract address and ABI
         const contractAddress = "0x8827e9d2a110E090EA53B0A6eB2C374B318dE576";
-        const contractABI = [{"inputs":[],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint256","name":"donationId","type":"uint256"},{"indexed":false,"internalType":"address","name":"creator","type":"address"}],"name":"DonationAdded","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"internalType":"uint256","name":"donationId","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"DonationDistributed","type":"event"},{"inputs":[{"internalType":"address[]","name":"_addresses","type":"address[]"},{"internalType":"string","name":"_name","type":"string"},{"internalType":"string","name":"_description","type":"string"},{"internalType":"uint256","name":"_startDate","type":"uint256"},{"internalType":"uint256","name":"_endDate","type":"uint256"},{"internalType":"uint256","name":"_minDonation","type":"uint256"},{"internalType":"uint256","name":"_maxDonation","type":"uint256"}],"name":"addDonation","outputs":[],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"uint256","name":"_donationId","type":"uint256"}],"name":"distributeDonations","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"_donationId","type":"uint256"}],"name":"donate","outputs":[],"stateMutability":"payable","type":"function"},{"inputs":[{"internalType":"uint256","name":"_donationId","type":"uint256"}],"name":"getDonation","outputs":[{"components":[{"internalType":"address","name":"creator","type":"address"},{"internalType":"address[]","name":"addresses","type":"address[]"},{"internalType":"string","name":"name","type":"string"},{"internalType":"string","name":"description","type":"string"},{"internalType":"uint256","name":"startDate","type":"uint256"},{"internalType":"uint256","name":"endDate","type":"uint256"},{"internalType":"uint256","name":"minDonation","type":"uint256"},{"internalType":"uint256","name":"maxDonation","type":"uint256"},{"internalType":"uint256","name":"totalDonations","type":"uint256"},{"internalType":"uint256","name":"distributedDonations","type":"uint256"}],"internalType":"struct DonationContract.Donation","name":"","type":"tuple"}],"stateMutability":"view","type":"function"}];
-
+        const contractABI = [
+  {
+    "inputs": [],
+    "stateMutability": "nonpayable",
+    "type": "constructor"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "donationId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "creator",
+        "type": "address"
+      }
+    ],
+    "name": "DonationAdded",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "donationId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "DonationDistributed",
+    "type": "event"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address[]",
+        "name": "_addresses",
+        "type": "address[]"
+      },
+      {
+        "internalType": "string",
+        "name": "_name",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_description",
+        "type": "string"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_startDate",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_endDate",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_minDonation",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_maxDonation",
+        "type": "uint256"
+      }
+    ],
+    "name": "addDonation",
+    "outputs": [],
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_donationId",
+        "type": "uint256"
+      }
+    ],
+    "name": "getDonation",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "creator",
+            "type": "address"
+          },
+          {
+            "internalType": "address[]",
+            "name": "addresses",
+            "type": "address[]"
+          },
+          {
+            "internalType": "string",
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "description",
+            "type": "string"
+          },
+          {
+            "internalType": "uint256",
+            "name": "startDate",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "endDate",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "minDonation",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "maxDonation",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "totalDonations",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "distributedDonations",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct DonationContract.Donation",
+        "name": "",
+        "type": "tuple"
+      }
+    ],
+    "name": "getDonation",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "creator",
+            "type": "address"
+          },
+          {
+            "internalType": "address[]",
+            "name": "addresses",
+            "type": "address[]"
+          },
+          {
+            "internalType": "string",
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "description",
+            "type": "string"
+          },
+          {
+            "internalType": "uint256",
+            "name": "startDate",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "endDate",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "minDonation",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "maxDonation",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "totalDonations",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "distributedDonations",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct DonationContract.Donation",
+        "name": "",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_donationId",
+        "type": "uint256"
+      }
+    ],
+    "name": "donate",
+    "outputs": [],
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_donationId",
+        "type": "uint256"
+      }
+    ],
+    "name": "distributeDonations",
+    "outputs": [],
+    "stateMutability": "external",
+    "type": "function"
+  }
+];
         // Web3 instance
         let web3;
 
