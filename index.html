@@ -403,74 +403,77 @@
         }
 
         // Fetch existing donations
-        async function fetchDonations() {
-            try {
-                const donationsGrid = document.getElementById("donationsGrid");
-                donationsGrid.innerHTML = ""; // Clear the grid
+async function fetchDonations() {
+  try {
+    const donationsGrid = document.getElementById("donationsGrid");
+    donationsGrid.innerHTML = ""; // Clear the grid
 
-                const donationCount = await donationContract.methods.getDonationCount().call();
+    const donationsArray = await donationContract.methods.getDonations().call();
 
-                for (let i = 0; i < donationCount; i++) {
-                    const donation = await donationContract.methods.getDonation(i).call();
+    for (let i = 0; i < donationsArray.length; i++) {
+      const donationId = donationsArray[i];
 
-                    if (donation.endDate > Math.floor(Date.now() / 1000)) {
-                        // Only display active donations
+      const donation = await donationContract.methods.getDonation(donationId).call();
 
-                        const donationCard = document.createElement("div");
-                        donationCard.className = "donation-card";
+      if (donation.endDate > Math.floor(Date.now() / 1000)) {
+        // Only display active donations
 
-                        const nameElement = document.createElement("h2");
-                        nameElement.textContent = donation.name;
-                        donationCard.appendChild(nameElement);
+        const donationCard = document.createElement("div");
+        donationCard.className = "donation-card";
 
-                        const descriptionElement = document.createElement("p");
-                        descriptionElement.textContent = donation.description;
-                        donationCard.appendChild(descriptionElement);
+        const nameElement = document.createElement("h2");
+        nameElement.textContent = donation.name;
+        donationCard.appendChild(nameElement);
 
-                        const creatorElement = document.createElement("p");
-                        creatorElement.textContent = "Creator: " + donation.creator;
-                        donationCard.appendChild(creatorElement);
+        const descriptionElement = document.createElement("p");
+        descriptionElement.textContent = donation.description;
+        donationCard.appendChild(descriptionElement);
 
-                        const startDateElement = document.createElement("p");
-                                                startDateElement.textContent = "Start Date: " + new Date(donation.startDate * 1000).toLocaleString();
-                        donationCard.appendChild(startDateElement);
+        const creatorElement = document.createElement("p");
+        creatorElement.textContent = "Creator: " + donation.creator;
+        donationCard.appendChild(creatorElement);
 
-                        const endDateElement = document.createElement("p");
-                        endDateElement.textContent = "End Date: " + new Date(donation.endDate * 1000).toLocaleString();
-                        donationCard.appendChild(endDateElement);
+        const startDateElement = document.createElement("p");
+        startDateElement.textContent = "Start Date: " + new Date(donation.startDate * 1000).toLocaleString();
+        donationCard.appendChild(startDateElement);
 
-                        const minDonationElement = document.createElement("p");
-                        minDonationElement.textContent = "Minimum Donation: " + web3.utils.fromWei(donation.minDonation) + " ETH";
-                        donationCard.appendChild(minDonationElement);
+        const endDateElement = document.createElement("p");
+        endDateElement.textContent = "End Date: " + new Date(donation.endDate * 1000).toLocaleString();
+        donationCard.appendChild(endDateElement);
 
-                        const maxDonationElement = document.createElement("p");
-                        maxDonationElement.textContent = "Maximum Donation: " + web3.utils.fromWei(donation.maxDonation) + " ETH";
-                        donationCard.appendChild(maxDonationElement);
+        const minDonationElement = document.createElement("p");
+        minDonationElement.textContent = "Minimum Donation: " + donation.minDonation + " wei";
+        donationCard.appendChild(minDonationElement);
 
-                        const totalDonationsElement = document.createElement("p");
-                        totalDonationsElement.textContent = "Total Donations: " + web3.utils.fromWei(donation.totalDonations) + " ETH";
-                        donationCard.appendChild(totalDonationsElement);
+        const maxDonationElement = document.createElement("p");
+        maxDonationElement.textContent = "Maximum Donation: " + donation.maxDonation + " wei";
+        donationCard.appendChild(maxDonationElement);
 
-                        const distributedDonationsElement = document.createElement("p");
-                        distributedDonationsElement.textContent = "Distributed Donations: " + web3.utils.fromWei(donation.distributedDonations) + " ETH";
-                        donationCard.appendChild(distributedDonationsElement);
+        const totalDonationsElement = document.createElement("p");
+        totalDonationsElement.textContent = "Total Donations: " + donation.totalDonations + " wei";
+        donationCard.appendChild(totalDonationsElement);
 
-                        if (donation.totalDonations > donation.distributedDonations) {
-                            const donateButton = document.createElement("button");
-                            donateButton.textContent = "Donate";
-                            donateButton.addEventListener("click", () => {
-                                showDonateModal(i);
-                            });
-                            donationCard.appendChild(donateButton);
-                        }
+        const distributedDonationsElement = document.createElement("p");
+        distributedDonationsElement.textContent = "Distributed Donations: " + donation.distributedDonations + " wei";
+        donationCard.appendChild(distributedDonationsElement);
 
-                        donationsGrid.appendChild(donationCard);
-                    }
-                }
-            } catch (error) {
-                console.error(error);
-            }
+        if (donation.totalDonations > donation.distributedDonations) {
+          const donateButton = document.createElement("button");
+          donateButton.textContent = "Donate";
+          donateButton.addEventListener("click", () => {
+            showDonateModal(donationId);
+          });
+          donationCard.appendChild(donateButton);
         }
+
+        donationsGrid.appendChild(donationCard);
+      }
+    }
+  } catch (error) {
+    console.error(error);
+  }
+}
+
 
         // Show donate modal
         function showDonateModal(donationId) {
