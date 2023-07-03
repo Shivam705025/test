@@ -408,7 +408,7 @@ async function fetchDonations() {
     const donationsGrid = document.getElementById("donationsGrid");
     donationsGrid.innerHTML = ""; // Clear the grid
 
-    const donationsArray = await donationContract.methods.getDonations().call();
+    const donationsArray = await donationContract.methods.getDonation().call();
 
     for (let i = 0; i < donationsArray.length; i++) {
       const donationId = donationsArray[i];
