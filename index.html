@@ -329,20 +329,22 @@
             }
         }
 
-        // Function to handle donation
+      // Function to handle donation
 async function donate(donationId) {
-    const donation = donations[donationId]; // Access the donations array
-
-    const donationAmount = Number(
-        prompt(`Enter donation amount (between ${donation.minDonation} and ${donation.maxDonation}):`)
-    );
-
-    if (donationAmount < donation.minDonation || donationAmount > donation.maxDonation) {
-        alert('Invalid donation amount. Please enter a valid amount.');
-        return;
-    }
-
     try {
+        const donationTable = document.getElementById('donationTable');
+        const donations = await donationContract.methods.getDonations().call();
+        const donation = donations[donationId];
+
+        const donationAmount = Number(
+            prompt(`Enter donation amount (between ${donation.minDonation} and ${donation.maxDonation}):`)
+        );
+
+        if (donationAmount < donation.minDonation || donationAmount > donation.maxDonation) {
+            alert('Invalid donation amount. Please enter a valid amount.');
+            return;
+        }
+
         const accounts = await web3.eth.requestAccounts();
         const donor = accounts[0];
 
@@ -358,6 +360,7 @@ async function donate(donationId) {
         alert('Failed to make a donation. Please try again.');
     }
 }
+
 
 
         // Execute the getDonations function when the page loads
