@@ -78,9 +78,189 @@
     </div>
    <script src="https://cdn.jsdelivr.net/npm/web3@1.5.3/dist/web3.min.js"></script>
     <script>
-        const donationContractAddress = '<CONTRACT_ADDRESS>';
+        const donationContractAddress = '0x3fe76112c68fa9685bbe5a45308632c2404ec351';
         const donationContractABI = [
-            // Paste the ABI of the smart contract here
+            {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "_addresses",
+        "type": "address[]"
+      },
+      {
+        "name": "_name",
+        "type": "string"
+      },
+      {
+        "name": "_description",
+        "type": "string"
+      },
+      {
+        "name": "_startDate",
+        "type": "uint256"
+      },
+      {
+        "name": "_endDate",
+        "type": "uint256"
+      },
+      {
+        "name": "_minDonation",
+        "type": "uint256"
+      },
+      {
+        "name": "_maxDonation",
+        "type": "uint256"
+      }
+    ],
+    "name": "addDonation",
+    "outputs": [],
+    "payable": true,
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "getDonations",
+    "outputs": [
+      {
+        "components": [
+          {
+            "name": "creator",
+            "type": "address"
+          },
+          {
+            "name": "addresses",
+            "type": "address[]"
+          },
+          {
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "name": "description",
+            "type": "string"
+          },
+          {
+            "name": "startDate",
+            "type": "uint256"
+          },
+          {
+            "name": "endDate",
+            "type": "uint256"
+          },
+          {
+            "name": "minDonation",
+            "type": "uint256"
+          },
+          {
+            "name": "maxDonation",
+            "type": "uint256"
+          },
+          {
+            "name": "totalDonations",
+            "type": "uint256"
+          },
+          {
+            "name": "distributedDonations",
+            "type": "uint256"
+          }
+        ],
+        "name": "",
+        "type": "tuple[]"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "_donationId",
+        "type": "uint256"
+      }
+    ],
+    "name": "donate",
+    "outputs": [],
+    "payable": true,
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "_donationId",
+        "type": "uint256"
+      }
+    ],
+    "name": "distributeDonations",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [],
+    "name": "owner",
+    "outputs": [
+      {
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "constructor"
+  },
+  {
+    "payable": true,
+    "stateMutability": "payable",
+    "type": "fallback"
+  },
+    {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "name": "donationId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "name": "creator",
+        "type": "address"
+      }
+    ],
+    "name": "DonationAdded",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "name": "donationId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "DonationDistributed",
+    "type": "event"
+  }
         ];
 
         const web3 = new Web3(window.ethereum);
