@@ -310,16 +310,17 @@
                     const donation = donations[i];
                     const row = document.createElement('tr');
                     row.innerHTML = `
-                        <td>${donation.name}</td>
-                        <td>${donation.description}</td>
-                        <td>${new Date(donation.startDate * 1000)}</td>
-                        <td>${new Date(donation.endDate * 1000)}</td>
-                        <td>${donation.minDonation}</td>
-                        <td>${donation.maxDonation}</td>
-                        <td>
-                            <button class="donate-button" onclick="donate(${i})">Donate</button>
-                        </td>
-                    `;
+    <td>${donation.name}</td>
+    <td>${donation.description}</td>
+    <td>${new Date(donation.startDate * 1000)}</td>
+    <td>${new Date(donation.endDate * 1000)}</td>
+    <td>${donation.minDonation}</td>
+    <td>${donation.maxDonation}</td>
+    <td>
+        <input type="number" id="donationAmount${i}" placeholder="Donation Amount">
+        <button class="donate-button" onclick="donate(${i})">Donate</button>
+    </td>
+`;
                     donationTable.appendChild(row);
                 }
             } catch (error) {
@@ -329,26 +330,35 @@
         }
 
         // Function to handle donation
-        async function donate(donationId) {
-            const donation = await donationContract.methods.getDonations()[donationId].call();
-            const donationAmount = Number(prompt(`Enter donation amount (between ${donation.minDonation} and ${donation.maxDonation}):`));
+async function donate(donationId) {
+    const donation = donations[donationId]; // Access the donations array
 
-            try {
-                const accounts = await web3.eth.requestAccounts();
-                const donor = accounts[0];
+    const donationAmount = Number(
+        prompt(`Enter donation amount (between ${donation.minDonation} and ${donation.maxDonation}):`)
+    );
 
-                await donationContract.methods.donate(donationId).send({
-                    from: donor,
-                    value: donationAmount + 0.1 * 10 ** 18, // Adding 0.1 Ether as tax amount
-                });
+    if (donationAmount < donation.minDonation || donationAmount > donation.maxDonation) {
+        alert('Invalid donation amount. Please enter a valid amount.');
+        return;
+    }
 
-                alert('Donation successful!');
-                window.location.reload();
-            } catch (error) {
-                console.error(error);
-                alert('Failed to make a donation. Please try again.');
-            }
-        }
+    try {
+        const accounts = await web3.eth.requestAccounts();
+        const donor = accounts[0];
+
+        await donationContract.methods.donate(donationId).send({
+            from: donor,
+            value: donationAmount + 0.1 * 10 ** 18, // Adding 0.1 Ether as tax amount
+        });
+
+        alert('Donation successful!');
+        window.location.reload();
+    } catch (error) {
+        console.error(error);
+        alert('Failed to make a donation. Please try again.');
+    }
+}
+
 
         // Execute the getDonations function when the page loads
         window.addEventListener('load', () => {
