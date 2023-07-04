@@ -24,9 +24,12 @@
             border: 1px solid #ddd;
             border-radius: 5px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
         }
         .donation-card:hover {
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transform: scale(1.05);
         }
         .donation-card h2 {
             margin-top: 0;
@@ -44,8 +47,30 @@
             display: inline-block;
             cursor: pointer;
             border-radius: 4px;
+            transition: background-color 0.3s ease;
         }
         .donate-button:hover {
+            background-color: #45a049;
+        }
+        input[type="text"],
+        input[type="number"],
+        input[type="datetime-local"],
+        input[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+            font-family: Arial, sans-serif;
+        }
+        input[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        input[type="submit"]:hover {
             background-color: #45a049;
         }
     </style>
