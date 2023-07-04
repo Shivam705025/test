@@ -12,19 +12,27 @@
         h1 {
             text-align: center;
         }
-        form {
-            margin-bottom: 20px;
+        .donation-cards {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
         }
-        table {
-            width: 100%;
-            border-collapse: collapse;
+        .donation-card {
+            width: 300px;
+            margin: 10px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
-        th, td {
-            padding: 8px;
-            border-bottom: 1px solid #ddd;
+        .donation-card:hover {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
-        tr:hover {
-            background-color: #f5f5f5;
+        .donation-card h2 {
+            margin-top: 0;
+        }
+        .donation-card p {
+            margin: 0;
         }
         .donate-button {
             background-color: #4CAF50;
@@ -64,23 +72,13 @@
             <input type="submit" value="Create Donation">
         </form>
         <h2>Donations</h2>
-        <table id="donationTable">
-            <tr>
-                <th>Name</th>
-                <th>Description</th>
-                <th>Start Date</th>
-                <th>End Date</th>
-                <th>Min Donation</th>
-                <th>Max Donation</th>
-                <th>Action</th>
-            </tr>
-        </table>
+        <div class="donation-cards" id="donationCards"></div>
     </div>
    <script src="https://cdn.jsdelivr.net/npm/web3@1.5.3/dist/web3.min.js"></script>
     <script>
-        const donationContractAddress = '0x3fe76112c68fa9685bbe5a45308632c2404ec351';
-        const donationContractABI = [
-            {
+    const donationContractAddress = '0x3fe76112c68fa9685bbe5a45308632c2404ec351';
+    const donationContractABI = [
+        {
     "constant": false,
     "inputs": [
       {
@@ -261,77 +259,78 @@
     "name": "DonationDistributed",
     "type": "event"
   }
-        ];
+    ];
 
-        const web3 = new Web3(window.ethereum);
-        const donationContract = new web3.eth.Contract(donationContractABI, donationContractAddress);
+    const web3 = new Web3(window.ethereum);
+    const donationContract = new web3.eth.Contract(donationContractABI, donationContractAddress);
 
-        // Event listener for the createDonationForm submit
-        document.getElementById('createDonationForm').addEventListener('submit', async (event) => {
-            event.preventDefault();
+    // Event listener for the createDonationForm submit
+    document.getElementById('createDonationForm').addEventListener('submit', async (event) => {
+        event.preventDefault();
 
-            const addresses = document.getElementById('addresses').value.split(',');
-            const name = document.getElementById('name').value;
-            const description = document.getElementById('description').value;
-            const startDate = Math.floor(new Date(document.getElementById('startDate').value) / 1000);
-            const endDate = Math.floor(new Date(document.getElementById('endDate').value) / 1000);
-            const minDonation = document.getElementById('minDonation').value;
-            const maxDonation = document.getElementById('maxDonation').value;
+        const addresses = document.getElementById('addresses').value.split(',');
+        const name = document.getElementById('name').value;
+        const description = document.getElementById('description').value;
+        const startDate = Math.floor(new Date(document.getElementById('startDate').value) / 1000);
+        const endDate = Math.floor(new Date(document.getElementById('endDate').value) / 1000);
+        const minDonation = document.getElementById('minDonation').value;
+        const maxDonation = document.getElementById('maxDonation').value;
 
-            try {
-                const accounts = await web3.eth.requestAccounts();
-                const creator = accounts[0];
+        try {
+            const accounts = await web3.eth.requestAccounts();
+            const creator = accounts[0];
 
-                await donationContract.methods.addDonation(
-                    addresses,
-                    name,
-                    description,
-                    startDate,
-                    endDate,
-                    minDonation,
-                    maxDonation
-                ).send({ from: creator, value: 0.2 * 10 ** 18 }); // Sending 0.2 Ether as tax amount
+            await donationContract.methods.addDonation(
+                addresses,
+                name,
+                description,
+                startDate,
+                endDate,
+                minDonation,
+                maxDonation
+            ).send({ from: creator, value: 0.2 * 10 ** 18 }); // Sending 0.2 Ether as tax amount
 
-                alert('Donation created successfully!');
-                window.location.reload();
-            } catch (error) {
-                console.error(error);
-                alert('Failed to create donation. Please try again.');
-            }
-        });
-
-        // Function to retrieve and display the list of donations
-        async function getDonations() {
-            try {
-                const donationTable = document.getElementById('donationTable');
-                const donations = await donationContract.methods.getDonations().call();
-
-                for (let i = 0; i < donations.length; i++) {
-                    const donation = donations[i];
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-    <td>${donation.name}</td>
-    <td>${donation.description}</td>
-    <td>${new Date(donation.startDate * 1000)}</td>
-    <td>${new Date(donation.endDate * 1000)}</td>
-    <td>${donation.minDonation}</td>
-    <td>${donation.maxDonation}</td>
-    <td>
-        <button class="donate-button" onclick="donate(${i})">Donate</button>
-    </td>
-`;
-                    donationTable.appendChild(row);
-                }
-            } catch (error) {
-                console.error(error);
-                alert('Failed to retrieve donations. Please try again.');
-            }
+            alert('Donation created successfully!');
+            window.location.reload();
+        } catch (error) {
+            console.error(error);
+            alert('Failed to create donation. Please try again.');
         }
+    });
 
-      // Function to handle donation
+    // Function to retrieve and display the list of donations
+    async function getDonations() {
+        try {
+            const donationCards = document.getElementById('donationCards');
+            const donations = await donationContract.methods.getDonations().call();
+
+            for (let i = 0; i < donations.length; i++) {
+                const donation = donations[i];
+                const donationCard = document.createElement('div');
+                donationCard.classList.add('donation-card');
+                donationCard.innerHTML = `
+                    <h2>${donation.name}</h2>
+                    <p><strong>Description:</strong> ${donation.description}</p>
+                    <p><strong>Start Date:</strong> ${new Date(donation.startDate * 1000)}</p>
+                    <p><strong>End Date:</strong> ${new Date(donation.endDate * 1000)}</p>
+                    <p><strong>Min Donation:</strong> ${donation.minDonation}</p>
+                    <p><strong>Max Donation:</strong> ${donation.maxDonation}</p>
+                    <p><strong>Total Donations:</strong> ${donation.totalDonations}</p>
+                    <p><strong>Distributed Donations:</strong> ${donation.distributedDonations}</p>
+                    <button class="donate-button" onclick="donate(${i})">Donate</button>
+                `;
+                donationCards.appendChild(donationCard);
+            }
+        } catch (error) {
+            console.error(error);
+            alert('Failed to retrieve donations. Please try again.');
+        }
+    }
+
+    // Function to handle donation
+// Function to handle donation
 async function donate(donationId) {
     try {
-        const donationTable = document.getElementById('donationTable');
         const donations = await donationContract.methods.getDonations().call();
         const donation = donations[donationId];
 
@@ -340,7 +339,7 @@ async function donate(donationId) {
         );
 
         if (donationAmount < donation.minDonation || donationAmount > donation.maxDonation) {
-            alert('Invalid donation amount. Please enter a valid amount.');
+            alert('Invalid donation amount. Please try again.');
             return;
         }
 
@@ -349,7 +348,7 @@ async function donate(donationId) {
 
         await donationContract.methods.donate(donationId).send({
             from: donor,
-            value: donationAmount + 0.1 * 10 ** 18, // Adding 0.1 Ether as tax amount
+            value: web3.utils.toWei(String(donationAmount))
         });
 
         alert('Donation successful!');
@@ -360,12 +359,8 @@ async function donate(donationId) {
     }
 }
 
-
-
-        // Execute the getDonations function when the page loads
-        window.addEventListener('load', () => {
-            getDonations();
-        });
-    </script>
+// Call the getDonations function to display the list of donations on page load
+getDonations();
+</script>
 </body>
 </html>
