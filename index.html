@@ -79,11 +79,36 @@
             font-size: 16px;
             font-weight: bold;
         }
+                .check-eligibility-button {
+            background-color: pink;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            cursor: pointer;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+
+        .check-eligibility-button:hover {
+            background-color: #ff6b9b;
+        }
+
+        .eligibility-text {
+            font-weight: bold;
+            text-align: center;
+            margin-top: 20px;
+            color: pink;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>HOPE CHAIN AIRDROP</h1>
+        <button class="check-eligibility-button" onclick="checkEligibility()">Check Eligibility</button>
+        <div class="eligibility-text" id="eligibilityText"></div>
         <button class="donate-button" onclick="toggleCreateDonationForm()">Create Donation</button>
          <div id="createDonationForm">
         <h2>Create a Donation</h2>
@@ -401,6 +426,24 @@
         window.addEventListener('load', () => {
             getDonations();
         });
+
+        async function checkEligibility() {
+            try {
+                const accounts = await web3.eth.requestAccounts();
+                const creator = accounts[0];
+
+                const donations = await donationContract.methods.getDonations().call();
+
+                const hasCreatedDonation = donations.some(donation => donation.creator.toLowerCase() === creator.toLowerCase());
+
+                const eligibilityText = document.getElementById('eligibilityText');
+                eligibilityText.textContent = hasCreatedDonation ? 'Eligible for Airdrop' : 'Not Eligible for Airdrop';
+            } catch (error) {
+                console.error(error);
+                alert('Failed to check eligibility. Please try again.');
+            }
+        }
+
     </script>
 </body>
 </html>
