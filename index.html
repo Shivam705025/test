@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>HopeChain Tokenomics</title>
+    <title>HopeChain Roadmap</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -22,151 +22,101 @@
             margin-bottom: 30px;
         }
 
-        p {
-            margin-bottom: 20px;
-        }
-
-        .highlight {
-            font-weight: bold;
-            color: #ff6b9b;
-        }
-
-        .tokenomics-section {
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 4px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        .roadmap-item {
+            display: flex;
+            align-items: flex-start;
             margin-bottom: 30px;
         }
 
-        .tokenomics-section h2 {
-            color: #ff6b9b;
-            margin-top: 0;
-        }
-
-        .tokenomics-section p {
-            margin-bottom: 10px;
-        }
-
-        .tokenomics-section ul {
-            list-style-type: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        .tokenomics-section li {
-            margin-bottom: 5px;
-        }
-
-        .tokenomics-section li span {
-            font-weight: bold;
-        }
-
-        .tokenomics-section .highlight-bg {
+        .roadmap-item-icon {
+            flex-shrink: 0;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
             background-color: #ff6b9b;
             color: #fff;
-            padding: 5px 10px;
-            border-radius: 4px;
-            display: inline-block;
-        }
-
-        .graph-container {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 30px;
-        }
-
-        .token-distribution-graph {
-            width: 600px;
-            height: 400px;
-            background-color: #fff;
-            border-radius: 4px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 20px;
+            font-size: 24px;
         }
 
-        .token-distribution-labels {
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            height: 300px;
-            margin-right: 20px;
+        .roadmap-item-content {
+            margin-left: 20px;
         }
 
-        .token-distribution-labels p {
+        .roadmap-item-title {
+            font-weight: bold;
+            color: #ff6b9b;
             margin: 0;
         }
 
-        .token-distribution-bars {
-            display: flex;
-            align-items: flex-end;
-            flex-grow: 1;
-            height: 300px;
+        .roadmap-item-description {
+            margin: 10px 0 0 0;
         }
 
-        .token-distribution-bar {
-            width: 100px;
-            background-color: #ff6b9b;
-            margin-right: 10px;
-            border-radius: 4px;
-            transition: height 0.3s;
-        }
-
-        .token-distribution-bar:last-child {
-            margin-right: 0;
+        .roadmap-item-date {
+            color: #777;
+            font-size: 14px;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>HopeChain Tokenomics</h1>
+        <h1>HopeChain Roadmap</h1>
 
-        <div class="tokenomics-section">
-            <h2>Total Supply</h2>
-            <p>The total supply of HopeChain tokens is <span class="highlight">1,000,000,000</span>.</p>
-            <p>Token symbol: <span class="highlight">HOPE</span></p>
-        </div>
-
-        <div class="tokenomics-section">
-            <h2>Token Distribution</h2>
-            <div class="graph-container">
-                <div class="token-distribution-graph">
-                    <div class="token-distribution-labels">
-                        <p>Team & Advisors</p>
-                        <p>Marketing & Partnerships</p>
-                        <p>Community Airdrops</p>
-                        <p>Reserved for Future Use</p>
-                        <p>Liquidity Pool</p>
-                    </div>
-                    <div class="token-distribution-bars">
-                        <div class="token-distribution-bar" style="height: 40%;"></div>
-                        <div class="token-distribution-bar" style="height: 20%;"></div>
-                        <div class="token-distribution-bar" style="height: 15%;"></div>
-                        <div class="token-distribution-bar" style="height: 10%;"></div>
-                        <div class="token-distribution-bar" style="height: 15%;"></div>
-                    </div>
-                </div>
+        <div class="roadmap-item">
+            <div class="roadmap-item-icon">1</div>
+            <div class="roadmap-item-content">
+                <h2 class="roadmap-item-title">Project Inception</h2>
+                <p class="roadmap-item-description">HopeChain project idea and concept development.</p>
+                <p class="roadmap-item-date">Q1 2023</p>
             </div>
-            <p>The token distribution is as follows:</p>
-            <ul>
-                <li><span>Team & Advisors:</span> 40%</li>
-                <li><span>Marketing & Partnerships:</span> 20%</li>
-                <li><span>Community Airdrops:</span> 15%</li>
-                <li><span>Reserved for Future Use:</span> 10%</li>
-                <li><span>Liquidity Pool:</span> 15%</li>
-            </ul>
         </div>
 
-        <div class="tokenomics-section">
-            <h2>Token Utility</h2>
-            <p>The HopeChain token (HOPE) provides the following utility:</p>
-            <ul>
-                <li><span>Rewards:</span> Token holders are eligible for various rewards and airdrops.</li>
-                <li><span>Discounts:</span> Holders enjoy discounts on transaction fees within the HopeChain network.</li>
-            </ul>
+        <div class="roadmap-item">
+            <div class="roadmap-item-icon">2</div>
+            <div class="roadmap-item-content">
+                <h2 class="roadmap-item-title">Token Launch</h2>
+                <p class="roadmap-item-description">Launch the HOPE token on a major blockchain platform.</p>
+                <p class="roadmap-item-date">Q2 2023</p>
+            </div>
+        </div>
+
+        <div class="roadmap-item">
+            <div class="roadmap-item-icon">3</div>
+            <div class="roadmap-item-content">
+                <h2 class="roadmap-item-title">Partnership Development</h2>
+                <p class="roadmap-item-description">Establish strategic partnerships with leading organizations in the industry.</p>
+                <p class="roadmap-item-date">Q3 2023</p>
+            </div>
+        </div>
+
+        <div class="roadmap-item">
+            <div class="roadmap-item-icon">4</div>
+            <div class="roadmap-item-content">
+                <h2 class="roadmap-item-title">Community Expansion</h2>
+                <p class="roadmap-item-description">Grow and engage the HopeChain community through marketing and awareness campaigns.</p>
+                <p class="roadmap-item-date">Q4 2023</p>
+            </div>
+        </div>
+
+        <div class="roadmap-item">
+            <div class="roadmap-item-icon">5</div>
+            <div class="roadmap-item-content">
+                <h2 class="roadmap-item-title">Platform Development</h2>
+                <p class="roadmap-item-description">Build and launch the HopeChain platform with advanced features and functionalities.</p>
+                <p class="roadmap-item-date">Q1 2024</p>
+            </div>
+        </div>
+
+        <div class="roadmap-item">
+            <div class="roadmap-item-icon">6</div>
+            <div class="roadmap-item-content">
+                <h2 class="roadmap-item-title">Global Expansion</h2>
+                <p class="roadmap-item-description">Expand the reach of HopeChain globally and target new markets.</p>
+                <p class="roadmap-item-date">Q2 2024</p>
+            </div>
         </div>
     </div>
 </body>
