@@ -43,30 +43,68 @@
         .donate-button:hover {
             background-color: #ff6b9b;
         }
+                #createDonationForm {
+            display: none;
+            margin-top: 20px;
+            background-color: #f2f2f2;
+            padding: 20px;
+            border-radius: 4px;
+        }
+
+        #createDonationForm label {
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        #createDonationForm input[type="text"],
+        #createDonationForm textarea,
+        #createDonationForm input[type="date"],
+        #createDonationForm input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+
+        #createDonationForm button[type="submit"] {
+            background-color: pink;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>HOPE CHAIN AIRDROP</h1>
-        <button onclick="toggleCreateDonationForm()">Create Donation</button>
-        <form id="createDonationForm" style="display: none;">
-            <h2>Create Donation</h2>
-            <label for="addresses">Recipient Addresses (comma-separated):</label><br>
-            <input type="text" id="addresses" name="addresses" required><br>
-            <label for="name">Name:</label><br>
-            <input type="text" id="name" name="name" required><br>
-            <label for="description">Description:</label><br>
-            <input type="text" id="description" name="description" required><br>
-            <label for="startDate">Start Date:</label><br>
-            <input type="datetime-local" id="startDate" name="startDate" required><br>
-            <label for="endDate">End Date:</label><br>
-            <input type="datetime-local" id="endDate" name="endDate" required><br>
-            <label for="minDonation">Minimum Donation:</label><br>
-            <input type="number" id="minDonation" name="minDonation" required><br>
-            <label for="maxDonation">Maximum Donation:</label><br>
-            <input type="number" id="maxDonation" name="maxDonation" required><br>
-            <input type="submit" value="Create Donation">
+        <button class="donate-button" onclick="toggleCreateDonationForm()">Create Donation</button>
+         <div id="createDonationForm">
+        <h2>Create a Donation</h2>
+        <form id="donationForm">
+            <label for="addresses">Addresses:</label>
+            <input type="text" id="addresses" required><br>
+            <label for="name">Name:</label>
+            <input type="text" id="name" required><br>
+            <label for="description">Description:</label>
+            <textarea id="description" required></textarea><br>
+            <label for="startDate">Start Date:</label>
+            <input type="date" id="startDate" required><br>
+            <label for="endDate">End Date:</label>
+            <input type="date" id="endDate" required><br>
+            <label for="minDonation">Min Donation:</label>
+            <input type="number" id="minDonation" required><br>
+            <label for="maxDonation">Max Donation:</label>
+            <input type="number" id="maxDonation" required><br>
+            <button type="submit">Create</button>
         </form>
+    </div>
         <h2>Donations</h2>
         <div class="donation-cards" id="donationCards"></div>
     </div>
