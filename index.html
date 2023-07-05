@@ -1,452 +1,173 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Donation Contract</title>
+    <title>HopeChain Tokenomics</title>
     <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+        }
+
         .container {
             max-width: 800px;
             margin: 0 auto;
             padding: 20px;
-            font-family: Arial, sans-serif;
         }
+
         h1 {
             text-align: center;
+            color: #ff6b9b;
+            margin-bottom: 30px;
         }
-        form {
+
+        p {
             margin-bottom: 20px;
         }
-        .donation-cards {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            grid-gap: 20px;
+
+        .highlight {
+            font-weight: bold;
+            color: #ff6b9b;
         }
-        .donation-card {
-            border: 1px solid #ddd;
-            padding: 10px;
-            border-radius: 4px;
-            background-color: #f5f5f5;
-        }
-        .donation-card h2 {
-            margin-top: 0;
-        }
-        .donate-button {
-            background-color: pink;
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            text-align: center;
-            text-decoration: none;
-            display: inline-block;
-            cursor: pointer;
-            border-radius: 4px;
-        }
-        .donate-button:hover {
-            background-color: #ff6b9b;
-        }
-                #createDonationForm {
-            display: none;
-            margin-top: 20px;
-            background-color: #f2f2f2;
+
+        .tokenomics-section {
+            background-color: #fff;
             padding: 20px;
             border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
         }
 
-        #createDonationForm label {
-            display: block;
+        .tokenomics-section h2 {
+            color: #ff6b9b;
+            margin-top: 0;
+        }
+
+        .tokenomics-section p {
             margin-bottom: 10px;
         }
 
-        #createDonationForm input[type="text"],
-        #createDonationForm textarea,
-        #createDonationForm input[type="date"],
-        #createDonationForm input[type="number"] {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box;
-            font-size: 14px;
+        .tokenomics-section ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
         }
 
-        #createDonationForm button[type="submit"] {
-            background-color: pink;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
+        .tokenomics-section li {
+            margin-bottom: 5px;
+        }
+
+        .tokenomics-section li span {
             font-weight: bold;
         }
-                .check-eligibility-button {
-            background-color: pink;
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            text-align: center;
-            text-decoration: none;
-            display: inline-block;
-            cursor: pointer;
-            border-radius: 4px;
-            margin-bottom: 20px;
-        }
 
-        .check-eligibility-button:hover {
+        .tokenomics-section .highlight-bg {
             background-color: #ff6b9b;
+            color: #fff;
+            padding: 5px 10px;
+            border-radius: 4px;
+            display: inline-block;
         }
 
-        .eligibility-text {
-            font-weight: bold;
-            text-align: center;
-            margin-top: 20px;
-            color: pink;
+        .graph-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+
+        .token-distribution-graph {
+            width: 600px;
+            height: 400px;
+            background-color: #fff;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .token-distribution-labels {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 300px;
+            margin-right: 20px;
+        }
+
+        .token-distribution-labels p {
+            margin: 0;
+        }
+
+        .token-distribution-bars {
+            display: flex;
+            align-items: flex-end;
+            flex-grow: 1;
+            height: 300px;
+        }
+
+        .token-distribution-bar {
+            width: 100px;
+            background-color: #ff6b9b;
+            margin-right: 10px;
+            border-radius: 4px;
+            transition: height 0.3s;
+        }
+
+        .token-distribution-bar:last-child {
+            margin-right: 0;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>HOPE CHAIN AIRDROP</h1>
-        <div align="center">
-        <p style="color: pink;">Create Donation to become eligible for airdrop</p>
+        <h1>HopeChain Tokenomics</h1>
+
+        <div class="tokenomics-section">
+            <h2>Total Supply</h2>
+            <p>The total supply of HopeChain tokens is <span class="highlight">1,000,000,000</span>.</p>
+            <p>Token symbol: <span class="highlight">HOPE</span></p>
         </div>
-        <button class="check-eligibility-button" onclick="checkEligibility()">Check Eligibility</button>
-        <div class="eligibility-text" id="eligibilityText"></div>
-        <button class="donate-button" onclick="toggleCreateDonationForm()">Create Donation</button>
-         <div id="createDonationForm">
-        <h2>Create a Donation</h2>
-        <form id="donationForm">
-            <label for="addresses">Addresses:</label>
-            <input type="text" id="addresses" required><br>
-            <label for="name">Name:</label>
-            <input type="text" id="name" required><br>
-            <label for="description">Description:</label>
-            <textarea id="description" required></textarea><br>
-            <label for="startDate">Start Date:</label>
-            <input type="date" id="startDate" required><br>
-            <label for="endDate">End Date:</label>
-            <input type="date" id="endDate" required><br>
-            <label for="minDonation">Min Donation:</label>
-            <input type="number" id="minDonation" required><br>
-            <label for="maxDonation">Max Donation:</label>
-            <input type="number" id="maxDonation" required><br>
-            <button type="submit">Create</button>
-        </form>
+
+        <div class="tokenomics-section">
+            <h2>Token Distribution</h2>
+            <div class="graph-container">
+                <div class="token-distribution-graph">
+                    <div class="token-distribution-labels">
+                        <p>Team & Advisors</p>
+                        <p>Marketing & Partnerships</p>
+                        <p>Community Airdrops</p>
+                        <p>Reserved for Future Use</p>
+                        <p>Liquidity Pool</p>
+                    </div>
+                    <div class="token-distribution-bars">
+                        <div class="token-distribution-bar" style="height: 40%;"></div>
+                        <div class="token-distribution-bar" style="height: 20%;"></div>
+                        <div class="token-distribution-bar" style="height: 15%;"></div>
+                        <div class="token-distribution-bar" style="height: 10%;"></div>
+                        <div class="token-distribution-bar" style="height: 15%;"></div>
+                    </div>
+                </div>
+            </div>
+            <p>The token distribution is as follows:</p>
+            <ul>
+                <li><span>Team & Advisors:</span> 40%</li>
+                <li><span>Marketing & Partnerships:</span> 20%</li>
+                <li><span>Community Airdrops:</span> 15%</li>
+                <li><span>Reserved for Future Use:</span> 10%</li>
+                <li><span>Liquidity Pool:</span> 15%</li>
+            </ul>
+        </div>
+
+        <div class="tokenomics-section">
+            <h2>Token Utility</h2>
+            <p>The HopeChain token (HOPE) provides the following utility:</p>
+            <ul>
+                <li><span>Rewards:</span> Token holders are eligible for various rewards and airdrops.</li>
+                <li><span>Discounts:</span> Holders enjoy discounts on transaction fees within the HopeChain network.</li>
+            </ul>
+        </div>
     </div>
-        <h2>Donations</h2>
-        <div class="donation-cards" id="donationCards"></div>
-    </div>
-    <script src="https://cdn.jsdelivr.net/npm/web3@1.5.3/dist/web3.min.js"></script>
-    <script>
-        const donationContractAddress = '0x3fe76112c68fa9685bbe5a45308632c2404ec351';
-        const donationContractABI = [
-            {
-    "constant": false,
-    "inputs": [
-      {
-        "name": "_addresses",
-        "type": "address[]"
-      },
-      {
-        "name": "_name",
-        "type": "string"
-      },
-      {
-        "name": "_description",
-        "type": "string"
-      },
-      {
-        "name": "_startDate",
-        "type": "uint256"
-      },
-      {
-        "name": "_endDate",
-        "type": "uint256"
-      },
-      {
-        "name": "_minDonation",
-        "type": "uint256"
-      },
-      {
-        "name": "_maxDonation",
-        "type": "uint256"
-      }
-    ],
-    "name": "addDonation",
-    "outputs": [],
-    "payable": true,
-    "stateMutability": "payable",
-    "type": "function"
-  },
-  {
-    "constant": true,
-    "inputs": [],
-    "name": "getDonations",
-    "outputs": [
-      {
-        "components": [
-          {
-            "name": "creator",
-            "type": "address"
-          },
-          {
-            "name": "addresses",
-            "type": "address[]"
-          },
-          {
-            "name": "name",
-            "type": "string"
-          },
-          {
-            "name": "description",
-            "type": "string"
-          },
-          {
-            "name": "startDate",
-            "type": "uint256"
-          },
-          {
-            "name": "endDate",
-            "type": "uint256"
-          },
-          {
-            "name": "minDonation",
-            "type": "uint256"
-          },
-          {
-            "name": "maxDonation",
-            "type": "uint256"
-          },
-          {
-            "name": "totalDonations",
-            "type": "uint256"
-          },
-          {
-            "name": "distributedDonations",
-            "type": "uint256"
-          }
-        ],
-        "name": "",
-        "type": "tuple[]"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "constant": false,
-    "inputs": [
-      {
-        "name": "_donationId",
-        "type": "uint256"
-      }
-    ],
-    "name": "donate",
-    "outputs": [],
-    "payable": true,
-    "stateMutability": "payable",
-    "type": "function"
-  },
-  {
-    "constant": false,
-    "inputs": [
-      {
-        "name": "_donationId",
-        "type": "uint256"
-      }
-    ],
-    "name": "distributeDonations",
-    "outputs": [],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "constant": false,
-    "inputs": [],
-    "name": "owner",
-    "outputs": [
-      {
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "payable": false,
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "payable": false,
-    "stateMutability": "nonpayable",
-    "type": "constructor"
-  },
-  {
-    "payable": true,
-    "stateMutability": "payable",
-    "type": "fallback"
-  },
-    {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "name": "donationId",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "name": "creator",
-        "type": "address"
-      }
-    ],
-    "name": "DonationAdded",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "name": "donationId",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "name": "amount",
-        "type": "uint256"
-      }
-    ],
-    "name": "DonationDistributed",
-    "type": "event"
-  }
-        ];
-
-        const web3 = new Web3(window.ethereum);
-        const donationContract = new web3.eth.Contract(donationContractABI, donationContractAddress);
-
-        // Event listener for the createDonationForm submit
-        document.getElementById('createDonationForm').addEventListener('submit', async (event) => {
-            event.preventDefault();
-
-            // Get form input values
-            const addresses = document.getElementById('addresses').value.split(',');
-            const name = document.getElementById('name').value;
-            const description = document.getElementById('description').value;
-            const startDate = Math.floor(new Date(document.getElementById('startDate').value) / 1000);
-            const endDate = Math.floor(new Date(document.getElementById('endDate').value) / 1000);
-            const minDonation = document.getElementById('minDonation').value;
-            const maxDonation = document.getElementById('maxDonation').value;
-
-            try {
-                const accounts = await web3.eth.requestAccounts();
-                const creator = accounts[0];
-
-                await donationContract.methods.addDonation(
-                    addresses,
-                    name,
-                    description,
-                    startDate,
-                    endDate,
-                    minDonation,
-                    maxDonation
-                ).send({ from: creator, value: 0.2 * 10 ** 18 }); // Sending 0.2 Ether as tax amount
-
-                alert('Donation created successfully!');
-                window.location.reload();
-            } catch (error) {
-                console.error(error);
-                alert('Failed to create donation. Please try again.');
-            }
-        });
-
-        // Function to retrieve and display the list of donations
-        async function getDonations() {
-            try {
-                const donationCards = document.getElementById('donationCards');
-                const donations = await donationContract.methods.getDonations().call();
-
-                for (let i = 0; i < donations.length; i++) {
-                    const donation = donations[i];
-                    const card = document.createElement('div');
-                    card.className = 'donation-card';
-                    card.innerHTML = `
-                        <h2>${donation.name}</h2>
-                        <p>${donation.description}</p>
-                        <p><strong>Start Date:</strong> ${new Date(donation.startDate * 1000)}</p>
-                        <p><strong>End Date:</strong> ${new Date(donation.endDate * 1000)}</p>
-                        <p><strong>Min Donation:</strong> ${donation.minDonation}</p>
-                        <p><strong>Max Donation:</strong> ${donation.maxDonation}</p>
-                        <button class="donate-button" onclick="donate(${i})">Donate</button>
-                    `;
-                    donationCards.appendChild(card);
-                }
-            } catch (error) {
-                console.error(error);
-                alert('Failed to retrieve donations. Please try again.');
-            }
-        }
-
-        // Function to handle donation
-        async function donate(donationId) {
-            try {
-                const donations = await donationContract.methods.getDonations().call();
-                const donation = donations[donationId];
-
-                const donationAmount = Number(
-                    prompt(`Enter donation amount (between ${donation.minDonation} and ${donation.maxDonation}):`)
-                );
-
-                if (donationAmount < donation.minDonation || donationAmount > donation.maxDonation) {
-                    alert('Invalid donation amount. Please enter a valid amount.');
-                    return;
-                }
-
-                const accounts = await web3.eth.requestAccounts();
-                const donor = accounts[0];
-
-                await donationContract.methods.donate(donationId).send({
-                    from: donor,
-                    value: donationAmount + 0.1 * 10 ** 18, // Adding 0.1 Ether as tax amount
-                });
-
-                alert('Donation successful!');
-                window.location.reload();
-            } catch (error) {
-                console.error(error);
-                alert('Failed to make a donation. Please try again.');
-            }
-        }
-
-        // Toggle visibility of create donation form
-        function toggleCreateDonationForm() {
-            const form = document.getElementById('createDonationForm');
-            form.style.display = form.style.display === 'none' ? 'block' : 'none';
-        }
-
-        // Execute the getDonations function when the page loads
-        window.addEventListener('load', () => {
-            getDonations();
-        });
-
-        async function checkEligibility() {
-            try {
-                const accounts = await web3.eth.requestAccounts();
-                const creator = accounts[0];
-
-                const donations = await donationContract.methods.getDonations().call();
-
-                const hasCreatedDonation = donations.some(donation => donation.creator.toLowerCase() === creator.toLowerCase());
-
-                const eligibilityText = document.getElementById('eligibilityText');
-                eligibilityText.textContent = hasCreatedDonation ? 'Eligible for Airdrop' : 'Not Eligible for Airdrop';
-            } catch (error) {
-                console.error(error);
-                alert('Failed to check eligibility. Please try again.');
-            }
-        }
-
-    </script>
 </body>
 </html>
