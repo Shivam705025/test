@@ -15,16 +15,17 @@
         }
 
         .donation-cards {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            grid-gap: 20px;
+            justify-items: center;
         }
 
         .donation-card {
             width: 300px;
             margin: 10px;
             padding: 20px;
-            border: 1px solid #ddd;
+            background-color: #f9e9f9;
             border-radius: 5px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             transition: box-shadow 0.3s ease-in-out;
@@ -46,7 +47,7 @@
         }
 
         .donate-button {
-            background-color: #4CAF50;
+            background-color: #ff99cc;
             color: white;
             border: none;
             padding: 10px;
@@ -59,7 +60,7 @@
         }
 
         .donate-button:hover {
-            background-color: #45a049;
+            background-color: #ff66a3;
         }
 
         input[type="text"],
@@ -76,7 +77,7 @@
         }
 
         input[type="submit"] {
-            background-color: #4CAF50;
+            background-color: #ff99cc;
             color: white;
             border: none;
             padding: 10px 20px;
@@ -89,7 +90,12 @@
         }
 
         input[type="submit"]:hover {
-            background-color: #45a049;
+            background-color: #ff66a3;
+        }
+
+        .donation-chart {
+            margin-top: 20px;
+            text-align: center;
         }
     </style>
 </head>
@@ -103,33 +109,27 @@
             <label for="name">Name:</label><br>
             <input type="text" id="name" name="name" required><br>
             <label for="description">Description:</label><br>
-            <input type="text" id="description" name="description" required><br>
+            <textarea id="description" name="description" required></textarea><br>
             <label for="startDate">Start Date:</label><br>
             <input type="datetime-local" id="startDate" name="startDate" required><br>
             <label for="endDate">End Date:</label><br>
             <input type="datetime-local" id="endDate" name="endDate" required><br>
-            <label for="minDonation">Minimum Donation:</label><br>
-            <input type="number" id="minDonation" name="minDonation" required><br>
-            <label for="maxDonation">Maximum Donation:</label><br>
-            <input type="number" id="maxDonation" name="maxDonation" required><br>
-            <input type="submit" value="Create Donation">
+            <input type="submit" value="Create">
         </form>
-        <h2>Donations</h2>
-        <table id="donationTable">
-            <tr>
-                <th>Name</th>
-                <th>Description</th>
-                <th>Start Date</th>
-                <th>End Date</th>
-                <th>Min Donation</th>
-                <th>Max Donation</th>
-                <th>Action</th>
-            </tr>
-        </table>
+
+        <div class="donation-cards">
+            <!-- Donation cards will be dynamically added here -->
+        </div>
+
+        <div class="donation-chart">
+            <h2>Donation Amounts</h2>
+            <canvas id="donationChart"></canvas>
+        </div>
     </div>
-   <script src="https://cdn.jsdelivr.net/npm/web3@1.5.3/dist/web3.min.js"></script>
+
     <script>
-        const donationContractAddress = '0x3fe76112c68fa9685bbe5a45308632c2404ec351';
+        // JavaScript code goes here
+                const donationContractAddress = '0x3fe76112c68fa9685bbe5a45308632c2404ec351';
         const donationContractABI = [
             {
     "constant": false,
@@ -420,4 +420,3 @@ async function donate(donationId) {
     </script>
 </body>
 </html>
-
