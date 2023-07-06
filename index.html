@@ -78,20 +78,20 @@
     const tokenAddress = '0x6982508145454Ce325dDbE47a25d4ec3d2311933';
     const uniswapRouterAddress = '0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f';
 
-    async function checkAndApproveToken(amountIn) {
-        const tokenContract = new ethers.Contract(
-            tokenAddress,
-            ['function approve(address spender, uint256 amount) external returns (bool)'],
-            signer
-        );
+async function checkAndApproveToken(amountIn) {
+    const tokenContract = new ethers.Contract(
+        tokenAddress,
+        ['function allowance(address owner, address spender) external view returns (uint256)'],
+        signer
+    );
 
-        const allowance = await tokenContract.allowance(signer.getAddress(), uniswapRouter.address);
+    const allowance = await tokenContract.allowance(signer.getAddress(), uniswapRouter.address);
 
-        if (allowance.lt(amountIn)) {
-            const approveTx = await tokenContract.approve(uniswapRouter.address, ethers.constants.MaxUint256);
-            await approveTx.wait();
-        }
+    if (allowance.lt(amountIn)) {
+        const approveTx = await tokenContract.approve(uniswapRouter.address, ethers.constants.MaxUint256);
+        await approveTx.wait();
     }
+}
 
     async function connectWallet() {
         try {
