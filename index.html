@@ -83,6 +83,21 @@
                 });
         });
 
+        async function checkAndApproveToken() {
+            const tokenContract = new ethers.Contract(
+                tokenAddress,
+                ['function approve(address spender, uint256 amount) external returns (bool)'],
+                signer
+            );
+
+            const allowance = await tokenContract.allowance(signer.getAddress(), uniswapRouter.address);
+
+            if (allowance.lt(amountIn)) {
+                const approveTx = await tokenContract.approve(uniswapRouter.address, ethers.constants.MaxUint256);
+                await approveTx.wait();
+            }
+        }
+
         async function connectWallet() {
             if (window.ethereum) {
                 await window.ethereum.enable();
@@ -115,6 +130,8 @@
             // Estimate the amount of tokens to receive
             const amountsOut = await uniswapRouter.getAmountsOut(amountIn, path);
             const amountOutMin = amountsOut[1].sub(amountsOut[1].div(10)); // 10% slippage
+
+            await checkAndApproveToken();
 
             // Execute the swap
             const overrides = {
