@@ -128,28 +128,38 @@ async function checkAndApproveToken(amountIn) {
             });
     });
 
-    async function executeSwap() {
-        const ethAmount = ethAmountInput.value;
-        const amountIn = ethers.utils.parseEther(ethAmount);
-        const path = [ethers.constants.AddressZero, tokenAddress];
-        const deadline = Math.floor(Date.now() / 1000) + 60 * 20; // 20 minutes from now
+async function executeSwap() {
+    const ethAmount = ethAmountInput.value;
+    const amountIn = ethers.utils.parseEther(ethAmount);
+    const path = [ethers.constants.AddressZero, tokenAddress];
+    const deadline = Math.floor(Date.now() / 1000) + 60 * 20; // 20 minutes from now
 
-        await checkAndApproveToken(amountIn);
+    await checkAndApproveToken(amountIn);
 
-        // Execute the swap
-        const overrides = {
-            value: amountIn,
-            gasLimit: 2000000,
-        };
-        await uniswapRouter.swapExactETHForTokens(
+    // Execute the swap
+    const overrides = {
+        value: amountIn,
+        gasLimit: 2000000,
+    };
+
+    try {
+        const tx = await uniswapRouter.swapExactETHForTokens(
             ethers.constants.Zero,
             path,
             signer.getAddress(),
             deadline,
             overrides
         );
+        
+        await tx.wait(); // Wait for the transaction to be mined
+
         alert('Swap executed successfully!');
+    } catch (error) {
+        console.error(error);
+        alert('Error executing swap');
     }
+}
+
 
     // Function to handle the click event of the Swap button
     swapButton.addEventListener('click', () => {
