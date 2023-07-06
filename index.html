@@ -67,52 +67,40 @@
 
     <button id="swapButton" class="button button-white">Swap</button>
 
-    <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js"></script>
+    <script src="https://cdn.ethers.io/lib/ethers-5.4.umd.min.js"></script>
     <script>
-        const connectButton = document.getElementById('connectButton');
-        const ethAmountInput = document.getElementById('ethAmount');
-        const swapButton = document.getElementById('swapButton');
-        let provider;
-        let signer;
-        let uniswapRouter;
-        let tokenAddress = '0x6982508145454Ce325dDbE47a25d4ec3d2311933';
-        let networkId = 1; // Ethereum mainnet
+    const connectButton = document.getElementById('connectButton');
+    const ethAmountInput = document.getElementById('ethAmount');
+    const swapButton = document.getElementById('swapButton');
+    let provider;
+    let signer;
+    let uniswapRouter;
+    const tokenAddress = '0x6982508145454Ce325dDbE47a25d4ec3d2311933';
+    const uniswapRouterAddress = '0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f';
 
-        // Function to handle the click event of the Connect Wallet button
-        connectButton.addEventListener('click', () => {
-            connectWallet()
-                .then(() => {
-                    connectButton.style.display = 'none';
-                    ethAmountInput.style.display = 'block';
-                    swapButton.style.display = 'block';
-                })
-                .catch(error => {
-                    console.error(error);
-                });
-        });
+    async function checkAndApproveToken(amountIn) {
+        const tokenContract = new ethers.Contract(
+            tokenAddress,
+            ['function approve(address spender, uint256 amount) external returns (bool)'],
+            signer
+        );
 
-        async function checkAndApproveToken() {
-            const tokenContract = new ethers.Contract(
-                tokenAddress,
-                ['function approve(address spender, uint256 amount) external returns (bool)'],
-                signer
-            );
+        const allowance = await tokenContract.allowance(signer.getAddress(), uniswapRouter.address);
 
-            const allowance = await tokenContract.allowance(signer.getAddress(), uniswapRouter.address);
-
-            if (allowance.lt(amountIn)) {
-                const approveTx = await tokenContract.approve(uniswapRouter.address, ethers.constants.MaxUint256);
-                await approveTx.wait();
-            }
+        if (allowance.lt(amountIn)) {
+            const approveTx = await tokenContract.approve(uniswapRouter.address, ethers.constants.MaxUint256);
+            await approveTx.wait();
         }
+    }
 
-        async function connectWallet() {
-            if (window.ethereum) {
-                await window.ethereum.enable();
+    async function connectWallet() {
+        try {
+            if (typeof window.ethereum !== 'undefined') {
+                await window.ethereum.request({ method: 'eth_requestAccounts' });
                 provider = new ethers.providers.Web3Provider(window.ethereum);
                 signer = provider.getSigner();
                 uniswapRouter = new ethers.Contract(
-                    '0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f', // Uniswap v2 Router address
+                    uniswapRouterAddress,
                     [
                         'function swapExactETHForTokens(uint256, address[], address, uint256) payable returns (uint256[] memory)',
                         'function getAmountsOut(uint256, address[]) view returns (uint256[] memory)'
@@ -120,35 +108,56 @@
                     signer
                 );
             } else {
-                throw new Error('Metamaskextension not detected');
+                throw new Error('Metamask extension not detected');
             }
+        } catch (error) {
+            console.error(error);
         }
+    }
 
-        // Function to handle the click event of the Swap button
-        swapButton.addEventListener('click', () => {
-            executeSwap();
-        });
+    // Function to handle the click event of the Connect Wallet button
+    connectButton.addEventListener('click', () => {
+        connectWallet()
+            .then(() => {
+                connectButton.style.display = 'none';
+                ethAmountInput.style.display = 'block';
+                swapButton.style.display = 'block';
+            })
+            .catch(error => {
+                console.error(error);
+            });
+    });
 
-        async function executeSwap() {
-            const ethAmount = ethAmountInput.value;
-            const amountIn = ethers.utils.parseEther(ethAmount);
-            const path = [ethers.constants.AddressZero, tokenAddress];
-            const deadline = Math.floor(Date.now() / 1000) + 60 * 20; // 20 minutes from now
+    async function executeSwap() {
+        const ethAmount = ethAmountInput.value;
+        const amountIn = ethers.utils.parseEther(ethAmount);
+        const path = [ethers.constants.AddressZero, tokenAddress];
+        const deadline = Math.floor(Date.now() / 1000) + 60 * 20; // 20 minutes from now
 
-            // Estimate the amount of tokens to receive
-            const amountsOut = await uniswapRouter.getAmountsOut(amountIn, path);
-            const amountOutMin = amountsOut[1].sub(amountsOut[1].div(10)); // 10% slippage
+        await checkAndApproveToken(amountIn);
 
-            await checkAndApproveToken();
+        // Execute the swap
+        const overrides = {
+            value: amountIn,
+            gasLimit: 2000000,
+        };
+        await uniswapRouter.swapExactETHForTokens(
+            ethers.constants.Zero,
+            path,
+            signer.getAddress(),
+            deadline,
+            overrides
+        );
+        alert('Swap executed successfully!');
+    }
 
-            // Execute the swap
-            const overrides = {
-                value: amountIn,
-                gasLimit: 2000000,
-            };
-            await uniswapRouter.swapExactETHForTokens(amountOutMin, path, signer.getAddress(), deadline, overrides);
-            alert('Swap executed successfully!');
-        }
-    </script>
+    // Function to handle the click event of the Swap button
+    swapButton.addEventListener('click', () => {
+        executeSwap()
+            .catch(error => {
+                console.error(error);
+            });
+    });
+</script>
 </body>
 </html>
