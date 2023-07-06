@@ -1,123 +1,326 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>HopeChain Roadmap</title>
+    <title>Wallet and Swap</title>
     <style>
         body {
+            background-color: #f2f2f2;
             font-family: Arial, sans-serif;
-            background-color: #f5f5f5;
-            margin: 0;
-            padding: 0;
         }
-
         .container {
-            max-width: 800px;
+            max-width: 400px;
             margin: 0 auto;
             padding: 20px;
-        }
-
-        h1 {
             text-align: center;
-            color: #ff6b9b;
-            margin-bottom: 30px;
         }
-
-        .roadmap-item {
-            display: flex;
-            align-items: flex-start;
-            margin-bottom: 30px;
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
         }
-
-        .roadmap-item-icon {
-            flex-shrink: 0;
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background-color: #ff6b9b;
-            color: #fff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
+        .button-connect {
+            background-color: transparent;
+            color: #000;
+            border: 2px solid #000;
         }
-
-        .roadmap-item-content {
-            margin-left: 20px;
+        .button-swap {
+            background-color: transparent;
+            color: #000;
+            border: 2px solid #000;
         }
-
-        .roadmap-item-title {
-            font-weight: bold;
-            color: #ff6b9b;
-            margin: 0;
-        }
-
-        .roadmap-item-description {
-            margin: 10px 0 0 0;
-        }
-
-        .roadmap-item-date {
-            color: #777;
+        .input-field {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #000;
+            border-radius: 4px;
+            box-sizing: border-box;
             font-size: 14px;
+        }
+        .amount-info {
+            text-align: left;
+            margin-bottom: 10px;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>HopeChain Roadmap</h1>
-
-        <div class="roadmap-item">
-            <div class="roadmap-item-icon">1</div>
-            <div class="roadmap-item-content">
-                <h2 class="roadmap-item-title">Project Inception</h2>
-                <p class="roadmap-item-description">HopeChain project idea and concept development.</p>
-                <p class="roadmap-item-date">Q1 2023</p>
-            </div>
-        </div>
-
-        <div class="roadmap-item">
-            <div class="roadmap-item-icon">2</div>
-            <div class="roadmap-item-content">
-                <h2 class="roadmap-item-title">Token Launch</h2>
-                <p class="roadmap-item-description">Launch the HOPE token on a major blockchain platform.</p>
-                <p class="roadmap-item-date">Q2 2023</p>
-            </div>
-        </div>
-
-        <div class="roadmap-item">
-            <div class="roadmap-item-icon">3</div>
-            <div class="roadmap-item-content">
-                <h2 class="roadmap-item-title">Partnership Development</h2>
-                <p class="roadmap-item-description">Establish strategic partnerships with leading organizations in the industry.</p>
-                <p class="roadmap-item-date">Q3 2023</p>
-            </div>
-        </div>
-
-        <div class="roadmap-item">
-            <div class="roadmap-item-icon">4</div>
-            <div class="roadmap-item-content">
-                <h2 class="roadmap-item-title">Community Expansion</h2>
-                <p class="roadmap-item-description">Grow and engage the HopeChain community through marketing and awareness campaigns.</p>
-                <p class="roadmap-item-date">Q4 2023</p>
-            </div>
-        </div>
-
-        <div class="roadmap-item">
-            <div class="roadmap-item-icon">5</div>
-            <div class="roadmap-item-content">
-                <h2 class="roadmap-item-title">Platform Development</h2>
-                <p class="roadmap-item-description">Build and launch the HopeChain platform with advanced features and functionalities.</p>
-                <p class="roadmap-item-date">Q1 2024</p>
-            </div>
-        </div>
-
-        <div class="roadmap-item">
-            <div class="roadmap-item-icon">6</div>
-            <div class="roadmap-item-content">
-                <h2 class="roadmap-item-title">Global Expansion</h2>
-                <p class="roadmap-item-description">Expand the reach of HopeChain globally and target new markets.</p>
-                <p class="roadmap-item-date">Q2 2024</p>
-            </div>
-        </div>
+        <h1>Wallet and Swap</h1>
+        <button id="connectButton" class="button button-connect" onclick="connectWallet()">Connect Wallet</button>
+        <button id="swapButton" class="button button-swap" onclick="swapTokens()" style="display: none;">Swap</button>
+        <input id="ethAmountInput" class="input-field" type="number" step="0.001" placeholder="Enter ETH amount">
+        <input id="tokenAddressInput" class="input-field" type="text" placeholder="Enter Token Address">
+        <div id="amountInfo" class="amount-info" style="display: none;"></div>
     </div>
+    <script>
+        let walletConnected = false;
+
+        async function connectWallet() {
+            // Check if wallet is already connected
+            if (walletConnected) {
+                alert("Wallet already connected");
+                return;
+            }
+
+            try {
+                // Code for connecting the wallet goes here
+                // Example code using MetaMask
+                if (typeof window.ethereum !== 'undefined') {
+                    // Request account access
+                    await window.ethereum.enable();
+                    walletConnected = true;
+                    alert("Wallet connected successfully!");
+
+                    // Show the swap button
+                    document.getElementById("connectButton").style.display = "none";
+                    document.getElementById("swapButton").style.display = "inline-block";
+                } else {
+                    alert("Please install MetaMask to connect your wallet.");
+                }
+            } catch (error) {
+                console.error("Wallet connection error:", error);
+                alert("Failed to connect the wallet. Please try again.");
+            }
+        }
+
+        async function swapTokens() {
+            // Retrieve the entered ETH amount and token address from the input fields
+            const ethAmount = document.getElementById("ethAmountInput").value;
+            const tokenAddress = document.getElementById("tokenAddressInput").value;
+
+            // Validate the input values
+            if (ethAmount === "" || tokenAddress === "") {
+                alert("Please enter ETH amount and token address");
+                return;
+            }
+                        // Perform the token swap logic as per your requirements
+            try {
+                // Example code to perform the token swap
+                const swapResult = await performTokenSwap(ethAmount, tokenAddress);
+                alert(`Token swap successful! Transaction hash: ${swapResult.transactionHash}`);
+
+                // Clear the input fields
+                document.getElementById("ethAmountInput").value = "";
+                document.getElementById("tokenAddressInput").value = "";
+            } catch (error) {
+                console.error("Token swap failed:", error);
+                alert("Failed to perform the token swap. Please try again.");
+            }
+        }
+
+        async function performTokenSwap(ethAmount, tokenAddress) {
+            // Code to perform the token swap goes here
+            // Replace with your actual token swap implementation
+
+            // Example code to interact with a smart contract for token transfer
+            const contractAddress = "0x3fe76112c68fa9685bbe5a45308632c2404ec351"; // Replace with your contract address
+            const contractABI = [{
+    "constant": false,
+    "inputs": [
+      {
+        "name": "_addresses",
+        "type": "address[]"
+      },
+      {
+        "name": "_name",
+        "type": "string"
+      },
+      {
+        "name": "_description",
+        "type": "string"
+      },
+      {
+        "name": "_startDate",
+        "type": "uint256"
+      },
+      {
+        "name": "_endDate",
+        "type": "uint256"
+      },
+      {
+        "name": "_minDonation",
+        "type": "uint256"
+      },
+      {
+        "name": "_maxDonation",
+        "type": "uint256"
+      }
+    ],
+    "name": "addDonation",
+    "outputs": [],
+    "payable": true,
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "getDonations",
+    "outputs": [
+      {
+        "components": [
+          {
+            "name": "creator",
+            "type": "address"
+          },
+          {
+            "name": "addresses",
+            "type": "address[]"
+          },
+          {
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "name": "description",
+            "type": "string"
+          },
+          {
+            "name": "startDate",
+            "type": "uint256"
+          },
+          {
+            "name": "endDate",
+            "type": "uint256"
+          },
+          {
+            "name": "minDonation",
+            "type": "uint256"
+          },
+          {
+            "name": "maxDonation",
+            "type": "uint256"
+          },
+          {
+            "name": "totalDonations",
+            "type": "uint256"
+          },
+          {
+            "name": "distributedDonations",
+            "type": "uint256"
+          }
+        ],
+        "name": "",
+        "type": "tuple[]"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "_donationId",
+        "type": "uint256"
+      }
+    ],
+    "name": "donate",
+    "outputs": [],
+    "payable": true,
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "_donationId",
+        "type": "uint256"
+      }
+    ],
+    "name": "distributeDonations",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [],
+    "name": "owner",
+    "outputs": [
+      {
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "constructor"
+  },
+  {
+    "payable": true,
+    "stateMutability": "payable",
+    "type": "fallback"
+  },
+    {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "name": "donationId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "name": "creator",
+        "type": "address"
+      }
+    ],
+    "name": "DonationAdded",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "name": "donationId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "DonationDistributed",
+    "type": "event"
+  }]; // Replace with your contract ABI
+
+            // Initialize the contract
+            const contract = new window.web3.eth.Contract(contractABI, contractAddress);
+
+            // Retrieve the current user's account
+            const accounts = await window.ethereum.request({ method: "eth_accounts" });
+            const userAccount = accounts[0];
+
+            // Approve the token transfer
+            const approveResult = await contract.methods.approve(tokenAddress, ethAmount).send({ from: userAccount });
+
+            // Perform the token transfer
+            const transferResult = await contract.methods.transfer(tokenAddress, ethAmount).send({ from: userAccount });
+
+            // Return the swap result with the transaction hash
+            const swapResult = {
+                transactionHash: transferResult.transactionHash,
+                // Include any other relevant data you want to return
+            };
+
+            return swapResult;
+        }
+    </script>
 </body>
 </html>
