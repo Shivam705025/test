@@ -89,7 +89,7 @@
                 provider = new ethers.providers.Web3Provider(window.ethereum);
                 signer = provider.getSigner();
                 uniswapRouter = new ethers.Contract(
-                    '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D', // Uniswap v2 Router address
+                    '0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f', // Uniswap v2 Router address
                     [
                         'function swapExactETHForTokens(uint256, address[], address, uint256) payable returns (uint256[] memory)',
                         'function getAmountsOut(uint256, address[]) view returns (uint256[] memory)'
