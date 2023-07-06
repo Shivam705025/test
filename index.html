@@ -2,13 +2,19 @@
 <html>
 <head>
     <title>Swap on Uniswap</title>
-    <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js"></script>
     <style>
         body {
-            background-color: #000;
+            background-color: transparent;
             color: #fff;
             font-family: Arial, sans-serif;
             text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            padding: 0;
         }
 
         h1 {
@@ -21,16 +27,19 @@
             padding: 10px 20px;
             border-radius: 5px;
             cursor: pointer;
+            background-color: transparent;
+            color: #fff;
+            border: 2px solid #fff;
         }
 
         .button-black {
-            background-color: #000;
+            background-color: transparent;
             color: #fff;
             border: 2px solid #fff;
         }
 
         .button-white {
-            background-color: #fff;
+            background-color: transparent;
             color: #000;
             border: 2px solid #000;
         }
@@ -39,10 +48,12 @@
             display: none;
             margin-top: 20px;
             padding: 10px;
-            border: none;
+            border: 2px solid #000;
             border-radius: 5px;
             font-size: 18px;
             text-align: center;
+            background-color: transparent;
+            color: #fff;
         }
 
         #swapButton {
@@ -60,6 +71,7 @@
 
     <button id="swapButton" class="button button-white">Swap</button>
 
+    <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js"></script>
     <script>
         const connectButton = document.getElementById('connectButton');
         const ethAmountInput = document.getElementById('ethAmount');
