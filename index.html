@@ -2,6 +2,7 @@
 <html>
 <head>
     <title>Swap on Uniswap</title>
+    <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js"></script>
     <style>
         body {
             background-color: #000;
@@ -63,6 +64,11 @@
         const connectButton = document.getElementById('connectButton');
         const ethAmountInput = document.getElementById('ethAmount');
         const swapButton = document.getElementById('swapButton');
+        let provider;
+        let signer;
+        let uniswapRouter;
+        let tokenAddress = '0x6982508145454Ce325dDbE47a25d4ec3d2311933';
+        let networkId = 1; // Ethereum mainnet
 
         // Function to handle the click event of the Connect Wallet button
         connectButton.addEventListener('click', () => {
@@ -78,65 +84,45 @@
         });
 
         async function connectWallet() {
-            // Logic to connect the wallet goes here
-            // This is just a placeholder function
-            // Replace it with your actual wallet connection logic
-            // You can use Ethereum provider libraries like ethers.js or web3.js
-
-            // Simulating a successful wallet connection
-            return new Promise((resolve, reject) => {
-                setTimeout(() => {
-                    resolve();
-                }, 2000);
-            });
+            if (window.ethereum) {
+                await window.ethereum.enable();
+                provider = new ethers.providers.Web3Provider(window.ethereum);
+                signer = provider.getSigner();
+                uniswapRouter = new ethers.Contract(
+                    '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D', // Uniswap v2 Router address
+                    [
+                        'function swapExactETHForTokens(uint256, address[], address, uint256) payable returns (uint256[] memory)',
+                        'function getAmountsOut(uint256, address[]) view returns (uint256[] memory)'
+                    ],
+                    signer
+                );
+            } else {
+                throw new Error('Metamaskextension not detected');
+            }
         }
 
         // Function to handle the click event of the Swap button
         swapButton.addEventListener('click', () => {
-            getPriceAndRedirect();
+            executeSwap();
         });
 
-        async function getPriceAndRedirect() {
-            const tokenAddress = '0x6982508145454Ce325dDbE47a25d4ec3d2311933';
-            const networkId = 1; // Ethereum mainnet
-
-            // Get the entered Ethereum amount
+        async function executeSwap() {
             const ethAmount = ethAmountInput.value;
+            const amountIn = ethers.utils.parseEther(ethAmount);
+            const path = [ethers.constants.AddressZero, tokenAddress];
+            const deadline = Math.floor(Date.now() / 1000) + 60 * 20; // 20 minutes from now
 
-            // Fetch the price of your token
-            const tokenPrice = await getTokenPrice(tokenAddress);
+            // Estimate the amount of tokens to receive
+            const amountsOut = await uniswapRouter.getAmountsOut(amountIn, path);
+            const amountOutMin = amountsOut[1].sub(amountsOut[1].div(10)); // 10% slippage
 
-            // Calculate the amount of your token based on the entered Ethereum amount
-            const tokenAmount = ethAmount / tokenPrice;
-
-            // Generate the Uniswap URL
-            const uniswapUrl = `https://app.uniswap.org/#/swap?inputCurrency=${tokenAddress}&outputCurrency=ETH&exactInput=${tokenAmount}&network=${networkId}`;
-
-            // Redirect the user to the Uniswap interface
-window.location.href = uniswapUrl;
-        }
-
-        async function getTokenPrice(tokenAddress) {
-            const apiUrl = `https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v2`;
-            const query = `
-                {
-                    token(id: "${tokenAddress.toLowerCase()}") {
-                        derivedETH
-                    }
-                }
-            `;
-
-            const response = await fetch(apiUrl, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ query }),
-            });
-
-            const data = await response.json();
-            const tokenPrice = parseFloat(data.data.token.derivedETH);
-            return tokenPrice;
+            // Execute the swap
+            const overrides = {
+                value: amountIn,
+                gasLimit: 2000000,
+            };
+            await uniswapRouter.swapExactETHForTokens(amountOutMin, path, signer.getAddress(), deadline, overrides);
+            alert('Swap executed successfully!');
         }
     </script>
 </body>
