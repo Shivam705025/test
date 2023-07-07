@@ -4,26 +4,54 @@
   <title>KILROY Tokenomics</title>
   <style>
     body {
-      background-color: black;
-      color: white;
+      background-color: transparent;
       font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
     }
 
     h1 {
       text-align: center;
+      margin: 20px 0;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: rgba(255, 255, 255, 0.9);
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     }
 
     .section {
-      margin-top: 30px;
+      margin-top: 40px;
+    }
+
+    h2 {
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    p {
+      font-size: 16px;
+      line-height: 1.5;
+      margin-bottom: 20px;
+    }
+
+    .distribution {
+      display: flex;
+      justify-content: space-between;
     }
 
     .heading {
-      font-size: 20px;
+      font-size: 16px;
       font-weight: bold;
     }
 
     .percentage {
-      font-size: 18px;
+      font-size: 16px;
     }
 
     .chart {
@@ -42,7 +70,7 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background-color: white;
+      background-color: rgba(255, 255, 255, 0.9);
       border-radius: 50%;
       transform: rotate(0deg);
       z-index: 1;
@@ -58,61 +86,63 @@
     }
 
     .chart-bar-liquidity {
-      background-color: white;
+      background-color: rgba(255, 255, 255, 0.8);
       transform-origin: left;
     }
 
     .chart-bar-rewards {
-      background-color: white;
+      background-color: rgba(255, 255, 255, 0.6);
       transform-origin: right;
     }
 
     .chart-bar-listings {
-      background-color: white;
+      background-color: rgba(255, 255, 255, 0.4);
       transform-origin: bottom;
     }
   </style>
 </head>
 <body>
-  <h1>KILROY Tokenomics</h1>
+  <div class="container">
+    <h1>KILROY Tokenomics</h1>
 
-  <div class="section">
-    <h2>Total Supply</h2>
-    <p>420,690,000,000,000 KILROY tokens</p>
-  </div>
-
-  <div class="section">
-    <h2>Token Distribution</h2>
-    <div class="distribution">
-      <p class="heading">Liquidity:</p>
-      <p class="percentage">80%</p>
+    <div class="section">
+      <h2>Total Supply</h2>
+      <p>420,690,000,000,000 KILROY tokens</p>
     </div>
-    <div class="distribution">
-      <p class="heading">Staking and Platform Rewards:</p>
-      <p class="percentage">10%</p>
+
+    <div class="section">
+      <h2>Token Distribution</h2>
+      <div class="distribution">
+        <p class="heading">Liquidity:</p>
+        <p class="percentage">80%</p>
+      </div>
+      <div class="distribution">
+        <p class="heading">Staking and Platform Rewards:</p>
+        <p class="percentage">10%</p>
+      </div>
+      <div class="distribution">
+        <p class="heading">Partnerships, CEX Listings:</p>
+        <p class="percentage">10%</p>
+      </div>
     </div>
-    <div class="distribution">
-      <p class="heading">Partnerships, CEX Listings:</p>
-      <p class="percentage">10%</p>
+
+    <div class="section">
+      <h2>Vesting and Lock-up Periods</h2>
+      <p>All tokens outside of the Liquidity Pool are vested and released periodically as necessary. This ensures a gradual release of tokens and aligns with the incentives with the project's long-term success and transparency.</p>
     </div>
-  </div>
 
-  <div class="section">
-    <h2>Vesting and Lock-up Periods</h2>
-    <p>All tokens outside of the Liquidity Pool are vested and released periodically as necessary. This ensures a gradual release of tokens and aligns with the incentives with the project's long-term success and transparency.</p>
-  </div>
+    <div class="section">
+      <h2>Tax Structure</h2>
+      <p>There will be zero tax in buying and selling KILROY tokens.</p>
+    </div>
 
-  <div class="section">
-    <h2>Tax Structure</h2>
-    <p>There will be zero tax in buying and selling KILROY tokens.</p>
-  </div>
-
-  <div class="section">
-    <h2>Token Distribution Chart</h2>
-    <div class="chart">
-      <div class="chart-bar chart-bar-liquidity" style="transform: rotate(0deg);"></div>
-      <div class="chart-bar chart-bar-rewards" style="transform: rotate(288deg);"></div>
-      <div class="chart-bar chart-bar-listings" style="transform: rotate(144deg);"></div>
+    <div class="section">
+      <h2>Token Distribution Chart</h2>
+      <div class="chart">
+        <div class="chart-bar chart-bar-liquidity" style="transform: rotate(0deg);"></div>
+        <div class="chart-bar chart-bar-rewards" style="transform: rotate(288deg);"></div>
+        <div class="chart-bar chart-bar-listings" style="transform: rotate(144deg);"></div>
+      </div>
     </div>
   </div>
 </body>
