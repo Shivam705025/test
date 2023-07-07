@@ -61,6 +61,7 @@
       height: 200px;
       border-radius: 50%;
       overflow: hidden;
+      display: flex;
     }
 
     .chart::before {
@@ -80,24 +81,24 @@
       position: absolute;
       top: 0;
       left: 0;
-      width: 100%;
+      width: 50%;
       height: 100%;
-      clip: rect(0, 100px, 200px, 0);
+      transform-origin: right;
     }
 
     .chart-bar-liquidity {
       background-color: rgba(255, 255, 255, 0.8);
-      transform-origin: left;
+      transform: rotate(0deg);
     }
 
     .chart-bar-rewards {
       background-color: rgba(255, 255, 255, 0.6);
-      transform-origin: right;
+      transform: rotate(144deg);
     }
 
     .chart-bar-listings {
       background-color: rgba(255, 255, 255, 0.4);
-      transform-origin: bottom;
+      transform: rotate(288deg);
     }
   </style>
 </head>
@@ -139,9 +140,9 @@
     <div class="section">
       <h2>Token Distribution Chart</h2>
       <div class="chart">
-        <div class="chart-bar chart-bar-liquidity" style="transform: rotate(0deg);"></div>
-        <div class="chart-bar chart-bar-rewards" style="transform: rotate(288deg);"></div>
-        <div class="chart-bar chart-bar-listings" style="transform: rotate(144deg);"></div>
+        <div class="chart-bar chart-bar-liquidity"></div>
+        <div class="chart-bar chart-bar-rewards"></div>
+        <div class="chart-bar chart-bar-listings"></div>
       </div>
     </div>
   </div>
