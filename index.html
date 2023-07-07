@@ -1,173 +1,119 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Swap on Uniswap</title>
-    <style>
-        body {
-            background-color: transparent;
-            color: #fff;
-            font-family: Arial, sans-serif;
-            text-align: center;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            margin: 0;
-            padding: 0;
-        }
+  <title>KILROY Tokenomics</title>
+  <style>
+    body {
+      background-color: black;
+      color: white;
+      font-family: Arial, sans-serif;
+    }
 
-        h1 {
-            margin-top: 50px;
-        }
+    h1 {
+      text-align: center;
+    }
 
-        .button {
-            display: inline-block;
-            margin-top: 30px;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            background-color: #000;
-            color: #fff;
-            border: none;
-        }
+    .section {
+      margin-top: 30px;
+    }
 
-        .button-black {
-            background-color: #000;
-        }
+    .heading {
+      font-size: 20px;
+      font-weight: bold;
+    }
 
-        .button-white {
-            background-color: #000;
-        }
+    .percentage {
+      font-size: 18px;
+    }
 
-        #ethAmount {
-            display: none;
-            margin-top: 20px;
-            padding: 10px;
-            border: 2px solid #000;
-            border-radius: 5px;
-            font-size: 18px;
-            text-align: center;
-            background-color: transparent;
-            color: #000;
-        }
+    .chart {
+      margin-top: 20px;
+      position: relative;
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      overflow: hidden;
+    }
 
-        #swapButton {
-            display: none;
-            margin-top: 20px;
-        }
-    </style>
+    .chart::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: white;
+      border-radius: 50%;
+      transform: rotate(0deg);
+      z-index: 1;
+    }
+
+    .chart-bar {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      clip: rect(0, 100px, 200px, 0);
+    }
+
+    .chart-bar-liquidity {
+      background-color: white;
+      transform-origin: left;
+    }
+
+    .chart-bar-rewards {
+      background-color: white;
+      transform-origin: right;
+    }
+
+    .chart-bar-listings {
+      background-color: white;
+      transform-origin: bottom;
+    }
+  </style>
 </head>
 <body>
-    <h1>Swap on Uniswap</h1>
+  <h1>KILROY Tokenomics</h1>
 
-    <button id="connectButton" class="button button-black">Connect Wallet</button>
+  <div class="section">
+    <h2>Total Supply</h2>
+    <p>420,690,000,000,000 KILROY tokens</p>
+  </div>
 
-    <input type="number" id="ethAmount" min="0" step="0.01" placeholder="Enter Ethereum Amount">
+  <div class="section">
+    <h2>Token Distribution</h2>
+    <div class="distribution">
+      <p class="heading">Liquidity:</p>
+      <p class="percentage">80%</p>
+    </div>
+    <div class="distribution">
+      <p class="heading">Staking and Platform Rewards:</p>
+      <p class="percentage">10%</p>
+    </div>
+    <div class="distribution">
+      <p class="heading">Partnerships, CEX Listings:</p>
+      <p class="percentage">10%</p>
+    </div>
+  </div>
 
-    <button id="swapButton" class="button button-white">Swap</button>
+  <div class="section">
+    <h2>Vesting and Lock-up Periods</h2>
+    <p>All tokens outside of the Liquidity Pool are vested and released periodically as necessary. This ensures a gradual release of tokens and aligns with the incentives with the project's long-term success and transparency.</p>
+  </div>
 
-    <script src="https://cdn.ethers.io/lib/ethers-5.4.umd.min.js"></script>
-    <script>
-    const connectButton = document.getElementById('connectButton');
-    const ethAmountInput = document.getElementById('ethAmount');
-    const swapButton = document.getElementById('swapButton');
-    let provider;
-    let signer;
-    let uniswapRouter;
-    const tokenAddress = '0x6982508145454Ce325dDbE47a25d4ec3d2311933';
-    const uniswapRouterAddress = '0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f';
+  <div class="section">
+    <h2>Tax Structure</h2>
+    <p>There will be zero tax in buying and selling KILROY tokens.</p>
+  </div>
 
-async function checkAndApproveToken(amountIn) {
-    const tokenContract = new ethers.Contract(
-        tokenAddress,
-        ['function allowance(address owner, address spender) external view returns (uint256)'],
-        signer
-    );
-
-    const allowance = await tokenContract.allowance(signer.getAddress(), uniswapRouter.address);
-
-    if (allowance.lt(amountIn)) {
-        const approveTx = await tokenContract.approve(uniswapRouter.address, ethers.constants.MaxUint256);
-        await approveTx.wait();
-    }
-}
-
-    async function connectWallet() {
-        try {
-            if (typeof window.ethereum !== 'undefined') {
-                await window.ethereum.request({ method: 'eth_requestAccounts' });
-                provider = new ethers.providers.Web3Provider(window.ethereum);
-                signer = provider.getSigner();
-                uniswapRouter = new ethers.Contract(
-                    uniswapRouterAddress,
-                    [
-                        'function swapExactETHForTokens(uint256, address[], address, uint256) payable returns (uint256[] memory)',
-                        'function getAmountsOut(uint256, address[]) view returns (uint256[] memory)'
-                    ],
-                    signer
-                );
-            } else {
-                throw new Error('Metamask extension not detected');
-            }
-        } catch (error) {
-            console.error(error);
-        }
-    }
-
-    // Function to handle the click event of the Connect Wallet button
-    connectButton.addEventListener('click', () => {
-        connectWallet()
-            .then(() => {
-                connectButton.style.display = 'none';
-                ethAmountInput.style.display = 'block';
-                swapButton.style.display = 'block';
-            })
-            .catch(error => {
-                console.error(error);
-            });
-    });
-
-async function executeSwap() {
-    const ethAmount = ethAmountInput.value;
-    const amountIn = ethers.utils.parseEther(ethAmount);
-    const path = [ethers.constants.AddressZero, tokenAddress];
-    const deadline = Math.floor(Date.now() / 1000) + 60 * 20; // 20 minutes from now
-
-    await checkAndApproveToken(amountIn);
-
-    // Execute the swap
-    const overrides = {
-        value: amountIn,
-        gasLimit: 2000000,
-    };
-
-    try {
-        const tx = await uniswapRouter.swapExactETHForTokens(
-            ethers.constants.Zero,
-            path,
-            signer.getAddress(),
-            deadline,
-            overrides
-        );
-        
-        await tx.wait(); // Wait for the transaction to be mined
-
-        alert('Swap executed successfully!');
-    } catch (error) {
-        console.error(error);
-        alert('Error executing swap');
-    }
-}
-
-
-    // Function to handle the click event of the Swap button
-    swapButton.addEventListener('click', () => {
-        executeSwap()
-            .catch(error => {
-                console.error(error);
-            });
-    });
-</script>
+  <div class="section">
+    <h2>Token Distribution Chart</h2>
+    <div class="chart">
+      <div class="chart-bar chart-bar-liquidity" style="transform: rotate(0deg);"></div>
+      <div class="chart-bar chart-bar-rewards" style="transform: rotate(288deg);"></div>
+      <div class="chart-bar chart-bar-listings" style="transform: rotate(144deg);"></div>
+    </div>
+  </div>
 </body>
 </html>
