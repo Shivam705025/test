@@ -100,6 +100,25 @@
       background-color: rgba(255, 255, 255, 0.4);
       transform: rotate(288deg);
     }
+
+    .button {
+      display: inline-block;
+      padding: 10px 20px;
+      background-color: #ff6f00;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      border: none;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(255, 111, 0, 0.5);
+      cursor: pointer;
+      text-decoration: none;
+      transition: box-shadow 0.3s;
+    }
+
+    .button:hover {
+      box-shadow: 0 0 20px rgba(255, 111, 0, 0.7);
+    }
   </style>
 </head>
 <body>
@@ -138,12 +157,7 @@
     </div>
 
     <div class="section">
-      <h2>Token Distribution Chart</h2>
-      <div class="chart">
-        <div class="chart-bar chart-bar-liquidity"></div>
-        <div class="chart-bar chart-bar-rewards"></div>
-        <div class="chart-bar chart-bar-listings"></div>
-      </div>
+      <a class="button" href="https://app.uniswap.org">Go to Uniswap</a>
     </div>
   </div>
 </body>
