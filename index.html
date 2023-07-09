@@ -1,81 +1,96 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Image Grid</title>
+  <title>Tokenomics</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     body {
       margin: 0;
       padding: 0;
-      background-color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
     }
 
-   .image-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 20px;
-  padding: 20px;
-  justify-items: center;
-}
+    .chart-container {
+      position: relative;
+      border: 2px solid black;
+      max-width: 90vw;
+      max-height: 90vh;
+    }
 
-
-.image-container {
-  position: relative;
-  overflow: hidden;
-  width: 300px;  /* Specify the desired width */
-  height: 200px; /* Specify the desired height */
-}
-
-.image-container img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover; /* Maintain aspect ratio and fill the container */
-}
-
-
-    .image-overlay {
+    .chart {
       position: absolute;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      background-color: rgba(0, 0, 0, 0.8);
-      opacity: 0;
-      transition: opacity 0.3s;
-    }
-
-    .image-container:hover .image-overlay {
-      opacity: 1;
     }
   </style>
 </head>
 <body>
-  <div class="image-grid">
-    <div class="image-container">
-      <img src="image1.jpg" alt="Image 1">
-      <div class="image-overlay"></div>
-    </div>
-    <div class="image-container">
-      <img src="image2.jpg" alt="Image 2">
-      <div class="image-overlay"></div>
-    </div>
-    <div class="image-container">
-      <img src="image3.jpg" alt="Image 3">
-      <div class="image-overlay"></div>
-    </div>
-    <div class="image-container">
-      <img src="image3.jpg" alt="Image 3">
-      <div class="image-overlay"></div>
-    </div>
-    <div class="image-container">
-      <img src="image3.jpg" alt="Image 3">
-      <div class="image-overlay"></div>
-    </div>
-    <div class="image-container">
-      <img src="image3.jpg" alt="Image 3">
-      <div class="image-overlay"></div>
-    </div>
-    
+  <div class="chart-container">
+    <canvas id="pieChart" class="chart"></canvas>
   </div>
+
+  <div class="chart-container" style="margin-top: 50px;">
+    <canvas id="barChart" class="chart"></canvas>
+  </div>
+
+  <script>
+    // Token Distribution
+    const liquidity = 80;
+    const stakingRewards = 10;
+    const partnerships = 10;
+
+    // Create the pie chart
+    const pieData = {
+      labels: ['Liquidity', 'Staking and Rewards', 'Partnerships'],
+      datasets: [{
+        data: [liquidity, stakingRewards, partnerships],
+        backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56'],
+      }],
+    };
+
+    const pieOptions = {
+      responsive: true,
+      maintainAspectRatio: false,
+    };
+
+    const pieChart = new Chart(document.getElementById('pieChart'), {
+      type: 'pie',
+      data: pieData,
+      options: pieOptions,
+    });
+
+    // Token Release
+    const vestingLockup = 100 - liquidity;
+
+    // Create the bar chart
+    const barData = {
+      labels: ['Liquidity', 'Vesting and Lock-up'],
+      datasets: [{
+        data: [liquidity, vestingLockup],
+        backgroundColor: ['#FF6384', '#36A2EB'],
+      }],
+    };
+
+    const barOptions = {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        y: {
+          beginAtZero: true,
+        },
+      },
+    };
+
+    const barChart = new Chart(document.getElementById('barChart'), {
+      type: 'bar',
+      data: barData,
+      options: barOptions,
+    });
+  </script>
 </body>
 </html>
