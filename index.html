@@ -1,164 +1,70 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>KILROY Tokenomics</title>
+  <title>Tokenomics</title>
   <style>
-    body {
-      background-color: transparent;
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-    }
-
-    h1 {
-      text-align: center;
-      margin: 20px 0;
-    }
-
-    .container {
-      max-width: 800px;
-      margin: 0 auto;
-      padding: 20px;
-      background-color: rgba(255, 255, 255, 0.9);
+    .chart {
+      border: 2px solid black;
       border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    }
-
-    .section {
-      margin-top: 40px;
-    }
-
-    h2 {
-      font-size: 20px;
-      font-weight: bold;
-      margin-bottom: 10px;
-    }
-
-    p {
-      font-size: 16px;
-      line-height: 1.5;
+      padding: 20px;
       margin-bottom: 20px;
     }
 
-    .distribution {
-      display: flex;
-      justify-content: space-between;
+    #pieChart {
+      width: 400px;
+      height: 400px;
     }
 
-    .heading {
-      font-size: 16px;
-      font-weight: bold;
-    }
-
-    .percentage {
-      font-size: 16px;
-    }
-
-    .chart {
-      margin-top: 20px;
-      position: relative;
-      width: 200px;
-      height: 200px;
-      border-radius: 50%;
-      overflow: hidden;
-      display: flex;
-    }
-
-    .chart::before {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(255, 255, 255, 0.9);
-      border-radius: 50%;
-      transform: rotate(0deg);
-      z-index: 1;
-    }
-
-    .chart-bar {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 50%;
-      height: 100%;
-      transform-origin: right;
-    }
-
-    .chart-bar-liquidity {
-      background-color: rgba(255, 255, 255, 0.8);
-      transform: rotate(0deg);
-    }
-
-    .chart-bar-rewards {
-      background-color: rgba(255, 255, 255, 0.6);
-      transform: rotate(144deg);
-    }
-
-    .chart-bar-listings {
-      background-color: rgba(255, 255, 255, 0.4);
-      transform: rotate(288deg);
-    }
-
-    .button {
-      display: inline-block;
-     border: 2px solid #000000;
-    padding: 15px 30px;
-      background-color: #ff6f00;
-      color: #000000;
-      font-size: 18px;
-      font-weight: bold;
-      border-radius: 5px;
-      box-shadow: 0 0 10px rgba(255, 111, 0, 0.5);
-      cursor: pointer;
-      text-decoration: none;
-      transition: box-shadow 0.3s;
-    }
-
-    .button:hover {
-      box-shadow: 0 0 20px rgba(255, 111, 0, 0.7);
+    #barChart {
+      width: 400px;
+      height: 300px;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>KILROY Tokenomics</h1>
+  <div class="chart" id="pieChart"></div>
+  <div class="chart" id="barChart"></div>
 
-    <div class="section">
-      <h2>Total Supply</h2>
-      <p>420,690,000,000,000 KILROY tokens</p>
-    </div>
+  <script src="https://cdn.jsdelivr.net/npm/apexcharts@3.27.3/dist/apexcharts.min.js"></script>
+  <script>
+    // Token Distribution
+    const liquidity = 80;
+    const stakingRewards = 10;
+    const partnerships = 10;
 
-    <div class="section">
-      <h2>Token Distribution</h2>
-      <div class="distribution">
-        <p class="heading">Liquidity:</p>
-        <p class="percentage">80%</p>
-      </div>
-      <div class="distribution">
-        <p class="heading">Staking and Platform Rewards:</p>
-        <p class="percentage">10%</p>
-      </div>
-      <div class="distribution">
-        <p class="heading">Partnerships, CEX Listings:</p>
-        <p class="percentage">10%</p>
-      </div>
-    </div>
+    // Create the pie chart
+    const pieChartOptions = {
+      series: [liquidity, stakingRewards, partnerships],
+      labels: ['Liquidity', 'Staking and Rewards', 'Partnerships'],
+      colors: ['#FF6384', '#36A2EB', '#FFCE56'],
+      chart: {
+        type: 'pie',
+        width: '100%',
+        height: '100%',
+      },
+    };
 
-    <div class="section">
-      <h2>Vesting and Lock-up Periods</h2>
-      <p>All tokens outside of the Liquidity Pool are vested and released periodically as necessary. This ensures a gradual release of tokens and aligns with the incentives with the project's long-term success and transparency.</p>
-    </div>
+    const pieChart = new ApexCharts(document.querySelector("#pieChart"), pieChartOptions);
+    pieChart.render();
 
-    <div class="section">
-      <h2>Tax Structure</h2>
-      <p>There will be zero tax in buying and selling KILROY tokens.</p>
-    </div>
+    // Token Release
+    const vestingLockup = 100 - liquidity;
 
-    <div class="section">
-      <a class="button" href="https://app.uniswap.org">Go to Uniswap</a>
-    </div>
-  </div>
+    // Create the bar chart
+    const barChartOptions = {
+      series: [{ data: [liquidity, vestingLockup] }],
+      chart: {
+        type: 'bar',
+        width: '100%',
+        height: '100%',
+      },
+      xaxis: {
+        categories: ['Liquidity', 'Vesting and Lock-up'],
+      },
+    };
+
+    const barChart = new ApexCharts(document.querySelector("#barChart"), barChartOptions);
+    barChart.render();
+  </script>
 </body>
 </html>
