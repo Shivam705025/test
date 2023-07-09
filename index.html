@@ -4,38 +4,22 @@
   <title>Tokenomics</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
-    body {
-      margin: 0;
-      padding: 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-    }
-
-    .chart-container {
-      position: relative;
+    canvas {
       border: 2px solid black;
-      max-width: 90vw;
-      max-height: 90vh;
-    }
-
-    .chart {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
     }
   </style>
 </head>
 <body>
-  <div class="chart-container">
-    <canvas id="pieChart" class="chart"></canvas>
+  <div style="display: flex; justify-content: center; align-items: center; height: 100vh;">
+    <div style="width: 500px;">
+      <canvas id="pieChart"></canvas>
+    </div>
   </div>
 
-  <div class="chart-container" style="margin-top: 50px;">
-    <canvas id="barChart" class="chart"></canvas>
+  <div style="display: flex; justify-content: center; align-items: center; margin-top: 50px;">
+    <div style="width: 500px;">
+      <canvas id="barChart"></canvas>
+    </div>
   </div>
 
   <script>
