@@ -7,17 +7,6 @@
     canvas {
       border: 2px solid black;
     }
-    .token-details {
-      text-align: center;
-      margin-top: 20px;
-    }
-    .token-details h2 {
-      font-size: 24px;
-      margin-bottom: 10px;
-    }
-    .token-details p {
-      font-size: 16px;
-    }
   </style>
 </head>
 <body>
@@ -31,23 +20,6 @@
     <div style="width: 500px;">
       <canvas id="barChart"></canvas>
     </div>
-  </div>
-
-  <div class="token-details">
-    <h2>Token Distribution</h2>
-    <p>Liquidity - 80%</p>
-    <p>Staking and Platform Rewards - 10%</p>
-    <p>Partnerships, CEX listings - 10%</p>
-  </div>
-
-  <div class="token-details">
-    <h2>Vesting and Lock-up Periods</h2>
-    <p>All tokens outside of the Liquidity Pool are vested and released periodically as necessary. This ensures a gradual release of tokens and aligns with the incentives with the project's long-term success and transparency.</p>
-  </div>
-
-  <div class="token-details">
-    <h2>Tax Structure</h2>
-    <p>There will be zero tax in buying and selling KILROY tokens.</p>
   </div>
 
   <script>
@@ -69,9 +41,6 @@
       responsive: true,
       maintainAspectRatio: false,
       plugins: {
-        legend: {
-          position: 'right',
-        },
         tooltip: {
           callbacks: {
             label: function(context) {
