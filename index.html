@@ -209,7 +209,7 @@ async function loadChat() {
         const timestamp = new Date(stringEntry.timestamp * 1000).toLocaleString();
 
         const chatEntry = document.createElement('div');
-        chatEntry.innerHTML = `<strong>${sender}</strong> (${timestamp}): ${message}`;
+        chatEntry.innerHTML = `<strong>${sender}</strong> (${timestamp}): ${message}<br><br>`;
         chatBox.appendChild(chatEntry);
     });
 }
