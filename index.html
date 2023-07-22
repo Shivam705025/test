@@ -138,7 +138,7 @@ async function loadChat() {
     const chatBox = document.getElementById('chatBox');
     chatBox.innerHTML = '';
 
-    const recentStrings = await contract.methods.getRecentStrings().send();
+    const recentStrings = await contract.methods.getRecentStrings().call();
 
     recentStrings.forEach(stringEntry => {
         const sender = stringEntry.sender;
