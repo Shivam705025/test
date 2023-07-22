@@ -63,10 +63,21 @@ button {
     </div>
     <script src="https://cdn.jsdelivr.net/npm/web3@1.5.2/dist/web3.min.js"></script>
     <script>
-      const contractAddress = '0xee2ec33e838c922bc099331dbc35f8f466b9b4bf'; // Replace with your smart contract address
+      const contractAddress = '0xc02cba78bbf6c5bff675214ac1fc685e1fbc41b2'; // Replace with your smart contract address
 const abi = [
   {
-    "inputs": [],
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "_name",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "_data",
+        "type": "string"
+      }
+    ],
     "name": "addString",
     "outputs": [],
     "stateMutability": "nonpayable",
@@ -82,6 +93,11 @@ const abi = [
             "internalType": "address",
             "name": "sender",
             "type": "address"
+          },
+          {
+            "internalType": "string",
+            "name": "name",
+            "type": "string"
           },
           {
             "internalType": "string",
@@ -102,7 +118,8 @@ const abi = [
     "stateMutability": "view",
     "type": "function"
   }
-];
+]
+;
 
    let contract; // Declare contract variable outside functions
 
