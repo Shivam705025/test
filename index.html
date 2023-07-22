@@ -127,7 +127,7 @@ const abi = [
 
             try {
                 // Use call() instead of send() for non-payable functions
-                await contractInstance.methods.addString(message).call();
+                await contractInstance.methods.addString(message).send();
                 document.getElementById('messageInput').value = '';
                 loadChat();
             } catch (error) {
@@ -138,7 +138,7 @@ async function loadChat() {
     const chatBox = document.getElementById('chatBox');
     chatBox.innerHTML = '';
 
-    const recentStrings = await contract.methods.getRecentStrings().call();
+    const recentStrings = await contract.methods.getRecentStrings().send();
 
     recentStrings.forEach(stringEntry => {
         const sender = stringEntry.sender;
