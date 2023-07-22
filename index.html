@@ -225,7 +225,7 @@ const abi = [
         const fromAddress = web3.givenProvider.selectedAddress;
 
         // Provide both "_name" and "_data" parameters when calling "addString"
-        await contract.methods.addString(name, message).send({ from: fromAddress });
+        await contract.methods.addString(fromAddress, message).send({ from: fromAddress });
         document.getElementById('messageInputChat').value = '';
         loadChat();
     } catch (error) {
