@@ -106,7 +106,7 @@
     <div class="input-box">
     <input type="text" id="nameInput" placeholder="Your Name">
     <input type="text" id="messageInput" placeholder="Type your message...">
-    <button onclick="setNameAndSendMessage()">Set Name & Send</button>
+    <button onclick="setNameAndSendMessage()">Send</button>
 </div>
     <script src="https://cdn.jsdelivr.net/npm/web3@1.5.2/dist/web3.min.js"></script>
     <script>
@@ -243,7 +243,7 @@ const abi = [
         const fromAddress = web3.givenProvider.selectedAddress;
 
         // Provide both "_name" and "_data" parameters when calling "addString"
-        await contract.methods.addString(name, '').send({ from: fromAddress });
+        await contract.methods.addString(name, 'Alice').send({ from: fromAddress });
         document.getElementById('nameInput').value = ''; // Clear the name input field after setting the name
         loadChat();
     } catch (error) {
