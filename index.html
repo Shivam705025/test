@@ -266,11 +266,13 @@ async function loadChat() {
     chatBox.innerHTML = '';
 
     const recentStrings = await contract.methods.getRecentStrings().call();
-    recentStrings.forEach(stringEntry => {
+    recentStrings.forEach(async stringEntry => {
         const sender = stringEntry.sender;
         const message = stringEntry.data;
         const timestamp = new Date(stringEntry.timestamp * 1000).toLocaleString();
-        const name = stringEntry.name; // Get the name from the contract
+
+        // Fetch the name from the contract for the sender's address
+        const name = await contract.methods.getNameForAddress(sender).call();
 
         const chatEntry = document.createElement('div');
         // Use the name if available, or fallback to the sender's address
