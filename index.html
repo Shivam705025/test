@@ -216,7 +216,7 @@ const abi = [
 
        async function sendMessage() {
     const name = "Your Name"; // Replace "Your Name" with the name of the sender (can be any string)
-    const message = document.getElementById('messageInput').value;
+    const message = document.getElementById('messageInputChat').value;
     if (message.trim() === '') return;
 
     await connectWalletAndLoadChat(); // Ensure wallet is connected before sending the message
@@ -226,7 +226,7 @@ const abi = [
 
         // Provide both "_name" and "_data" parameters when calling "addString"
         await contract.methods.addString(name, message).send({ from: fromAddress });
-        document.getElementById('messageInput').value = '';
+        document.getElementById('messageInputChat').value = '';
         loadChat();
     } catch (error) {
         console.error('Error sending message:', error);
