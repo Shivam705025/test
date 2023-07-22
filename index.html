@@ -137,20 +137,22 @@ const abi = [
         }
 
         async function sendMessage() {
-            const message = document.getElementById('messageInput').value;
-            if (message.trim() === '') return;
+    const name = "BUMBOO"; // Replace "Your Name" with the name of the sender (can be any string)
+    const message = document.getElementById('messageInput').value;
+    if (message.trim() === '') return;
 
-            await connectWalletAndLoadChat(); // Ensure wallet is connected before sending the message
+    await connectWalletAndLoadChat(); // Ensure wallet is connected before sending the message
 
-            try {
-                // Use call() instead of send() for non-payable functions
-                await contract.methods.addString(message).send();
-                document.getElementById('messageInput').value = '';
-                loadChat();
-            } catch (error) {
-                console.error('Error sending message:', error);
-            }
-        }
+    try {
+        // Provide both "_name" and "_data" parameters when calling "addString"
+        await contract.methods.addString(name, message).send();
+        document.getElementById('messageInput').value = '';
+        loadChat();
+    } catch (error) {
+        console.error('Error sending message:', error);
+    }
+}
+
 async function loadChat() {
     const chatBox = document.getElementById('chatBox');
     chatBox.innerHTML = '';
