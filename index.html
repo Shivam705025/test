@@ -126,12 +126,12 @@ const abi = [
             await connectWalletAndLoadChat(); // Ensure wallet is connected before sending the message
 
             try {
-                await contract.methods.addString(message).send({ from: web3.currentProvider.selectedAddress });
+                // Use call() instead of send() for non-payable functions
+                await contract.methods.addString(message).call({ from: web3.currentProvider.selectedAddress });
                 document.getElementById('messageInput').value = '';
                 loadChat();
             } catch (error) {
                 console.error('Error sending message:', error);
-                alert('Failed to send the message. Please try again.');
             }
         }
 async function loadChat() {
