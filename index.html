@@ -119,16 +119,16 @@ const abi = [
             }
         }
 
-        async function sendMessage() {
-            const message = document.getElementById('messageInput').value;
-            if (message.trim() === '') return;
+async function sendMessage() {
+    const message = document.getElementById('messageInput').value;
+    if (message.trim() === '') return;
 
-            await connectWalletAndLoadChat(); // Ensure wallet is connected to Goerli before sending the message
+    await connectWalletAndLoadChat(); // Ensure wallet is connected before sending the message
 
-            await contract.methods.addString(message).send({ from: web3.currentProvider.selectedAddress });
-            document.getElementById('messageInput').value = '';
-            loadChat();
-        }
+    await contract.methods.addString(message).send({ from: web3.currentProvider.selectedAddress });
+    document.getElementById('messageInput').value = '';
+    loadChat();
+}
 async function loadChat() {
     const chatBox = document.getElementById('chatBox');
     chatBox.innerHTML = '';
