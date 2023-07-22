@@ -96,16 +96,16 @@
 </head>
 <body>
     <div class="chat-container">
-        <div class="chat-header">Bumboo Chat</div>
-        <div class="chat-box" id="chatBox"></div>
-        <div class="input-box">
-            <input type="text" id="messageInput" placeholder="Type your message...">
-            <button onclick="sendMessage()">Send</button>
-        </div>
-    </div>
+    <div class="chat-header">Bumboo Chat</div>
+    <div class="chat-box" id="chatBox"></div>
     <div class="input-box">
-    <input type="text" id="nameInput" placeholder="Your Name">
-    <input type="text" id="messageInput" placeholder="Type your message...">
+        <input type="text" id="messageInputChat" placeholder="Type your message...">
+        <button onclick="sendMessage()">Send</button>
+    </div>
+</div>
+<div class="input-box">
+    <input type="text" id="nameInputChat" placeholder="Your Name">
+    <input type="text" id="messageInputSetName" placeholder="Type your message...">
     <button onclick="setNameAndSendMessage()">Send</button>
 </div>
     <script src="https://cdn.jsdelivr.net/npm/web3@1.5.2/dist/web3.min.js"></script>
@@ -234,22 +234,29 @@ const abi = [
 }
 
        async function setNameAndSendMessage() {
-    const name = document.getElementById('nameInput').value;
+    const name = document.getElementById('nameInputChat').value;
     if (name.trim() === '') return;
-    
-    await connectWalletAndLoadChat(); // Corrected function name
+
+    await connectWalletAndLoadChat();
 
     try {
         const fromAddress = web3.givenProvider.selectedAddress;
+        await contract.methods.setName(name).send({ from: fromAddress });
+        document.getElementById('nameInputChat').value = ''; // Clear the name input field after setting the name
 
-        // Provide both "_name" and "_data" parameters when calling "addString"
-        await contract.methods.addString(name, 'Alice').send({ from: fromAddress });
-        document.getElementById('nameInput').value = ''; // Clear the name input field after setting the name
+        // Sending a message after setting the name (optional)
+        const message = document.getElementById('messageInputSetName').value;
+        if (message.trim() !== '') {
+            await contract.methods.addString(name, message).send({ from: fromAddress });
+            document.getElementById('messageInputSetName').value = ''; // Clear the message input field after sending the message
+        }
+
         loadChat();
     } catch (error) {
-        console.error('Error setting name:', error);
+        console.error('Error setting name or sending message:', error);
     }
 }
+
 
 // ... (existing code) ...
 
