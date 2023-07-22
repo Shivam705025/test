@@ -35,16 +35,26 @@
         }
 
         .chat-entry {
-            padding: 8px;
-            border-radius: 5px;
+            padding: 10px;
+            border-radius: 20px;
             margin-bottom: 10px;
             background-color: rgba(0, 0, 0, 0.5); /* Transparent black text box */
             color: #fff; /* Text color for chat entries */
             word-break: break-word; /* Wrap long messages */
         }
 
-        .chat-entry strong {
+        .chat-entry p {
+            margin: 0;
+        }
+
+        .chat-entry .sender-name {
+            font-weight: bold;
             color: #ffc107; /* Yellow color for the sender's name */
+        }
+
+        .chat-entry .timestamp {
+            font-size: 0.8rem;
+            color: #bbb; /* Light gray color for the timestamp */
         }
 
         .input-box {
