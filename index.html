@@ -136,16 +136,18 @@ const abi = [
             }
         }
 
-        async function sendMessage() {
-    const name = "BUMBOO"; // Replace "Your Name" with the name of the sender (can be any string)
+       async function sendMessage() {
+    const name = "Your Name"; // Replace "Your Name" with the name of the sender (can be any string)
     const message = document.getElementById('messageInput').value;
     if (message.trim() === '') return;
 
     await connectWalletAndLoadChat(); // Ensure wallet is connected before sending the message
 
     try {
+        const fromAddress = web3.givenProvider.selectedAddress;
+
         // Provide both "_name" and "_data" parameters when calling "addString"
-        await contract.methods.addString(name, message).send();
+        await contract.methods.addString(name, message).send({ from: fromAddress });
         document.getElementById('messageInput').value = '';
         loadChat();
     } catch (error) {
