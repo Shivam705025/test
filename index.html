@@ -108,17 +108,11 @@ const abi = [
 
         const web3 = new Web3(Web3.givenProvider);
 
-        async function connectWalletAndLoadChat() {
+           async function connectWalletAndLoadChat() {
             try {
                 await window.ethereum.enable();
-                const chainId = await web3.eth.getChainId();
-                if (chainId === '0x5') {
-                    // Connected to Goerli chain
-                    contract = new web3.eth.Contract(abi, contractAddress); // Initialize contract here
-                    await loadChat();
-                } else {
-                    alert('Please switch your wallet network to Goerli testnet to use this chat application.');
-                }
+                contract = new web3.eth.Contract(abi, contractAddress); // Initialize contract here
+                await loadChat();
             } catch (error) {
                 console.error('Error connecting to wallet:', error);
                 alert('Failed to connect to your Ethereum wallet. Please make sure you have MetaMask or another compatible wallet installed and try again.');
