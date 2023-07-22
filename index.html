@@ -103,9 +103,15 @@
             <button onclick="sendMessage()">Send</button>
         </div>
     </div>
+    <div class="input-box">
+    <input type="text" id="nameInput" placeholder="Your Name">
+    <input type="text" id="messageInput" placeholder="Type your message...">
+    <button onclick="setNameAndSendMessage()">Set Name & Send</button>
+    <button onclick="sendMessage()">Send</button>
+</div>
     <script src="https://cdn.jsdelivr.net/npm/web3@1.5.2/dist/web3.min.js"></script>
     <script>
-      const contractAddress = '0xc02cba78bbf6c5bff675214ac1fc685e1fbc41b2'; // Replace with your smart contract address
+      const contractAddress = '0x6fa53b21abd808c4536115f9d9a648068367d409'; // Replace with your smart contract address
 const abi = [
   {
     "inputs": [
@@ -159,9 +165,40 @@ const abi = [
     ],
     "stateMutability": "view",
     "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "_name",
+        "type": "string"
+      }
+    ],
+    "name": "setName",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_addr",
+        "type": "address"
+      }
+    ],
+    "name": "getNameForAddress",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
   }
-]
-;
+];
 
    let contract; // Declare contract variable outside functions
 
@@ -197,19 +234,42 @@ const abi = [
     }
 }
 
+        async function setNameAndSendMessage() {
+    const name = document.getElementById('nameInput').value;
+    if (name.trim() === '') return;
+    
+    await connectWallet(); // Ensure wallet is connected before setting the name
+
+    try {
+        const fromAddress = web3.givenProvider.selectedAddress;
+
+        // Provide both "_name" and "_data" parameters when calling "addString"
+        await contract.methods.addString(name, '').send({ from: fromAddress });
+        document.getElementById('nameInput').value = ''; // Clear the name input field after setting the name
+        loadChat();
+    } catch (error) {
+        console.error('Error setting name:', error);
+    }
+}
+
+// ... (existing code) ...
+
 async function loadChat() {
-    const chatBox = document.getElementById('chatBox');
+    // ... (existing code) ...
+        const chatBox = document.getElementById('chatBox');
     chatBox.innerHTML = '';
 
     const recentStrings = await contract.methods.getRecentStrings().call();
-
     recentStrings.forEach(stringEntry => {
         const sender = stringEntry.sender;
         const message = stringEntry.data;
         const timestamp = new Date(stringEntry.timestamp * 1000).toLocaleString();
+        const name = stringEntry.name; // Get the name from the contract
 
         const chatEntry = document.createElement('div');
-        chatEntry.innerHTML = `<strong>${sender}</strong> (${timestamp}): ${message}<br><br>`;
+        // Use the name if available, or fallback to the sender's address
+        const displayName = name.trim() !== '' ? name : sender;
+        chatEntry.innerHTML = `<strong>${displayName}</strong> (${timestamp}): ${message}<br><br>`;
         chatBox.appendChild(chatEntry);
     });
 }
