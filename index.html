@@ -103,18 +103,37 @@ const abi = [
   }
 ];
 
-const web3 = new Web3(Web3.givenProvider);
-const contract = new web3.eth.Contract(abi, contractAddress);
+   let contract; // Declare contract variable outside functions
 
-async function sendMessage() {
-    const message = document.getElementById('messageInput').value;
-    if (message.trim() === '') return;
+        const web3 = new Web3(Web3.givenProvider);
 
-    await contract.methods.addString(message).send({ from: web3.currentProvider.selectedAddress });
-    document.getElementById('messageInput').value = '';
-    loadChat();
-}
+        async function connectWalletAndLoadChat() {
+            try {
+                await window.ethereum.enable();
+                const chainId = await web3.eth.getChainId();
+                if (chainId === '0x5') {
+                    // Connected to Goerli chain
+                    contract = new web3.eth.Contract(abi, contractAddress); // Initialize contract here
+                    await loadChat();
+                } else {
+                    alert('Please switch your wallet network to Goerli testnet to use this chat application.');
+                }
+            } catch (error) {
+                console.error('Error connecting to wallet:', error);
+                alert('Failed to connect to your Ethereum wallet. Please make sure you have MetaMask or another compatible wallet installed and try again.');
+            }
+        }
 
+        async function sendMessage() {
+            const message = document.getElementById('messageInput').value;
+            if (message.trim() === '') return;
+
+            await connectWalletAndLoadChat(); // Ensure wallet is connected to Goerli before sending the message
+
+            await contract.methods.addString(message).send({ from: web3.currentProvider.selectedAddress });
+            document.getElementById('messageInput').value = '';
+            loadChat();
+        }
 async function loadChat() {
     const chatBox = document.getElementById('chatBox');
     chatBox.innerHTML = '';
@@ -132,16 +151,14 @@ async function loadChat() {
     });
 }
 
-// Load the chat when the page is loaded
 document.addEventListener('DOMContentLoaded', async () => {
-    // Check if the user has a connected wallet
-    if (window.ethereum && window.ethereum.isMetaMask) {
-        await window.ethereum.request({ method: 'eth_requestAccounts' });
-        await loadChat();
-    } else {
-        alert('Please install MetaMask or any other compatible Ethereum wallet to use this chat application.');
-    }
-});
+            if (window.ethereum && window.ethereum.isMetaMask) {
+                // Check if the user has MetaMask or another compatible wallet
+                await connectWalletAndLoadChat();
+            } else {
+                alert('Please install MetaMask or any other compatible Ethereum wallet to use this chat application.');
+            }
+        });
 
     </script>
 </body>
