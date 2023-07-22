@@ -233,11 +233,11 @@ const abi = [
     }
 }
 
-        async function setNameAndSendMessage() {
+       async function setNameAndSendMessage() {
     const name = document.getElementById('nameInput').value;
     if (name.trim() === '') return;
     
-    await connectWallet(); // Ensure wallet is connected before setting the name
+    await connectWalletAndLoadChat(); // Corrected function name
 
     try {
         const fromAddress = web3.givenProvider.selectedAddress;
@@ -274,13 +274,14 @@ async function loadChat() {
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
-            if (window.ethereum && window.ethereum.isMetaMask) {
-                // Check if the user has MetaMask or another compatible wallet
-                await connectWalletAndLoadChat();
-            } else {
-                alert('Please install MetaMask or any other compatible Ethereum wallet to use this chat application.');
-            }
-        });
+    if (window.ethereum && window.ethereum.isMetaMask) {
+        // Check if the user has MetaMask or another compatible wallet
+        await connectWalletAndLoadChat();
+    } else {
+        alert('Please install MetaMask or any other compatible Ethereum wallet to use this chat application.');
+    }
+});
+
 
     </script>
 </body>
