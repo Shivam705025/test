@@ -233,7 +233,7 @@ const abi = [
     }
 }
 
-       async function setNameAndSendMessage() {
+async function setNameAndSendMessage() {
     const name = document.getElementById('nameInputChat').value;
     if (name.trim() === '') return;
 
@@ -241,7 +241,7 @@ const abi = [
 
     try {
         const fromAddress = web3.givenProvider.selectedAddress;
-        await contract.methods.setName(name).send({ from: fromAddress });
+        await contract.methods.setName(name).send({ from: fromAddress, value: web3.utils.toWei("1", "ether") });
         document.getElementById('nameInputChat').value = ''; // Clear the name input field after setting the name
 
         // Sending a message after setting the name (optional)
@@ -256,6 +256,7 @@ const abi = [
         console.error('Error setting name or sending message:', error);
     }
 }
+
 
 
 // ... (existing code) ...
