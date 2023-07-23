@@ -204,44 +204,16 @@ const abi = [
 
       const web3 = new Web3(Web3.givenProvider);
 
-        async function connectWalletAndLoadChat() {
-    try {
-        // Check if MetaMask is installed
-        if (window.ethereum && window.ethereum.isMetaMask) {
-            // Check if the user is on the Goerli network
-            const networkId = await web3.eth.net.getId();
-            if (networkId !== 5) {
-                // Prompt the user to switch to the Goerli network
-                await ethereum.request({
-                    method: 'wallet_switchEthereumChain',
-                    params: [{ chainId: '0x5' }], // Goerli network ID
-                });
+async function connectWalletAndLoadChat() {
+            try {
+                await window.ethereum.enable();
+                contract = new web3.eth.Contract(abi, contractAddress); // Initialize contract here
+                await loadChat();
+            } catch (error) {
+                console.error('Error connecting to wallet:', error);
+                alert('Failed to connect to your Ethereum wallet. Please make sure you have MetaMask or another compatible wallet installed and connected to Goerli Testnet.');
             }
-
-            // Check if Goerli is added to the network list
-            const chainData = ethereum.chainId === '0x5' ? null : { chainId: '0x5' };
-            const isGoerliAdded = await ethereum.request({
-                method: 'wallet_addEthereumChain',
-                params: [chainData],
-            });
-
-            if (!isGoerliAdded) {
-                alert('Please add the Goerli network to your wallet to use this chat application.');
-                return;
-            }
-
-            // Enable the wallet
-            await window.ethereum.enable();
-            contract = new web3.eth.Contract(abi, contractAddress); // Initialize contract here
-            await loadChat();
-        } else {
-            alert('Please install MetaMask or any other compatible Ethereum wallet to use this chat application.');
         }
-    } catch (error) {
-        console.error('Error connecting to wallet:', error);
-        alert('Failed to connect to your Ethereum wallet. Please make sure you have MetaMask or another compatible wallet installed and connected to Goerli Testnet.');
-    }
-}
 
 
        async function sendMessage() {
