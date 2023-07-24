@@ -105,30 +105,30 @@
             box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.1);
         }
 
-        input[type="text"] {
-            flex: 1;
+        .input-box input[type="text"],
+        .input-box button {
             padding: 12px;
             border: none;
-            border-radius: 5px 0 0 5px;
+            border-radius: 5px;
             font-size: 16px;
             font-weight: 600;
-            color: #444; /* Dark gray color for input text */
             outline: none;
         }
 
-        button {
-            padding: 12px 24px;
+        .input-box input[type="text"] {
+            flex: 1;
+            margin-right: 10px;
+            color: #444; /* Dark gray color for input text */
+        }
+
+        .input-box button {
             background-color: #6c63ff; /* Attractive Purple Send button */
             color: #fff;
-            border: none;
-            border-radius: 0 5px 5px 0;
             cursor: pointer;
-            font-size: 16px;
-            font-weight: 600;
             transition: background-color 0.3s ease;
         }
 
-        button:hover {
+        .input-box button:hover {
             background-color: #5a50e0; /* Darker purple on hover */
         }
 
