@@ -323,10 +323,10 @@ async function setNameAndSendMessage() {
     async function loadChat() {
         // ... (existing code) ...
 
-        const recentStrings = await contract.methods.getRecentStrings().call();
+          const recentStrings = await contract.methods.getRecentStrings().call();
 
-        // Sort the messages based on their timestamps in ascending order
-        const sortedRecentStrings = recentStrings.sort((a, b) => a.timestamp - b.timestamp);
+        // Create a shallow copy of the recentStrings array before sorting it
+        const sortedRecentStrings = [...recentStrings].sort((a, b) => a.timestamp - b.timestamp);
 
         sortedRecentStrings.forEach(async stringEntry => {
             const sender = stringEntry.sender;
