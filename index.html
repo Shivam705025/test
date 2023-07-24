@@ -104,7 +104,7 @@
             cursor: pointer;
         }
 
-                .message-box {
+             .message-box {
             padding: 10px;
             border-radius: 10px;
             background-color: #ffffff; /* White color for the sender's message box */
@@ -112,10 +112,21 @@
             max-width: 80%; /* Limit the maximum width of the chat bubble */
             word-wrap: break-word; /* Wrap long messages */
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            position: relative; /* Position relative for pseudo-element */
         }
 
         .message-box.other {
             background-color: #f0f0f0; /* Light gray color for other user's message box */
+        }
+
+        .message-box::before {
+            content: '';
+            position: absolute;
+            left: -10px; /* Position the pseudo-element to the left of the message box */
+            top: 5px; /* Position the pseudo-element slightly below the top */
+            border-style: solid;
+            border-width: 10px 15px 10px 0; /* Create the triangle shape */
+            border-color: transparent #ffffff transparent transparent; /* Set the triangle color and transparent for other sides */
         }
 
         /* New CSS styles for chat bubbles */
@@ -125,6 +136,7 @@
             display: flex;
             align-items: flex-start;
             margin-bottom: 10px; /* Add some margin between chat entries */
+            position: relative; /* Position relative for user picture placement */
         }
 
         .chat-entry-container .user-picture {
@@ -134,6 +146,8 @@
             margin-right: 10px;
             flex-shrink: 0; /* Prevent the picture from shrinking */
             object-fit: cover; /* Ensure user picture maintains aspect ratio */
+            position: absolute;
+            top: -20px; /* Position the user picture slightly above the chat bubble */
         }
 
         .chat-entry-container .chat-content {
@@ -323,46 +337,43 @@ async function setNameAndSendMessage() {
 
 // ... (existing code) ...
 
-    async function loadChat() {
-        // ... (existing code) ...
+        async function loadChat() {
+            // ... (existing code) ...
 
-          const recentStrings = await contract.methods.getRecentStrings().call();
+            const sortedRecentStrings = [...recentStrings].sort((a, b) => a.timestamp - b.timestamp);
 
-        // Create a shallow copy of the recentStrings array before sorting it
-        const sortedRecentStrings = [...recentStrings].sort((a, b) => a.timestamp - b.timestamp);
+            sortedRecentStrings.forEach(async stringEntry => {
+                const sender = stringEntry.sender;
+                const message = stringEntry.data;
+                const timestamp = new Date(stringEntry.timestamp * 1000).toLocaleString();
 
-        sortedRecentStrings.forEach(async stringEntry => {
-            const sender = stringEntry.sender;
-            const message = stringEntry.data;
-            const timestamp = new Date(stringEntry.timestamp * 1000).toLocaleString();
+                // Fetch the name from the contract for the sender's address
+                const name = await contract.methods.getNameForAddress(sender).call();
 
-            // Fetch the name from the contract for the sender's address
-            const name = await contract.methods.getNameForAddress(sender).call();
+                const chatEntry = document.createElement('div');
+                chatEntry.classList.add('chat-entry-container');
 
-            const chatEntry = document.createElement('div');
-            chatEntry.classList.add('chat-entry-container');
+                // Replace the dummy image source with the actual user's picture URL
+                const userPicture = '<img src="dummy-user-picture.jpg" alt="User Picture" class="user-picture">';
 
-            // Replace the dummy image source with the actual user's picture URL
-            const userPicture = '<img src="dummy-user-picture.jpg" alt="User Picture" class="user-picture">';
+                // Check if the message is from the sender or other users and apply the appropriate class
+                const isSender = sender === web3.givenProvider.selectedAddress;
+                const messageBoxClass = isSender ? 'message-box' : 'message-box other';
 
-            // Check if the message is from the sender or other users and apply the appropriate class
-            const isSender = sender === web3.givenProvider.selectedAddress;
-            const messageBoxClass = isSender ? 'message-box' : 'message-box other';
-
-            chatEntry.innerHTML = `
-                ${userPicture}
-                <div class="chat-content">
-                    <strong>${name}</strong>:
-                    <div class="${messageBoxClass}">
-                        ${message}
+                chatEntry.innerHTML = `
+                    ${userPicture}
+                    <div class="chat-content">
+                        <strong>${name}</strong>:
+                        <div class="${messageBoxClass}">
+                            ${message}
+                        </div>
+                        <div class="timestamp">${timestamp}</div>
                     </div>
-                    <div class="timestamp">${timestamp}</div>
-                </div>
-            `;
+                `;
 
-            chatBox.appendChild(chatEntry);
-        });
-    }
+                chatBox.appendChild(chatEntry);
+            });
+        }
 
 function formatAddress(address) {
     return `${address.substring(0, 6)}...${address.substring(address.length - 4)}`;
