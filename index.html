@@ -45,8 +45,8 @@ body {
 }
 
 .chat-entry-container .user-picture {
-    width: 40px;
-    height: 40px;
+    width: 60px;
+    height: 60px;
     border-radius: 50%;
     margin-right: 10px;
     flex-shrink: 0; /* Prevent the picture from shrinking */
@@ -315,7 +315,7 @@ async function loadChat() {
                 chatEntry.classList.add('chat-entry-container');
 
                 // Replace the dummy image source with the actual user's picture URL
-                const userPicture = '<img src="dummy-user-picture.jpg" alt="User Picture" class="user-picture">';
+                const userPicture = '<img src="https://staticimg.amarujala.com/assets/images/2020/06/29/750x506/hacking-apps_1593421476.jpeg" alt="User Picture" class="user-picture">';
 
                 // Check if the message is from the sender or other users and apply the appropriate class
                 const isSender = sender === web3.givenProvider.selectedAddress;
