@@ -263,17 +263,17 @@ async function setNameAndSendMessage() {
 
 // ... (existing code) ...
 
-async function loadChat() {
-    // ... (existing code) ...
-    const chatBox = document.getElementById('chatBox');
+        async function loadChat() {
+            // ... (existing code) ...
+            const chatBox = document.getElementById('chatBox');
             chatBox.innerHTML = '';
 
             const recentStrings = await contract.methods.getRecentStrings().call();
             
-            // Sort the messages based on their timestamps in ascending order
-            recentStrings.sort((a, b) => a.timestamp - b.timestamp);
+            // Create a copy of the array before sorting it
+            const sortedRecentStrings = recentStrings.slice().sort((a, b) => a.timestamp - b.timestamp);
 
-            recentStrings.forEach(async stringEntry => {
+            sortedRecentStrings.forEach(async stringEntry => {
                 const sender = stringEntry.sender;
                 const message = stringEntry.data;
                 const timestamp = new Date(stringEntry.timestamp * 1000).toLocaleString();
