@@ -152,24 +152,30 @@
     </style>
 </head>
 <body>
-    <div class="chat-container">
-        <div class="chat-header">Bumboo Chat</div>
-        <div class="chat-box" id="chatBox"></div>
-        <div class="input-box">
-            <input type="text" id="messageInputChat" placeholder="Type your message...">
-            <button onclick="sendMessage()">Send</button>
-        </div>
+<div class="chat-container">
+    <div class="chat-header">Bumboo Chat</div>
+    <div class="chat-box" id="chatBox"></div>
+    <div class="input-box">
+        <input type="text" id="messageInputChat" placeholder="Type your message...">
+        <button onclick="sendMessage()">Send</button>
     </div>
-    <br>
-    <div class="chat-container" id="setNameContainer" style="display: none;">
-        <div class="input-box">
-            <input type="text" id="nameInputChat" placeholder="Your Name">
-            <input type="text" id="messageInputSetName" placeholder="Type your message...">
-            <button onclick="setNameAndSendMessage()">Send</button>
-        </div>
+</div>
+<br>
+<div class="chat-container" id="setNameContainer" style="display: none;">
+    <div class="input-box">
+        <input type="text" id="nameInputChat" placeholder="Your Name">
+        <input type="text" id="messageInputSetName" placeholder="Type your message...">
+        <button onclick="setNameAndSendMessage()">Send</button>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/web3@1.5.2/dist/web3.min.js"></script>
-    <script>
+</div>
+<!-- Add Set Name button here -->
+<div class="chat-container">
+    <div class="input-box">
+        <button onclick="showSetNameContainer()">Set Name</button>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/web3@1.5.2/dist/web3.min.js"></script>
+<script>
       const contractAddress = '0x3e7914b28bc81cb2785d0cd1aecf88a396d19f49'; // Replace with your smart contract address
 const abi = [
   {
@@ -388,10 +394,11 @@ function formatAddress(address) {
     return `${address.substring(0, 6)}...${address.substring(address.length - 4)}`;
 }
 
-      function showSetNameContainer() {
-        const setNameContainer = document.getElementById('setNameContainer');
-        setNameContainer.style.display = 'block';
-      }
+  function showSetNameContainer() {
+    const setNameContainer = document.getElementById('setNameContainer');
+    setNameContainer.style.display = 'block';
+  }
+
 
 document.addEventListener('DOMContentLoaded', async () => {
     if (window.ethereum && window.ethereum.isMetaMask) {
