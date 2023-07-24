@@ -333,11 +333,11 @@ async function loadChat() {
         chatBox.innerHTML = '';
 
         if (recentStrings && recentStrings.length > 0) {
-            // Create a shallow copy of the recentStrings array before sorting it
-            const sortedRecentStrings = [...recentStrings].sort((a, b) => a.timestamp - b.timestamp);
+            // Sort the recentStrings array by timestamp in ascending order (earliest to latest)
+            recentStrings.sort((a, b) => a.timestamp - b.timestamp);
 
             // Iterate through each chat entry
-            sortedRecentStrings.forEach(async stringEntry => {
+            recentStrings.forEach(async stringEntry => {
                 const sender = stringEntry.sender;
                 const message = stringEntry.data;
                 const timestamp = new Date(stringEntry.timestamp * 1000).toLocaleString();
@@ -386,6 +386,7 @@ async function loadChat() {
         console.error('Error loading chat:', error);
     }
 }
+
 
 
 function formatAddress(address) {
