@@ -266,24 +266,28 @@ async function setNameAndSendMessage() {
 async function loadChat() {
     // ... (existing code) ...
     const chatBox = document.getElementById('chatBox');
-    chatBox.innerHTML = '';
+            chatBox.innerHTML = '';
 
-    const recentStrings = await contract.methods.getRecentStrings().call();
-    recentStrings.forEach(async stringEntry => {
-        const sender = stringEntry.sender;
-        const message = stringEntry.data;
-        const timestamp = new Date(stringEntry.timestamp * 1000).toLocaleString();
+            const recentStrings = await contract.methods.getRecentStrings().call();
+            
+            // Sort the messages based on their timestamps in ascending order
+            recentStrings.sort((a, b) => a.timestamp - b.timestamp);
 
-        // Fetch the name from the contract for the sender's address
-        const name = await contract.methods.getNameForAddress(sender).call();
+            recentStrings.forEach(async stringEntry => {
+                const sender = stringEntry.sender;
+                const message = stringEntry.data;
+                const timestamp = new Date(stringEntry.timestamp * 1000).toLocaleString();
 
-        const chatEntry = document.createElement('div');
-        // Use the name if available, or fallback to the sender's address in Ethereum address format
-        const displayName = name.trim() !== '' ? name : (sender === web3.givenProvider.selectedAddress ? "Your Name" : formatAddress(sender));
-        chatEntry.innerHTML = `<strong>${displayName}</strong> (${timestamp}): ${message}<br><br>`;
-        chatBox.appendChild(chatEntry);
-    });
-}
+                // Fetch the name from the contract for the sender's address
+                const name = await contract.methods.getNameForAddress(sender).call();
+
+                const chatEntry = document.createElement('div');
+                // Use the name if available, or fallback to the sender's address in Ethereum address format
+                const displayName = name.trim() !== '' ? name : (sender === web3.givenProvider.selectedAddress ? "Your Name" : formatAddress(sender));
+                chatEntry.innerHTML = `<strong>${displayName}</strong> (${timestamp}): ${message}<br><br>`;
+                chatBox.appendChild(chatEntry);
+            });
+        }
 
 function formatAddress(address) {
     return `${address.substring(0, 6)}...${address.substring(address.length - 4)}`;
