@@ -305,7 +305,7 @@ async function setNameAndSendMessage() {
                 const displayName = name.trim() !== '' ? name : (sender === web3.givenProvider.selectedAddress ? "Your Name" : formatAddress(sender));
 
                 // Replace the dummy image source with the actual user's picture URL
-                const userPicture = '<img src="dummy-user-picture.jpg" alt="User Picture" class="user-picture">';
+                const userPicture = '<img src="https://www.pixelstalk.net/wp-content/uploads/2016/08/Best-Amazing-Images-For-Desktop.jpg" alt="User Picture" class="user-picture">';
 
                 chatEntry.innerHTML = `
                     ${userPicture}
