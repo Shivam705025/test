@@ -3,169 +3,123 @@
 <head>
     <title>Bumboo Chat</title>
     <style>
-                .chat-entry-container {
-            padding: 15px;
-            border-radius: 20px;
-            background-color: rgba(0, 0, 0, 0.5); /* Transparent black text box */
-            color: #fff; /* Text color for chat entries */
-            word-break: break-word; /* Wrap long messages */
-            display: flex;
-            align-items: center; /* Align the user picture and content vertically */
-        }
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f9f693; /* Yellow-themed background color */
+}
 
-        .user-picture {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            margin-right: 10px;
-            background-color: #ccc; /* Dummy background color, replace with user picture */
-            flex-shrink: 0; /* Prevent the picture from shrinking */
-        }
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f9f693; /* Yellow-themed background color */
-        }
+.chat-container {
+    max-width: 90%;
+    margin: 20px auto;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    background-color: #fff;
+    overflow: hidden; /* To prevent horizontal overflow */
+}
 
-        .chat-container {
-            max-width: 90%;
-            margin: 20px auto;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-            background-color: #fff;
-            overflow: hidden; /* To prevent horizontal overflow */
-        }
+.chat-header {
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+    padding: 10px;
+    background-color: #ffc107; /* Yellow header background color */
+    color: #fff;
+}
 
-        .chat-header {
-            text-align: center;
-            font-size: 1.5rem;
-            font-weight: bold;
-            padding: 10px;
-            background-color: #ffc107; /* Yellow header background color */
-            color: #fff;
-        }
+.chat-box {
+    max-height: 80vh; /* Maximum height to screen size */
+    overflow-y: auto;
+    padding: 10px;
+}
 
-        .chat-box {
-            max-height: 80vh; /* Maximum height to screen size */
-            overflow-y: auto;
-            padding: 10px;
-        }
+.chat-entry-container {
+    padding: 10px;
+    border-radius: 20px;
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 10px; /* Add some margin between chat entries */
+    position: relative; /* Position relative for user picture placement */
+    flex-direction: row; /* Set flex direction to horizontal */
+}
 
-        .chat-entry {
-            margin-bottom: 20px; /* Increase spacing between messages */
-        }
+.chat-entry-container .user-picture {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 10px;
+    flex-shrink: 0; /* Prevent the picture from shrinking */
+    object-fit: cover; /* Ensure user picture maintains aspect ratio */
+    position: absolute;
+    top: -20px; /* Position the user picture slightly above the chat bubble */
+}
 
-        .chat-entry-container {
-            padding: 15px;
-            border-radius: 20px;
-            background-color: rgba(0, 0, 0, 0.5); /* Transparent black text box */
-            color: #fff; /* Text color for chat entries */
-            word-break: break-word; /* Wrap long messages */
-        }
+.chat-entry-container .chat-content {
+    flex: 1;
+}
 
-        .chat-entry .info {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 5px;
-        }
+.chat-entry-container .timestamp {
+    font-size: 0.8rem;
+    color: #bbb;
+    margin-top: 5px;
+}
 
-        .chat-entry .sender-name {
-            font-weight: bold;
-            color: #ffc107; /* Yellow color for the sender's name */
-        }
+.message-box {
+    padding: 10px;
+    border-radius: 10px;
+    background-color: #ffffff; /* White color for the sender's message box */
+    color: #000000; /* Black color for text inside message boxes */
+    max-width: 80%; /* Limit the maximum width of the chat bubble */
+    word-wrap: break-word; /* Wrap long messages */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    position: relative; /* Position relative for pseudo-element */
+}
 
-        .chat-entry .timestamp {
-            font-size: 0.8rem;
-            color: #bbb; /* Light gray color for the timestamp */
-        }
+.message-box.other {
+    background-color: #f0f0f0; /* Light gray color for other user's message box */
+}
 
-        .input-box {
-            display: flex;
-            align-items: center;
-            background-color: #fff;
-            padding: 10px;
-        }
+.message-box::before {
+    content: '';
+    position: absolute;
+    left: -10px; /* Position the pseudo-element to the left of the message box */
+    top: 5px; /* Position the pseudo-element slightly below the top */
+    border-style: solid;
+    border-width: 10px 15px 10px 0; /* Create the triangle shape */
+    border-color: transparent #ffffff transparent transparent; /* Set the triangle color and transparent for other sides */
+}
 
-        input[type="text"] {
-            flex: 1;
-            padding: 8px;
-            border: none;
-            border-radius: 5px 0 0 5px;
-        }
+.input-box {
+    display: flex;
+    align-items: center;
+    background-color: #fff;
+    padding: 10px;
+}
 
-        button {
-            padding: 8px 15px;
-            background-color: #ffc107; /* Yellow Send button */
-            color: #fff;
-            border: none;
-            border-radius: 0 5px 5px 0;
-            cursor: pointer;
-        }
+input[type="text"] {
+    flex: 1;
+    padding: 8px;
+    border: none;
+    border-radius: 5px 0 0 5px;
+}
 
-             .message-box {
-            padding: 10px;
-            border-radius: 10px;
-            background-color: #ffffff; /* White color for the sender's message box */
-            color: #000000; /* Black color for text inside message boxes */
-            max-width: 80%; /* Limit the maximum width of the chat bubble */
-            word-wrap: break-word; /* Wrap long messages */
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-            position: relative; /* Position relative for pseudo-element */
-        }
+button {
+    padding: 8px 15px;
+    background-color: #ffc107; /* Yellow Send button */
+    color: #fff;
+    border: none;
+    border-radius: 0 5px 5px 0;
+    cursor: pointer;
+}
 
-        .message-box.other {
-            background-color: #f0f0f0; /* Light gray color for other user's message box */
-        }
+/* Media query for mobile responsiveness */
+@media (max-width: 600px) {
+    .chat-container {
+        max-width: 100%;
+    }
+}
 
-        .message-box::before {
-            content: '';
-            position: absolute;
-            left: -10px; /* Position the pseudo-element to the left of the message box */
-            top: 5px; /* Position the pseudo-element slightly below the top */
-            border-style: solid;
-            border-width: 10px 15px 10px 0; /* Create the triangle shape */
-            border-color: transparent #ffffff transparent transparent; /* Set the triangle color and transparent for other sides */
-        }
-
-        /* New CSS styles for chat bubbles */
-        .chat-entry-container {
-            padding: 10px;
-            border-radius: 20px;
-            display: flex;
-            align-items: flex-start;
-            margin-bottom: 10px; /* Add some margin between chat entries */
-            position: relative; /* Position relative for user picture placement */
-        }
-
-        .chat-entry-container .user-picture {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            margin-right: 10px;
-            flex-shrink: 0; /* Prevent the picture from shrinking */
-            object-fit: cover; /* Ensure user picture maintains aspect ratio */
-            position: absolute;
-            top: -20px; /* Position the user picture slightly above the chat bubble */
-        }
-
-        .chat-entry-container .chat-content {
-            flex: 1;
-        }
-
-        .chat-entry-container .timestamp {
-            font-size: 0.8rem;
-            color: #bbb;
-            margin-top: 5px;
-        }
-
-        /* Media query for mobile responsiveness */
-        @media (max-width: 600px) {
-            .chat-container {
-                max-width: 100%;
-            }
-        }
     </style>
 </head>
 <body>
@@ -372,7 +326,7 @@ async function loadChat() {
                     ${userPicture}
                     <div class="chat-content">
                         <strong>${name}</strong>:
-                        <div class="${messageBoxClass}">
+                        <div class="${messageBoxClass}" style="max-width:${Math.min(message.length * 10, 400)}px;">
                             ${message}
                         </div>
                         <div class="timestamp">${timestamp}</div>
@@ -381,6 +335,13 @@ async function loadChat() {
 
                 // Append the chat entry to the chat box
                 chatBox.appendChild(chatEntry);
+
+                // Add event listener to adjust message box width when content changes
+                const messageBox = chatEntry.querySelector('.message-box');
+                messageBox.addEventListener('input', () => {
+                    const newWidth = Math.min(messageBox.scrollWidth, 400);
+                    messageBox.style.maxWidth = `${newWidth}px`;
+                });
             });
         } else {
             console.log("No recent chat messages found.");
