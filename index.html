@@ -16,17 +16,18 @@
             margin: 20px auto;
             border-radius: 20px;
             box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-            background-color: #fff;
+            background-color: #f0f0f0; /* Light gray background for the chat container */
             overflow: hidden; /* To prevent horizontal overflow */
         }
 
         .chat-header {
             text-align: center;
-            font-size: 1.8rem;
+            font-size: 2rem;
             font-weight: bold;
             padding: 20px;
             background-color: #ffc107; /* Yellow header background color */
             color: #fff;
+            border-radius: 20px 20px 0 0;
         }
 
         .chat-box {
@@ -43,7 +44,7 @@
             margin-bottom: 15px; /* Add some margin between chat entries */
             position: relative; /* Position relative for user picture placement */
             flex-direction: row; /* Set flex direction to horizontal */
-            background-color: #f9f9f9;
+            background-color: #fff; /* White background for chat entries */
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
             animation: fadeIn 0.3s ease;
         }
@@ -52,7 +53,7 @@
             width: 60px;
             height: 60px;
             border-radius: 50%;
-            margin-right: 10px;
+            margin-right: 15px;
             flex-shrink: 0; /* Prevent the picture from shrinking */
             object-fit: cover; /* Ensure user picture maintains aspect ratio */
             position: absolute;
@@ -72,8 +73,8 @@
         .message-box {
             padding: 15px;
             border-radius: 10px;
-            background-color: #ffffff; /* White color for the sender's message box */
-            color: #000000; /* Black color for text inside message boxes */
+            background-color: #ffc107; /* Yellow color for the sender's message box */
+            color: #fff; /* White color for text inside sender's message boxes */
             max-width: 80%; /* Limit the maximum width of the chat bubble */
             word-wrap: break-word; /* Wrap long messages */
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
@@ -81,7 +82,8 @@
         }
 
         .message-box.other {
-            background-color: #f0f0f0; /* Light gray color for other user's message box */
+            background-color: #e0e0e0; /* Light gray color for other user's message box */
+            color: #444; /* Dark gray color for text inside other user's message boxes */
         }
 
         .message-box::before {
@@ -91,13 +93,13 @@
             top: 15px; /* Position the pseudo-element slightly below the top */
             border-style: solid;
             border-width: 10px 15px 10px 0; /* Create the triangle shape */
-            border-color: transparent #ffffff transparent transparent; /* Set the triangle color and transparent for other sides */
+            border-color: transparent #ffc107 transparent transparent; /* Set the triangle color and transparent for other sides */
         }
 
         .input-box {
             display: flex;
             align-items: center;
-            background-color: #f9f9f9;
+            background-color: #fff; /* White background for input box */
             padding: 20px;
             border-radius: 0 0 20px 20px;
             box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.05);
@@ -110,7 +112,7 @@
             border-radius: 5px 0 0 5px;
             font-size: 16px;
             font-weight: 600;
-            color: #444;
+            color: #444; /* Dark gray color for input text */
             outline: none;
         }
 
