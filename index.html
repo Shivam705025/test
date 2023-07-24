@@ -132,6 +132,22 @@
             background-color: #5a50e0; /* Darker purple on hover */
         }
 
+        .set-name-button {
+            padding: 12px 20px;
+            background-color: #6c63ff; /* Attractive Purple Set Name button */
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: background-color 0.3s ease;
+        }
+
+        .set-name-button:hover {
+            background-color: #5a50e0; /* Darker purple on hover */
+        }
+
         /* Media query for mobile responsiveness */
         @media (max-width: 600px) {
             .chat-container {
@@ -163,11 +179,30 @@
     <br>
     <div class="input-box">
         <input type="text" id="nameInputChat" placeholder="Your Name">
-        <input type="text" id="messageInputSetName" placeholder="Type your message...">
-        <button onclick="setNameAndSendMessage()">Send</button>
+        <button class="set-name-button" onclick="toggleSetNameField()">Set Name</button>
+        <input type="text" id="messageInputSetName" placeholder="Type your message..." style="display: none;">
+        <button onclick="setNameAndSendMessage()" style="display: none;">Send</button>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/web3@1.5.2/dist/web3.min.js"></script>
     <script>
+        function toggleSetNameField() {
+            const nameInput = document.getElementById('nameInputChat');
+            const messageInput = document.getElementById('messageInputSetName');
+            const sendButton = document.querySelector('.input-box button');
+            const setNameButton = document.querySelector('.set-name-button');
+
+            if (nameInput.style.display === 'none') {
+                nameInput.style.display = 'inline-block';
+                messageInput.style.display = 'inline-block';
+                sendButton.style.display = 'inline-block';
+                setNameButton.style.display = 'none';
+            } else {
+                nameInput.style.display = 'none';
+                messageInput.style.display = 'none';
+                sendButton.style.display = 'none';
+                setNameButton.style.display = 'inline-block';
+            }
+        }
       const contractAddress = '0x3e7914b28bc81cb2785d0cd1aecf88a396d19f49'; // Replace with your smart contract address
 const abi = [
   {
