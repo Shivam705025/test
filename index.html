@@ -333,11 +333,11 @@ async function loadChat() {
         chatBox.innerHTML = '';
 
         if (recentStrings && recentStrings.length > 0) {
-            // Sort the recentStrings array by timestamp in ascending order (earliest to latest)
-            recentStrings.sort((a, b) => a.timestamp - b.timestamp);
+            // Create a shallow copy of the recentStrings array before sorting it
+            const sortedRecentStrings = [...recentStrings].sort((a, b) => a.timestamp - b.timestamp);
 
             // Iterate through each chat entry
-            recentStrings.forEach(async stringEntry => {
+            sortedRecentStrings.forEach(async stringEntry => {
                 const sender = stringEntry.sender;
                 const message = stringEntry.data;
                 const timestamp = new Date(stringEntry.timestamp * 1000).toLocaleString();
