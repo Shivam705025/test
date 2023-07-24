@@ -15,7 +15,7 @@
             max-width: 90%;
             margin: 20px auto;
             border-radius: 20px;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
             background-color: #f0f0f0; /* Light gray background for the chat container */
             overflow: hidden; /* To prevent horizontal overflow */
         }
@@ -45,7 +45,7 @@
             position: relative; /* Position relative for user picture placement */
             flex-direction: row; /* Set flex direction to horizontal */
             background-color: #fff; /* White background for chat entries */
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             animation: fadeIn 0.3s ease;
         }
 
@@ -66,18 +66,18 @@
 
         .chat-entry-container .timestamp {
             font-size: 0.8rem;
-            color: #bbb;
+            color: #999;
             margin-top: 5px;
         }
 
         .message-box {
             padding: 15px;
-            border-radius: 10px;
+            border-radius: 20px;
             background-color: #ffc107; /* Yellow color for the sender's message box */
             color: #fff; /* White color for text inside sender's message boxes */
             max-width: 80%; /* Limit the maximum width of the chat bubble */
             word-wrap: break-word; /* Wrap long messages */
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
             position: relative; /* Position relative for pseudo-element */
         }
 
@@ -89,8 +89,8 @@
         .message-box::before {
             content: '';
             position: absolute;
-            left: -10px; /* Position the pseudo-element to the left of the message box */
-            top: 15px; /* Position the pseudo-element slightly below the top */
+            left: -15px; /* Position the pseudo-element to the left of the message box */
+            top: 20px; /* Position the pseudo-element slightly below the top */
             border-style: solid;
             border-width: 10px 15px 10px 0; /* Create the triangle shape */
             border-color: transparent #ffc107 transparent transparent; /* Set the triangle color and transparent for other sides */
@@ -102,7 +102,7 @@
             background-color: #fff; /* White background for input box */
             padding: 20px;
             border-radius: 0 0 20px 20px;
-            box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.1);
         }
 
         input[type="text"] {
