@@ -325,8 +325,8 @@ async function loadChat() {
                 chatEntry.innerHTML = `
                     ${userPicture}
                     <div class="chat-content">
-                    <br>
-                        <strong>${name}</strong>:
+                    <br><br>
+                        <strong>${name}</strong><br>:
                         <div class="${messageBoxClass}" style="max-width:${Math.min(message.length * 10, 400)}px;">
                             ${message}
                         </div>
