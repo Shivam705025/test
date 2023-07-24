@@ -8,15 +8,15 @@
             font-family: 'Poppins', Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f0f0f0; /* Light gray background */
+            background-color: #f4f6f9; /* Light gray background */
         }
 
         .chat-container {
-            max-width: 800px;
+            max-width: 90%;
             margin: 20px auto;
             border-radius: 20px;
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-            background-color: #fff; /* White background for the chat container */
+            background-color: #ffffff; /* White background for the chat container */
             overflow: hidden; /* To prevent horizontal overflow */
         }
 
@@ -25,7 +25,7 @@
             font-size: 2rem;
             font-weight: bold;
             padding: 20px;
-            background-color: #6c63ff; /* Attractive Purple header background */
+            background-color: #6c5ce7; /* Purple header background */
             color: #fff;
             border-radius: 20px 20px 0 0;
         }
@@ -44,7 +44,7 @@
             margin-bottom: 15px; /* Add some margin between chat entries */
             position: relative; /* Position relative for user picture placement */
             flex-direction: row; /* Set flex direction to horizontal */
-            background-color: #f5f5f5; /* Light gray background for chat entries */
+            background-color: #f9f9f9; /* Light gray background for chat entries */
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             animation: fadeIn 0.3s ease;
         }
@@ -73,7 +73,7 @@
         .message-box {
             padding: 15px;
             border-radius: 20px;
-            background-color: #6c63ff; /* Attractive Purple color for the sender's message box */
+            background-color: #6c5ce7; /* Purple color for the sender's message box */
             color: #fff; /* White color for text inside sender's message boxes */
             max-width: 80%; /* Limit the maximum width of the chat bubble */
             word-wrap: break-word; /* Wrap long messages */
@@ -82,7 +82,7 @@
         }
 
         .message-box.other {
-            background-color: #e5e5e5; /* Light gray color for other user's message box */
+            background-color: #f0f0f0; /* Light gray color for other user's message box */
             color: #444; /* Dark gray color for text inside other user's message boxes */
         }
 
@@ -93,7 +93,7 @@
             top: 20px; /* Position the pseudo-element slightly below the top */
             border-style: solid;
             border-width: 10px 15px 10px 0; /* Create the triangle shape */
-            border-color: transparent #6c63ff transparent transparent; /* Set the triangle color and transparent for other sides */
+            border-color: transparent #6c5ce7 transparent transparent; /* Set the triangle color and transparent for other sides */
         }
 
         .input-box {
@@ -105,30 +105,31 @@
             box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.1);
         }
 
-        .input-box input[type="text"],
-        .input-box button {
+        input[type="text"] {
+            flex: 1;
             padding: 12px;
             border: none;
-            border-radius: 5px;
+            border-radius: 5px 0 0 5px;
             font-size: 16px;
             font-weight: 600;
+            color: #444; /* Dark gray color for input text */
             outline: none;
         }
 
-        .set-name-button {
-            padding: 12px 20px;
-            background-color: #6c63ff; /* Attractive Purple Set Name button */
+        button {
+            padding: 12px 24px;
+            background-color: #6c5ce7; /* Purple Send button */
             color: #fff;
             border: none;
-            border-radius: 5px;
+            border-radius: 0 5px 5px 0;
             cursor: pointer;
             font-size: 16px;
             font-weight: 600;
             transition: background-color 0.3s ease;
         }
 
-        .set-name-button:hover {
-            background-color: #5a50e0; /* Darker purple on hover */
+        button:hover {
+            background-color: #5a4ad4; /* Darker purple on hover */
         }
 
         /* Media query for mobile responsiveness */
@@ -154,35 +155,21 @@
     <div class="chat-container">
         <div class="chat-header">Bumboo Chat</div>
         <div class="chat-box" id="chatBox"></div>
-        <div class="input-box" style="display: none;">
+        <div class="input-box">
+            <input type="text" id="messageInputChat" placeholder="Type your message...">
+            <button onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+    <br>
+    <div class="chat-container" id="setNameContainer" style="display: none;">
+        <div class="input-box">
             <input type="text" id="nameInputChat" placeholder="Your Name">
             <input type="text" id="messageInputSetName" placeholder="Type your message...">
             <button onclick="setNameAndSendMessage()">Send</button>
         </div>
     </div>
-    <br>
-    <div class="input-box">
-        <input type="text" id="messageInputChat" placeholder="Type your message...">
-        <button onclick="sendMessage()">Send</button>
-    </div>
-    <br>
-    <div style="text-align: center;">
-        <button class="set-name-button" onclick="toggleSetNameField()">Set Name</button>
-    </div>
     <script src="https://cdn.jsdelivr.net/npm/web3@1.5.2/dist/web3.min.js"></script>
     <script>
-        function toggleSetNameField() {
-            const setNameField = document.querySelector('.input-box');
-            const setNameButton = document.querySelector('.set-name-button');
-
-            if (setNameField.style.display === 'none') {
-                setNameField.style.display = 'flex';
-                setNameButton.style.display = 'none';
-            } else {
-                setNameField.style.display = 'none';
-                setNameButton.style.display = 'inline-block';
-            }
-        }
       const contractAddress = '0x3e7914b28bc81cb2785d0cd1aecf88a396d19f49'; // Replace with your smart contract address
 const abi = [
   {
@@ -310,7 +297,7 @@ async function connectWalletAndLoadChat() {
 async function setNameAndSendMessage() {
     const name = document.getElementById('nameInputChat').value;
     if (name.trim() === '') return;
-
+     showSetNameContainer();
     await connectWalletAndLoadChat();
 
     try {
@@ -400,6 +387,11 @@ async function loadChat() {
 function formatAddress(address) {
     return `${address.substring(0, 6)}...${address.substring(address.length - 4)}`;
 }
+
+      function showSetNameContainer() {
+        const setNameContainer = document.getElementById('setNameContainer');
+        setNameContainer.style.display = 'block';
+      }
 
 document.addEventListener('DOMContentLoaded', async () => {
     if (window.ethereum && window.ethereum.isMetaMask) {
