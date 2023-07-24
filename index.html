@@ -3,6 +3,24 @@
 <head>
     <title>Bumboo Chat</title>
     <style>
+                .chat-entry-container {
+            padding: 15px;
+            border-radius: 20px;
+            background-color: rgba(0, 0, 0, 0.5); /* Transparent black text box */
+            color: #fff; /* Text color for chat entries */
+            word-break: break-word; /* Wrap long messages */
+            display: flex;
+            align-items: center; /* Align the user picture and content vertically */
+        }
+
+        .user-picture {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+            background-color: #ccc; /* Dummy background color, replace with user picture */
+            flex-shrink: 0; /* Prevent the picture from shrinking */
+        }
         body {
             font-family: Arial, sans-serif;
             margin: 0;
@@ -269,8 +287,7 @@ async function setNameAndSendMessage() {
             chatBox.innerHTML = '';
 
             const recentStrings = await contract.methods.getRecentStrings().call();
-            
-            // Create a copy of the array before sorting it
+
             const sortedRecentStrings = recentStrings.slice().sort((a, b) => a.timestamp - b.timestamp);
 
             sortedRecentStrings.forEach(async stringEntry => {
@@ -282,9 +299,21 @@ async function setNameAndSendMessage() {
                 const name = await contract.methods.getNameForAddress(sender).call();
 
                 const chatEntry = document.createElement('div');
+                chatEntry.classList.add('chat-entry-container');
+
                 // Use the name if available, or fallback to the sender's address in Ethereum address format
                 const displayName = name.trim() !== '' ? name : (sender === web3.givenProvider.selectedAddress ? "Your Name" : formatAddress(sender));
-                chatEntry.innerHTML = `<strong>${displayName}</strong> (${timestamp}): ${message}<br><br>`;
+
+                // Replace the dummy image source with the actual user's picture URL
+                const userPicture = '<img src="dummy-user-picture.jpg" alt="User Picture" class="user-picture">';
+
+                chatEntry.innerHTML = `
+                    ${userPicture}
+                    <div>
+                        <strong>${displayName}</strong> (${timestamp}): ${message}<br>
+                    </div>
+                `;
+
                 chatBox.appendChild(chatEntry);
             });
         }
