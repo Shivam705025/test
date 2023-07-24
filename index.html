@@ -335,13 +335,19 @@ async function setNameAndSendMessage() {
 
 
 
-// ... (existing code) ...
+async function loadChat() {
+    try {
+        // Fetch the recentStrings array from the smart contract
+        const recentStrings = await contract.methods.getRecentStrings().call();
 
-        async function loadChat() {
-            // ... (existing code) ...
+        // Clear existing chat entries
+        chatBox.innerHTML = '';
 
+        if (recentStrings && recentStrings.length > 0) {
+            // Create a shallow copy of the recentStrings array before sorting it
             const sortedRecentStrings = [...recentStrings].sort((a, b) => a.timestamp - b.timestamp);
 
+            // Iterate through each chat entry
             sortedRecentStrings.forEach(async stringEntry => {
                 const sender = stringEntry.sender;
                 const message = stringEntry.data;
@@ -350,6 +356,7 @@ async function setNameAndSendMessage() {
                 // Fetch the name from the contract for the sender's address
                 const name = await contract.methods.getNameForAddress(sender).call();
 
+                // Create the chat entry container
                 const chatEntry = document.createElement('div');
                 chatEntry.classList.add('chat-entry-container');
 
@@ -360,6 +367,7 @@ async function setNameAndSendMessage() {
                 const isSender = sender === web3.givenProvider.selectedAddress;
                 const messageBoxClass = isSender ? 'message-box' : 'message-box other';
 
+                // Set the content of the chat entry
                 chatEntry.innerHTML = `
                     ${userPicture}
                     <div class="chat-content">
@@ -371,9 +379,17 @@ async function setNameAndSendMessage() {
                     </div>
                 `;
 
+                // Append the chat entry to the chat box
                 chatBox.appendChild(chatEntry);
             });
+        } else {
+            console.log("No recent chat messages found.");
         }
+    } catch (error) {
+        console.error('Error loading chat:', error);
+    }
+}
+
 
 function formatAddress(address) {
     return `${address.substring(0, 6)}...${address.substring(address.length - 4)}`;
