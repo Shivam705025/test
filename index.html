@@ -104,15 +104,26 @@
             cursor: pointer;
         }
 
-                .chat-entry-container {
-            padding: 15px;
+                .message-box {
+            padding: 10px;
+            border-radius: 10px;
+            background-color: #ffffff; /* White color for the sender's message box */
+            color: #000000; /* Black color for text inside message boxes */
+            max-width: 80%; /* Limit the maximum width of the chat bubble */
+            word-wrap: break-word; /* Wrap long messages */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .message-box.other {
+            background-color: #f0f0f0; /* Light gray color for other user's message box */
+        }
+
+        /* New CSS styles for chat bubbles */
+        .chat-entry-container {
+            padding: 10px;
             border-radius: 20px;
-            background-color: rgba(0, 0, 0, 0.5);
-            color: #fff;
-            word-break: break-word;
             display: flex;
             align-items: flex-start;
-            max-width: 70%; /* Limit the maximum width of the chat bubble */
             margin-bottom: 10px; /* Add some margin between chat entries */
         }
 
@@ -121,6 +132,8 @@
             height: 40px;
             border-radius: 50%;
             margin-right: 10px;
+            flex-shrink: 0; /* Prevent the picture from shrinking */
+            object-fit: cover; /* Ensure user picture maintains aspect ratio */
         }
 
         .chat-entry-container .chat-content {
@@ -131,16 +144,6 @@
             font-size: 0.8rem;
             color: #bbb;
             margin-top: 5px;
-        }
-
-        .message-box {
-            padding: 10px;
-            border-radius: 10px;
-            background-color: #007bff; /* Blue color for the sender's message box */
-        }
-
-        .message-box.other {
-            background-color: #28a745; /* Green color for the other user's message box */
         }
 
         /* Media query for mobile responsiveness */
