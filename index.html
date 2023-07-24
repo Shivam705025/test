@@ -104,6 +104,45 @@
             cursor: pointer;
         }
 
+                .chat-entry-container {
+            padding: 15px;
+            border-radius: 20px;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: #fff;
+            word-break: break-word;
+            display: flex;
+            align-items: flex-start;
+            max-width: 70%; /* Limit the maximum width of the chat bubble */
+            margin-bottom: 10px; /* Add some margin between chat entries */
+        }
+
+        .chat-entry-container .user-picture {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        .chat-entry-container .chat-content {
+            flex: 1;
+        }
+
+        .chat-entry-container .timestamp {
+            font-size: 0.8rem;
+            color: #bbb;
+            margin-top: 5px;
+        }
+
+        .message-box {
+            padding: 10px;
+            border-radius: 10px;
+            background-color: #007bff; /* Blue color for the sender's message box */
+        }
+
+        .message-box.other {
+            background-color: #28a745; /* Green color for the other user's message box */
+        }
+
         /* Media query for mobile responsiveness */
         @media (max-width: 600px) {
             .chat-container {
@@ -281,42 +320,41 @@ async function setNameAndSendMessage() {
 
 // ... (existing code) ...
 
-        async function loadChat() {
-            // ... (existing code) ...
-            const chatBox = document.getElementById('chatBox');
-            chatBox.innerHTML = '';
+    async function loadChat() {
+        // ... (existing code) ...
 
-            const recentStrings = await contract.methods.getRecentStrings().call();
+        sortedRecentStrings.forEach(async stringEntry => {
+            const sender = stringEntry.sender;
+            const message = stringEntry.data;
+            const timestamp = new Date(stringEntry.timestamp * 1000).toLocaleString();
 
-            const sortedRecentStrings = recentStrings.slice().sort((a, b) => a.timestamp - b.timestamp);
+            // Fetch the name from the contract for the sender's address
+            const name = await contract.methods.getNameForAddress(sender).call();
 
-            sortedRecentStrings.forEach(async stringEntry => {
-                const sender = stringEntry.sender;
-                const message = stringEntry.data;
-                const timestamp = new Date(stringEntry.timestamp * 1000).toLocaleString();
+            const chatEntry = document.createElement('div');
+            chatEntry.classList.add('chat-entry-container');
 
-                // Fetch the name from the contract for the sender's address
-                const name = await contract.methods.getNameForAddress(sender).call();
+            // Replace the dummy image source with the actual user's picture URL
+            const userPicture = '<img src="dummy-user-picture.jpg" alt="User Picture" class="user-picture">';
 
-                const chatEntry = document.createElement('div');
-                chatEntry.classList.add('chat-entry-container');
+            // Check if the message is from the sender or other users and apply the appropriate class
+            const isSender = sender === web3.givenProvider.selectedAddress;
+            const messageBoxClass = isSender ? 'message-box' : 'message-box other';
 
-                // Use the name if available, or fallback to the sender's address in Ethereum address format
-                const displayName = name.trim() !== '' ? name : (sender === web3.givenProvider.selectedAddress ? "Your Name" : formatAddress(sender));
-
-                // Replace the dummy image source with the actual user's picture URL
-                const userPicture = '<img src="https://www.pixelstalk.net/wp-content/uploads/2016/08/Best-Amazing-Images-For-Desktop.jpg" alt="User Picture" class="user-picture">';
-
-                chatEntry.innerHTML = `
-                    ${userPicture}
-                    <div>
-                        <strong>${displayName}</strong> (${timestamp}): ${message}<br>
+            chatEntry.innerHTML = `
+                ${userPicture}
+                <div class="chat-content">
+                    <strong>${name}</strong>:
+                    <div class="${messageBoxClass}">
+                        ${message}
                     </div>
-                `;
+                    <div class="timestamp">${timestamp}</div>
+                </div>
+            `;
 
-                chatBox.appendChild(chatEntry);
-            });
-        }
+            chatBox.appendChild(chatEntry);
+        });
+    }
 
 function formatAddress(address) {
     return `${address.substring(0, 6)}...${address.substring(address.length - 4)}`;
