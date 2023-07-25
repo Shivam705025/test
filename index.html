@@ -165,19 +165,22 @@
 <div class="chat-container">
     <div class="chat-header">Bumboo Chat</div>
     <div class="chat-box" id="chatBox"></div>
-    <div class="input-box">
-        <input type="text" id="messageInputChat" placeholder="Type your message...">
-        <button onclick="sendMessage()">Send</button>
+        <div class="input-box">
+            <input type="text" id="messageInputChat" placeholder="Type your message...">
+            <button onclick="sendMessage()">Send</button>
+            <div class="wallet-btn" onclick="showWalletInput()">
+                <img src="path_to_usdt_image.png" alt="USDT" class="usdt-image">
+            </div>
+        </div>
     </div>
-</div>
 <br>
-<div class="chat-container" id="setNameContainer" style="display: none;">
-    <div class="input-box">
-        <input type="text" id="nameInputChat" placeholder="Your Name">
-        <input type="text" id="messageInputSetName" placeholder="Type your message...">
-        <button onclick="setNameAndSendMessage()">Send</button>
+    <div class="chat-container" id="setNameContainer" style="display: none;">
+        <div class="input-box">
+            <input type="text" id="nameInputChat" placeholder="Your Name">
+            <input type="text" id="messageInputSetName" placeholder="Type your message...">
+            <button onclick="setNameAndSendMessage()">Send</button>
+        </div>
     </div>
-</div>
 <div align="center">
     <button onclick="showSetNameContainer()">Set Name</button>
 </div>
@@ -376,6 +379,18 @@ const abi = [
    let contract; // Declare contract variable outside functions
 
       const web3 = new Web3(Web3.givenProvider);
+    let walletInputVisible = false;
+
+function showWalletInput() {
+    const walletContainer = document.getElementById('setNameContainer');
+    if (!walletInputVisible) {
+        walletContainer.style.display = 'block';
+        walletInputVisible = true;
+    } else {
+        walletContainer.style.display = 'none';
+        walletInputVisible = false;
+    }
+}
 
 async function connectWalletAndLoadChat() {
             try {
