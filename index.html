@@ -227,15 +227,17 @@
             <button onclick="setNameAndSendMessage()">Send</button>
         </div>
     </div>
-<div class="usdt-wrapper">
-    <img src="https://www.pngall.com/wp-content/uploads/10/Tether-Crypto-Logo-PNG.png" alt="USDT" class="usdt-image">
-    <div class="input-box">
-        <input type="text" id="walletAddressInput" placeholder="Wallet Address">
-        <input type="number" id="usdtAmountInput" placeholder="Amount (USDT)">
-        <button onclick="transferUSDT()">Transfer USDT</button>
+
+    <div id="usdtInputContainer" style="display: none;">
+    <div class="usdt-wrapper">
+        <img src="https://www.pngall.com/wp-content/uploads/10/Tether-Crypto-Logo-PNG.png" alt="USDT" class="usdt-image">
+        <div class="input-box">
+            <input type="text" id="walletAddressInput" placeholder="Wallet Address">
+            <input type="number" id="usdtAmountInput" placeholder="Amount (USDT)">
+            <button onclick="transferUSDT()">Transfer USDT</button>
+        </div>
     </div>
 </div>
-    </div>
 <div align="center">
     <button onclick="showSetNameContainer()">Set Name</button>
 </div>
@@ -434,19 +436,19 @@ const abi = [
    let contract; // Declare contract variable outside functions
 
       const web3 = new Web3(Web3.givenProvider);
-let walletInputVisible = false;
 
-function toggleWalletInput() {
-    const walletContainer = document.getElementById('walletInputContainer');
-    walletInputVisible = !walletInputVisible;
+let usdtInputVisible = false;
 
-    if (walletInputVisible) {
-        walletContainer.style.display = 'block';
+function toggleUSDTInput() {
+    const usdtInputContainer = document.getElementById('usdtInputContainer');
+    usdtInputVisible = !usdtInputVisible;
+
+    if (usdtInputVisible) {
+        usdtInputContainer.style.display = 'block';
     } else {
-        walletContainer.style.display = 'none';
+        usdtInputContainer.style.display = 'none';
     }
 }
-
 async function transferUSDT() {
     const walletAddress = document.getElementById('walletAddressInput').value;
     const usdtAmount = document.getElementById('usdtAmountInput').value;
