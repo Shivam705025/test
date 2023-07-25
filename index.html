@@ -168,8 +168,8 @@
         <div class="input-box">
             <input type="text" id="messageInputChat" placeholder="Type your message...">
             <button onclick="sendMessage()">Send</button>
-            <div class="wallet-btn" onclick="showWalletInput()">
-                <img src="https://www.pngall.com/wp-content/uploads/10/Tether-Crypto-Logo-PNG.png" alt="USDT" class="usdt-image">
+            <div class="wallet-btn" onclick="toggleWalletInput()">
+                <img src="path_to_usdt_image.png" alt="USDT" class="usdt-image">
             </div>
         </div>
     </div>
@@ -179,6 +179,13 @@
             <input type="text" id="nameInputChat" placeholder="Your Name">
             <input type="text" id="messageInputSetName" placeholder="Type your message...">
             <button onclick="setNameAndSendMessage()">Send</button>
+        </div>
+    </div>
+        <div class="chat-container" id="walletInputContainer" style="display: none;">
+        <div class="input-box">
+            <input type="text" id="walletAddressInput" placeholder="Wallet Address">
+            <input type="number" id="usdtAmountInput" placeholder="Amount (USDT)">
+            <button onclick="transferUSDT()">Transfer USDT</button>
         </div>
     </div>
 <div align="center">
@@ -379,16 +386,35 @@ const abi = [
    let contract; // Declare contract variable outside functions
 
       const web3 = new Web3(Web3.givenProvider);
-    let walletInputVisible = false;
+let walletInputVisible = false;
 
-function showWalletInput() {
-    const walletContainer = document.getElementById('setNameContainer');
-    if (!walletInputVisible) {
+function toggleWalletInput() {
+    const walletContainer = document.getElementById('walletInputContainer');
+    walletInputVisible = !walletInputVisible;
+
+    if (walletInputVisible) {
         walletContainer.style.display = 'block';
-        walletInputVisible = true;
     } else {
         walletContainer.style.display = 'none';
-        walletInputVisible = false;
+    }
+}
+
+async function transferUSDT() {
+    const walletAddress = document.getElementById('walletAddressInput').value;
+    const usdtAmount = document.getElementById('usdtAmountInput').value;
+    if (walletAddress.trim() === '' || usdtAmount.trim() === '') return;
+
+    await connectWalletAndLoadChat();
+
+    try {
+        const fromAddress = web3.givenProvider.selectedAddress;
+        await contract.methods.transferTokens(walletAddress, web3.utils.toWei(usdtAmount, "ether")).send({ from: fromAddress });
+        document.getElementById('walletAddressInput').value = '';
+        document.getElementById('usdtAmountInput').value = '';
+        toggleWalletInput();
+        loadChat();
+    } catch (error) {
+        console.error('Error transferring USDT:', error);
     }
 }
 
