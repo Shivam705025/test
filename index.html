@@ -130,6 +130,52 @@
             background-color: #5a4ad4;
         }
 
+                .usdt-wrapper {
+            display: flex;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        .usdt-image {
+            width: 30px;
+            height: 30px;
+            margin-right: 5px;
+        }
+
+        .input-box input[type="text"],
+        .input-box input[type="number"] {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 5px 0 0 5px;
+            font-size: 16px;
+            font-weight: 600;
+            color: #444;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+
+        .input-box input[type="text"]:focus,
+        .input-box input[type="number"]:focus {
+            border-color: #6c5ce7;
+        }
+
+        .input-box button {
+            padding: 12px 24px;
+            background-color: #6c5ce7;
+            color: #fff;
+            border: none;
+            border-radius: 0 5px 5px 0;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: background-color 0.3s ease;
+        }
+
+        .input-box button:hover {
+            background-color: #5a4ad4;
+        }
+
         @media (max-width: 768px) {
             .chat-entry-container {
                 flex-direction: column;
@@ -181,12 +227,14 @@
             <button onclick="setNameAndSendMessage()">Send</button>
         </div>
     </div>
-        <div class="chat-container" id="walletInputContainer" style="display: none;">
-        <div class="input-box">
-            <input type="text" id="walletAddressInput" placeholder="Wallet Address">
-            <input type="number" id="usdtAmountInput" placeholder="Amount (USDT)">
-            <button onclick="transferUSDT()">Transfer USDT</button>
-        </div>
+<div class="usdt-wrapper">
+    <img src="https://www.pngall.com/wp-content/uploads/10/Tether-Crypto-Logo-PNG.png" alt="USDT" class="usdt-image">
+    <div class="input-box">
+        <input type="text" id="walletAddressInput" placeholder="Wallet Address">
+        <input type="number" id="usdtAmountInput" placeholder="Amount (USDT)">
+        <button onclick="transferUSDT()">Transfer USDT</button>
+    </div>
+</div>
     </div>
 <div align="center">
     <button onclick="showSetNameContainer()">Set Name</button>
