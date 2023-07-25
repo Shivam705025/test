@@ -183,24 +183,99 @@
 </div>
 <script src="https://cdn.jsdelivr.net/npm/web3@1.5.2/dist/web3.min.js"></script>
 <script>
-const contractAddress = '0x3e7914b28bc81cb2785d0cd1aecf88a396d19f49'; // Replace with your smart contract address
+const contractAddress = '0x34c0f5170667c778051670775d690ee3aff6ee75'; // Replace with your smart contract address
 const abi = [
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_erc20TokenAddress",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "constructor"
+  },
+  {
+    "anonymous": false,
+    "inputs": [],
+    "name": "ChatHalted",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [],
+    "name": "ChatStarted",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "_from",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "_to",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "_amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "TokensTransferred",
+    "type": "event"
+  },
+  {
+    "inputs": [],
+    "name": "chatActive",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
   {
     "inputs": [
       {
         "internalType": "string",
         "name": "_name",
         "type": "string"
-      },
+      }
+    ],
+    "name": "isValidStringLength",
+    "outputs": [],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_addr",
+        "type": "address"
+      }
+    ],
+    "name": "getNameForAddress",
+    "outputs": [
       {
         "internalType": "string",
-        "name": "_data",
+        "name": "",
         "type": "string"
       }
     ],
-    "name": "addString",
-    "outputs": [],
-    "stateMutability": "nonpayable",
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -248,6 +323,26 @@ const abi = [
     ],
     "name": "setName",
     "outputs": [],
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_erc20TokenAddress",
+        "type": "address"
+      }
+    ],
+    "name": "setERC20TokenAddress",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "startChat",
+    "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
   },
@@ -255,19 +350,25 @@ const abi = [
     "inputs": [
       {
         "internalType": "address",
-        "name": "_addr",
+        "name": "_to",
         "type": "address"
-      }
-    ],
-    "name": "getNameForAddress",
-    "outputs": [
+      },
       {
-        "internalType": "string",
-        "name": "",
-        "type": "string"
+        "internalType": "uint256",
+        "name": "_amount",
+        "type": "uint256"
       }
     ],
-    "stateMutability": "view",
+    "name": "transferTokens",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "haltChat",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   }
 ];
