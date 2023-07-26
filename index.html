@@ -524,7 +524,7 @@ async function loadChat() {
                 const timestamp = new Date(stringEntry.timestamp * 1000).toLocaleString();
 
                 // Fetch the name from the contract for the sender's address
-                const name = await contract.methods.getNameForAddress().call();
+                const name = await contract.methods.getNameForAddress(sender).call();
 
                 // Create the chat entry container
                 const chatEntry = document.createElement('div');
