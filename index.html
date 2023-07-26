@@ -316,18 +316,24 @@ const abi = [
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "getNameForAddress",
-    "outputs": [
-      {
-        "internalType": "string",
-        "name": "",
-        "type": "string"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
+  "inputs": [
+    {
+      "internalType": "address",
+      "name": "_addr",
+      "type": "address"
+    }
+  ],
+  "name": "getNameForAddress",
+  "outputs": [
+    {
+      "internalType": "string",
+      "name": "",
+      "type": "string"
+    }
+  ],
+  "stateMutability": "view",
+  "type": "function"
+},
   {
     "inputs": [
       {
