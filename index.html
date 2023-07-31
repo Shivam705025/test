@@ -27,18 +27,25 @@
   </div>
 
   <script>
-    // Add your JavaScript code here
-
-    // Replace this with your actual contract code
-    const contractCode = `
-    // Your contract code goes here
-    contract MyContract {
-      // ...
-    }
-    `;
-
     // Replace this with your actual OpenAI API key
     const openAIKey = "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";
+
+    // Example Solidity contract code
+    const contractCode = `
+    pragma solidity ^0.8.0;
+
+    contract MyContract {
+      uint256 public myVariable;
+
+      constructor() {
+        myVariable = 42;
+      }
+
+      function setVariable(uint256 newValue) public {
+        myVariable = newValue;
+      }
+    }
+    `;
 
     async function analyzeContractCode() {
       try {
@@ -57,7 +64,7 @@
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${openAIKey}`,
+          "Authorization": `Bearer ${openAIKey}`,
         },
         body: JSON.stringify({
           prompt: `Analyze the following Solidity code:\n${contractCode}`,
