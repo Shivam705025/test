@@ -58,7 +58,7 @@
     }
 
     async function fetchAnalysisResult(contractCode) {
-      const openAIEndpoint = "https://api.openai.com/v1/engines/davinci-codex/completions";
+      const openAIEndpoint = "https://api.openai.com/v1/completions";
 
       const response = await fetch(openAIEndpoint, {
         method: "POST",
